@@ -33,6 +33,107 @@ namespace CovenExpansionRecast
 
         public static bool Opt_AdditionalTenets = true;
 
+
+        public readonly List<string> SimpleSoul = new List<string>(new string[]
+        {
+            "Physician",
+            "Mediator",
+            "Exorcist",
+            "Lightbringer",
+            "Orc-slayer",
+            "Mage"
+        });
+
+        public readonly List<string> FirstSoul = new List<string>(new string[]
+        {
+            "Physician",
+            "Physician",
+            "Physician",
+            "Physician",
+            "Physician",
+            "Mediator",
+            "Mediator",
+            "Mediator",
+            "Mediator",
+            "Exorcist",
+            "Exorcist",
+            "Exorcist",
+            "Lightbringer",
+            "Lightbringer",
+            "Orc-slayer"
+        });
+
+        public readonly List<string> SecondSoul = new List<string>(new string[]
+        {
+            "Mediator",
+            "Exorcist",
+            "Lightbringer",
+            "Orc-slayer",
+            "Mage",
+            "Exorcist",
+            "Lightbringer",
+            "Orc-slayer",
+            "Mage",
+            "Lightbringer",
+            "Orc-slayer",
+            "Mage",
+            "Orc-slayer",
+            "Mage",
+            "Mage"
+        });
+
+        public readonly List<string> DeepOneSecondSoul = new List<string>(new string[]
+        {
+            "Physician",
+            "Mediator",
+            "Exorcist",
+            "Lightbringer",
+            "Orc-slayer",
+            "Mage"
+        });
+
+        public readonly List<string> BaseCraftables = new List<string>(new string[]
+        {
+            "I_barbDominion",
+            "I_cagedSpirit",
+            "I_casVeil",
+            "I_chronoBauble",
+            "I_evilBook",
+            "I_heroicBoot",
+            "I_panacea",
+            "I_RazRatKing",
+            "I_settlersClaim",
+            "I_spiritSeedcone",
+            "I_toxVial",
+            "I_BagOfBoundlessWealth",
+            "I_ExquisiteMask",
+            "I_RuinousBlade",
+            "I_HoodOfShadows"
+        });
+
+        public readonly List<string> SimpleCraftables = new List<string>(new string[]
+        {
+            "I_SkeletonKey",
+            "I_BagOfPoverty",
+            "I_Deathstone",
+            "I_DarkStone",
+            "I_StudentsManual",
+            "I_PoisonedDagger",
+            "I_PortableSkeleton",
+            "I_ReliableShield",
+            "I_PotionOfHealing"
+        });
+
+        public readonly List<string> DeepOneCraftables = new List<string>(new string[]
+        {
+            "I_AbyssalTome",
+            "I_DrownedMemento",
+            "I_MesmerizingShell",
+            "I_RitualistShard",
+            "I_WaterloggedCharm",
+            "I_StrangeMeat"
+        });
+
         public CovensCore()
         {
             instance = this;
