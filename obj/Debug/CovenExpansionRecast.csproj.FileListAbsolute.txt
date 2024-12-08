@@ -1,0 +1,6 @@
+C:\Users\ilike_000\Documents\My Documents\Shadows of Forbidden Gods\My Mods\CovenExpansionRecast\CovenExpansionRecast\bin\Debug\CovenExpansionRecast.dll
+C:\Users\ilike_000\Documents\My Documents\Shadows of Forbidden Gods\My Mods\CovenExpansionRecast\CovenExpansionRecast\bin\Debug\CovenExpansionRecast.pdb
+C:\Users\ilike_000\Documents\My Documents\Shadows of Forbidden Gods\My Mods\CovenExpansionRecast\CovenExpansionRecast\obj\Debug\CovenExpansionRecast.csproj.AssemblyReference.cache
+C:\Users\ilike_000\Documents\My Documents\Shadows of Forbidden Gods\My Mods\CovenExpansionRecast\CovenExpansionRecast\obj\Debug\CovenExpansionRecast.csproj.CoreCompileInputs.cache
+C:\Users\ilike_000\Documents\My Documents\Shadows of Forbidden Gods\My Mods\CovenExpansionRecast\CovenExpansionRecast\obj\Debug\CovenExpansionRecast.dll
+C:\Users\ilike_000\Documents\My Documents\Shadows of Forbidden Gods\My Mods\CovenExpansionRecast\CovenExpansionRecast\obj\Debug\CovenExpansionRecast.pdb
