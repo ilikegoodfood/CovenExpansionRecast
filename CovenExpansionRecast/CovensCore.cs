@@ -33,8 +33,11 @@ namespace CovenExpansionRecast
 
         public static bool Opt_AdditionalTenets = true;
 
-
-        public readonly List<string> SimpleSoul = new List<string>(new string[]
+        // Soul Craftable Pairs //
+        // The DUalSouls list is built dynamically in beforeMapGen
+        // The lists of craftables are randomiised in beforeMapGen
+        // Craftables lists must be of at least the length of the corresponding souls lists.
+        public readonly List<string> SingleSouls = new List<string>(new string[]
         {
             "Physician",
             "Mediator",
@@ -44,55 +47,23 @@ namespace CovenExpansionRecast
             "Mage"
         });
 
-        public readonly List<string> FirstSoul = new List<string>(new string[]
+        public readonly List<string> SingleCraftables = new List<string>(new string[]
         {
-            "Physician",
-            "Physician",
-            "Physician",
-            "Physician",
-            "Physician",
-            "Mediator",
-            "Mediator",
-            "Mediator",
-            "Mediator",
-            "Exorcist",
-            "Exorcist",
-            "Exorcist",
-            "Lightbringer",
-            "Lightbringer",
-            "Orc-slayer"
+            "I_SkeletonKey",
+            "I_BagOfPoverty",
+            "I_Deathstone",
+            "I_DarkStone",
+            "I_StudentsManual",
+            "I_PoisonedDagger",
+            "I_PortableSkeleton",
+            "I_ReliableShield",
+            "I_PotionOfHealing"
         });
 
-        public readonly List<string> SecondSoul = new List<string>(new string[]
-        {
-            "Mediator",
-            "Exorcist",
-            "Lightbringer",
-            "Orc-slayer",
-            "Mage",
-            "Exorcist",
-            "Lightbringer",
-            "Orc-slayer",
-            "Mage",
-            "Lightbringer",
-            "Orc-slayer",
-            "Mage",
-            "Orc-slayer",
-            "Mage",
-            "Mage"
-        });
+        // Given SimpleSouls has 6 items, DualSouls will have 15 items.
+        public readonly List<Tuple<string, string>> DualSouls = new List<Tuple<string, string>>();
 
-        public readonly List<string> DeepOneSecondSoul = new List<string>(new string[]
-        {
-            "Physician",
-            "Mediator",
-            "Exorcist",
-            "Lightbringer",
-            "Orc-slayer",
-            "Mage"
-        });
-
-        public readonly List<string> BaseCraftables = new List<string>(new string[]
+        public readonly List<string> DualCraftables = new List<string>(new string[]
         {
             "I_barbDominion",
             "I_cagedSpirit",
@@ -111,17 +82,14 @@ namespace CovenExpansionRecast
             "I_HoodOfShadows"
         });
 
-        public readonly List<string> SimpleCraftables = new List<string>(new string[]
+        public readonly List<string> DeepOneSouls = new List<string>(new string[]
         {
-            "I_SkeletonKey",
-            "I_BagOfPoverty",
-            "I_Deathstone",
-            "I_DarkStone",
-            "I_StudentsManual",
-            "I_PoisonedDagger",
-            "I_PortableSkeleton",
-            "I_ReliableShield",
-            "I_PotionOfHealing"
+            "Physician",
+            "Mediator",
+            "Exorcist",
+            "Lightbringer",
+            "Orc-slayer",
+            "Mage"
         });
 
         public readonly List<string> DeepOneCraftables = new List<string>(new string[]
@@ -180,6 +148,7 @@ namespace CovenExpansionRecast
             instance = this;
 
             GameInitialisation(map);
+            BuildSoulItemGroups();
         }
 
         public override void afterLoading(Map map)
@@ -224,6 +193,23 @@ namespace CovenExpansionRecast
         private void RegisterComLibHooks(Map map)
         {
             ComLib.RegisterHooks(new ComLibHooks(map));
+        }
+
+        private void BuildSoulItemGroups()
+        {
+            // Builds all possible combinations of Pairs of SimpleSouls, exlcuding those where both values of the pair are the same.
+            for (int i = 0; i < SingleSouls.Count; i++)
+            {
+                for (int j = i + 1; j < SingleSouls.Count; j++)
+                {
+                    DualSouls.Add(new Tuple<string, string>(SingleSouls[i], SingleSouls[j]));
+                }
+            }
+
+            // Shuffle craftables collection, ensuring that the soul-craftable pairs are unique each game.
+            SingleCraftables.Shuffle();
+            DualCraftables.Shuffle();
+            DeepOneCraftables.Shuffle();
         }
 
         public bool TryGetModIntegrationData(string name, out ModIntegrationData intData)
