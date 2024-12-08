@@ -19,9 +19,59 @@ namespace CovenExpansionRecast
 
         public static ModCore ComLib => comLib;
 
+        private Dictionary<string, ModIntegrationData> _modIntegrationData;
+
+        public static bool Opt_Curseweaving = true;
+
+        public static bool Opt_SoulWeaving = true;
+
+        public static bool Opt_LimitedInfluenceGain = true;
+
+        public static int Opt_LimitedInfluenceGainMax = 2;
+
+        public static bool Opt_FindableArtifacts = true;
+
+        public static bool Opt_AdditionalTenets = true;
+
         public CovensCore()
         {
             instance = this;
+        }
+
+        public override void receiveModConfigOpts_bool(string optName, bool value)
+        {
+            switch(optName)
+            {
+                case "Curseweaving":
+                    Opt_Curseweaving = value;
+                    break;
+                case "Soulweaving":
+                    Opt_SoulWeaving = value;
+                    break;
+                case "Limited Influence":
+                    Opt_LimitedInfluenceGain = value;
+                    break;
+                case "Findable Artifact Items":
+                    Opt_FindableArtifacts = value;
+                    break;
+                case "Unique Coven Tenets":
+                    Opt_AdditionalTenets = value;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public override void receiveModConfigOpts_int(string optName, int value)
+        {
+            switch(optName)
+            {
+                case "Influence Cap":
+                    Opt_LimitedInfluenceGainMax = value;
+                    break;
+                default:
+                    break;
+            }
         }
 
         public override void beforeMapGen(Map map)
@@ -40,6 +90,7 @@ namespace CovenExpansionRecast
 
         private void GameInitialisation(Map map)
         {
+            _modIntegrationData = new Dictionary<string, ModIntegrationData>();
             GetModKernels(map.mods);
             RegisterComLibHooks(map);
         }
@@ -57,6 +108,12 @@ namespace CovenExpansionRecast
                         }
                         comLib = modCore;
                         break;
+                    case "Wonderblunder_DeepOnes":
+                        _modIntegrationData.Add("DeepOnesPlus", new ModIntegrationData(kernel));
+                        break;
+                    case "LivingWilds":
+                        _modIntegrationData.Add("LivingWilds", new ModIntegrationData(kernel));
+                        break;
                     default:
                         break;
                 }
@@ -66,6 +123,25 @@ namespace CovenExpansionRecast
         private void RegisterComLibHooks(Map map)
         {
             ComLib.RegisterHooks(new ComLibHooks(map));
+        }
+
+        public bool TryGetModIntegrationData(string name, out ModIntegrationData intData)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                Console.WriteLine($"CovenExpansionRecast: Argument Exception - '{nameof(name)}' is null or empty.");
+                intData = null;
+                return false;
+            }
+
+            if (_modIntegrationData == null)
+            {
+                Console.WriteLine($"CovenExpansionRecast: Operation Exception - '{nameof(_modIntegrationData)}` is null");
+                intData = null;
+                return false;
+            }
+
+            return _modIntegrationData.TryGetValue(name, out intData);
         }
     }
 }
