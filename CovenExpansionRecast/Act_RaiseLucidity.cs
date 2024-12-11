@@ -10,7 +10,8 @@ namespace CovenExpansionRecast
 {
     public class Act_RaiseLucidity : Assets.Code.Action
     {
-        public Act_RaiseLucidity(Location loc) : base(loc)
+        public Act_RaiseLucidity(Location loc)
+            : base(loc)
         {
 
         }
@@ -27,7 +28,7 @@ namespace CovenExpansionRecast
 
         public override Sprite getIconFore()
         {
-            return EventManager.getImg("CovenExpansionRecast.lucid.png");
+            return EventManager.getImg("CovenExpansionRecast.Icon_Lucid.png");
         }
 
         public override double getUtility(SettlementHuman humanSettlement, Person ruler, List<ReasonMsg> reasons)
