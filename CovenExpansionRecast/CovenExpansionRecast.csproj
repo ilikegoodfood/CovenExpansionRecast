@@ -53,10 +53,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Act_Lucidity.cs" />
     <Compile Include="ComLibHooks.cs" />
     <Compile Include="CovensCore.cs" />
     <Compile Include="ModIntegrationData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Pr_Lucidity.cs" />
+    <Compile Include="Pr_MagicPlague.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
