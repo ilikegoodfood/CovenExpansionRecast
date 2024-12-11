@@ -27,9 +27,16 @@ namespace CovenExpansionRecast
 
             foreach (Ch_H_CurseIntrudingAcolyte curseAcolyte in curseAcolyteChallenges)
             {
-                if (curseAcolyte.Cooldown > 0)
+                if (curseAcolyte.Order == order)
                 {
-                    curseAcolyte.Cooldown--;
+                    if (curseAcolyte.Cooldown > 0)
+                    {
+                        curseAcolyte.Cooldown--;
+                    }
+                }
+                else if (curseAcolyte.Order.isGone())
+                {
+                    settlementHuman.customChallenges.Remove(curseAcolyte);
                 }
             }
         }
