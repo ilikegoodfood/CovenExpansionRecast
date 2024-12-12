@@ -174,15 +174,42 @@ namespace CovenExpansionRecast
                     case "CommunityLib":
                         if (!(kernel is ModCore modCore))
                         {
-                            throw new InvalidOperationException($"Kernel from the \"CommunityLib\" namespace is not of type \"CommunityLib.ModCore\". It's type is {kernel.GetType().AssemblyQualifiedName}");
+                            throw new InvalidOperationException($"Kernel from the \"CommunityLib\" namespace is not of type \"CommunityLib.ModCore\". It's type is '{kernel.GetType().AssemblyQualifiedName}'");
                         }
                         comLib = modCore;
                         break;
                     case "Wonderblunder_DeepOnes":
-                        _modIntegrationData.Add("DeepOnesPlus", new ModIntegrationData(kernel));
+                        Instance.TryAddModIntegrationData("DeepOnesPlus", new ModIntegrationData(kernel));
+                        Console.WriteLine($"CovenExpansionRecast: DeepOnesPlus is Enabled");
+
+                        if (Instance.TryGetModIntegrationData("DeepOnesPlus", out ModIntegrationData intDataDOP))
+                        {
+                            if (intDataDOP.TypeDict.TryGetValue("Kernel", out Type kernelType))
+                            {
+                                intDataDOP.MethodInfoDict.Add("getAbyssalItem", kernelType.GetMethod("getItemFromAbyssalPool", new Type[] { typeof(Map), typeof(UA) }));
+                            }
+                            else
+                            {
+                                Console.WriteLine($"CovenExpansionRecast - InvalidOperatinException: '{typeof(ModIntegrationData).Name}' for Key \"DeepOnesPlus\" did not contain Key \"Kernel\" in TypeDict");
+                            }
+                        }
                         break;
                     case "LivingWilds":
-                        _modIntegrationData.Add("LivingWilds", new ModIntegrationData(kernel));
+                        Instance.TryAddModIntegrationData("LivingWilds", new ModIntegrationData(kernel));
+                        Console.WriteLine($"CovenExpansionRecast: Living Wilds is Enabled");
+
+                        if (Instance.TryGetModIntegrationData("LivingWilds", out ModIntegrationData intDataLW))
+                        {
+                            Type lycanthropyTraitType = intDataLW.Assembly.GetType("Living_Wilds.T_Nature_Lycanthropy", false);
+                            if (lycanthropyTraitType != null)
+                            {
+                                intDataLW.TypeDict.Add("T_Lycanthropy", lycanthropyTraitType);
+                            }
+                            else
+                            {
+                                Console.WriteLine("CovenExpansionRecast: Failed to get Lycanthropy trait Type from Living Wilds (Living_Wilds.T_Nature_Lycanthropy)");
+                            }
+                        }
                         break;
                     default:
                         break;
@@ -210,6 +237,30 @@ namespace CovenExpansionRecast
             SingleCraftables.Shuffle();
             DualCraftables.Shuffle();
             DeepOneCraftables.Shuffle();
+        }
+
+        private bool TryAddModIntegrationData(string name, ModIntegrationData intData)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                Console.WriteLine($"CovenExpansionRecast: Argument Exception - '{nameof(name)}' is null or empty.");
+                return false;
+            }
+
+            if (_modIntegrationData == null)
+            {
+                Console.WriteLine($"CovenExpansionRecast: Operation Exception - '{nameof(_modIntegrationData)}` is null");
+                return false;
+            }
+
+            if (_modIntegrationData.ContainsKey(name))
+            {
+                Console.WriteLine($"CovenExpansionRecast: DuplicateKeyException - '{nameof(_modIntegrationData)}` already contains Key {name}");
+                return false;
+            }
+
+            _modIntegrationData.Add(name, intData);
+            return true;
         }
 
         public bool TryGetModIntegrationData(string name, out ModIntegrationData intData)
