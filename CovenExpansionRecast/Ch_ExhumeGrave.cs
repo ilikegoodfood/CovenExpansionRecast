@@ -141,14 +141,16 @@ namespace CovenExpansionRecast
             person.isDead = true;
             T_ChallengeBooster booster = robbed.GenerateChallengeBooster();
             person.receiveTrait(booster);
+            person.level++;
             person.addGold((int)(25.0 + Math.Sqrt(Eleven.random.Next(2500))));
 
-            AssignRandomSpecialEffects(person, out bool endFunctionEarly, out _);
+            AssignRandomSpecialEffects(u, person, out bool endFunctionEarly, out _);
             if (endFunctionEarly)
             {
                 return;
             }
 
+            AssignRandomLevelAndXP(person, out _);
             AssignRandomMadness(person, out _);
             AssignRandomCurseTrait(person, out _);
             AssignRandomItems(person, true, out _);
@@ -175,7 +177,7 @@ namespace CovenExpansionRecast
             }
         }
 
-        public void AssignRandomSpecialEffects(Person person, out bool endFunctionEarly, out int roll)
+        public void AssignRandomSpecialEffects(UA performer, Person person, out bool endFunctionEarly, out int roll)
         {
             roll = Eleven.random.Next(300);
             endFunctionEarly = false;
@@ -188,9 +190,72 @@ namespace CovenExpansionRecast
                     // Will pop trade window manually.
                     // Will endFunctionEarly.
                     break;
+                case 0:
+                    msgString = $"{performer.getName()} smashed through the lid of the freshly exposed coffin, expecting to find the riches left for the dead. Instead, the coffin contained only a broken skull, and a corroded copper token. This grave has been robbed before. Judging by the token, the entire graveyard was looted long before you ever thought to dig here.";
+                    endFunctionEarly = true;
+
+                    Pr_RobbedGraves robbed = (Pr_RobbedGraves)location.properties.FirstOrDefault(pr => pr is Pr_RobbedGraves);
+                    if (robbed != null)
+                    {
+                        robbed.charge = 100.0;
+                    }
+                    else
+                    {
+                        robbed = new Pr_RobbedGraves(location);
+                        robbed.charge = 100.0;
+                        location.properties.Add(robbed);
+                    }
+                    break;
                 default:
                     break;
             }
+        }
+
+        public void AssignRandomLevelAndXP(Person person, out int roll)
+        {
+            int level = RollRandomLevel(out roll);
+
+            if (level <= person.level)
+            {
+                person.level = level;
+                return;
+            }
+
+            for (int i = person.level; i < level; i++)
+            {
+                person.levelUp();
+            }
+
+            person.receiveXP(Eleven.random.Next((int)Math.Round(person.XPForNextLevel * 0.75)));
+        }
+
+        public int RollRandomLevel(out int roll)
+        {
+            roll = Eleven.random.Next(300);
+            int result = 1;
+
+            if (roll < 10)
+            {
+                // 10 / 300 CHance (3.33%)
+                result = 0;
+            }
+            else if (roll < 100)
+            {
+                // 90 / 300 Chance (30%)
+                result = 2;
+            }
+            else if (roll < 150)
+            {
+                // 50 / 300 Chance (16.6%)
+                result = 3;
+            }
+            else if (roll < 180)
+            {
+                // 30 /  300 Chance (10%)
+                result = 4;
+            }
+
+            return result;
         }
 
         public void AssignRandomMadness(Person person, out int roll)
