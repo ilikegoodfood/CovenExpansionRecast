@@ -203,7 +203,8 @@ namespace CovenExpansionRecast
                             Type lycanthropyTraitType = intDataLW.Assembly.GetType("Living_Wilds.T_Nature_Lycanthropy", false);
                             if (lycanthropyTraitType != null)
                             {
-                                intDataLW.TypeDict.Add("T_Lycanthropy", lycanthropyTraitType);
+                                intDataLW.MethodInfoDict.Add("T_Lycanthropy.InfectPerson", lycanthropyTraitType.GetMethod("infectPerson", new Type[] { typeof(Person), typeof(bool), typeof(bool) }));
+                                intDataLW.MethodInfoDict.Add("T_Lycanthropy.IsWerewolf", lycanthropyTraitType.GetMethod("isWerewolf", new Type[] { typeof(Person) }));
                             }
                             else
                             {

@@ -303,6 +303,36 @@ namespace CovenExpansionRecast
             {
                 person.receiveTrait(curseTrait);
             }
+
+            // Werewolf assignment requires person.
+            if (roll >= 12 && roll < 21)
+            {
+                // 9 / 300 Chance (3%)
+                if (CovensCore.Instance.TryGetModIntegrationData("LivingWilds", out ModIntegrationData intDataLW))
+                {
+                    if (intDataLW.MethodInfoDict.TryGetValue("T_Lycanthropy.IsWerewolf", out MethodInfo MI_IsWerewolf) && MI_IsWerewolf != null)
+                    {
+                        if (intDataLW.MethodInfoDict.TryGetValue("T_Lycanthropy.InfectPerson", out MethodInfo MI_InfectPerson) && MI_InfectPerson != null)
+                        {
+                            if (!(bool)MI_IsWerewolf.Invoke(null, new object[] { person }))
+                            {
+                                int innerRoll = Eleven.random.Next(4);
+                                object[] args = new object[] { person, false, false };
+                                if (innerRoll == 3)
+                                {
+                                    args = new object[] { person, true, false };
+                                }
+                                else if (innerRoll == 2)
+                                {
+                                    args = new object[] { person, false, true };
+                                }
+
+                                MI_InfectPerson.Invoke(null, args);
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         public Trait RollRandomCurseTrait(out int roll)
@@ -326,25 +356,7 @@ namespace CovenExpansionRecast
             else if (roll < 21)
             {
                 // 9 / 300 Chance (3%)
-                if (CovensCore.Instance.TryGetModIntegrationData("LivingWilds", out ModIntegrationData intDataLW))
-                {
-                    if (intDataLW.TypeDict.TryGetValue("T_Lycanthropy", out Type lycanthropyType) && lycanthropyType != null)
-                    {
-                        int innerRoll = Eleven.random.Next(4);
-                        object[] args = new object[] { false, false };
-                        if (roll == 3)
-                        {
-                            args = new object[] { true, false };
-                        }
-                        else if (roll == 2)
-                        {
-                            args = new object[] { false, true };
-                        }
-
-                        Trait lycanthropy = (Trait)Activator.CreateInstance(lycanthropyType, args);
-                        return lycanthropy;
-                    }
-                }
+                // Reserved slot for lycanthropy. Actual creation of the curse and assignment to the person is peformed in `AssignRandomCurse`
             }
 
             return null;

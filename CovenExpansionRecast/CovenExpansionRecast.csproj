@@ -64,6 +64,10 @@
     <Compile Include="Ch_ExhumeGrave.cs" />
     <Compile Include="ComLibHooks.cs" />
     <Compile Include="CovensCore.cs" />
+    <Compile Include="Curse_Flourish.cs" />
+    <Compile Include="Curse_LivingShadows.cs" />
+    <Compile Include="Curse_Lycanthropy.cs" />
+    <Compile Include="Curse_Mirror.cs" />
     <Compile Include="H_Curseweavers.cs" />
     <Compile Include="I_CraftList.cs" />
     <Compile Include="I_DoomedProphetRing.cs" />
@@ -78,7 +82,10 @@
     <Compile Include="Pr_RobbedGraves.cs" />
     <Compile Include="Sel2_CurseTargetChooser.cs" />
     <Compile Include="T_ Wanderer.cs" />
+    <Compile Include="T_Flourishing.cs" />
     <Compile Include="T_Generosity.cs" />
+    <Compile Include="T_LivingShadow.cs" />
+    <Compile Include="T_Mirror.cs" />
     <Compile Include="T_Soulless.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
