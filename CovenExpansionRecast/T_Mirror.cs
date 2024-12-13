@@ -11,8 +11,6 @@ namespace CovenExpansionRecast
     {
         public Person Target;
 
-        public int Strength = 0;
-
         public T_Mirror(Person target)
         {
             Target = target;
@@ -20,12 +18,12 @@ namespace CovenExpansionRecast
 
         public override string getName()
         {
-            return $"Mirrored ({Strength})";
+            return $"Mirrored";
         }
 
         public override string getDesc()
         {
-            return "This person is becomming a perfect mirror of another. Their original identity will soon be lost forever.";
+            return "This person is a perfect mirror of another. Their original identity is lost forever.";
         }
 
         public override void turnTick(Person p)
@@ -36,25 +34,11 @@ namespace CovenExpansionRecast
                 return;
             }
 
-            if (Strength < 100)
-            {
-                Strength++;
-            }
-            else
-            {
-                Strength = 100;
-            }
-
             validateTagOpinions(p);
             validateTagOpinions(Target);
 
             foreach(int tag in getAllTags(Target).Union(getAllTags(p)))
             {
-                if (Strength < 100 && Eleven.random.Next(100) >= Strength)
-                {
-                    continue;
-                }
-
                 int targetOpinion = getTagOpinion(Target, tag);
                 int personOpinion = getTagOpinion(p, tag);
 
@@ -63,13 +47,16 @@ namespace CovenExpansionRecast
                     continue;
                 }
 
-                if (personOpinion > targetOpinion)
+                while (personOpinion > targetOpinion)
                 {
                     p.decreasePreference(tag);
+                    personOpinion--;
                 }
-                else
+
+                while (personOpinion < targetOpinion)
                 {
                     p.increasePreference(tag);
+                    personOpinion++;
                 }
             }
         }
