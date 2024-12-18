@@ -1,4 +1,5 @@
 ﻿using Assets.Code;
+using CommunityLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -79,9 +80,17 @@ namespace CovenExpansionRecast
 
             foreach (Unit unit in location.units)
             {
-                if (!(unit is UAA uaa) || uaa.isCommandable() || uaa.order == Order || (uaa.task  != null && !(uaa.task is Task_PerformChallenge)))
+                if (!(unit is UAA uaa) || uaa.isCommandable() || uaa.order == Order || uaa.order is HolyOrder_Ophanim || (uaa.task  != null && !(uaa.task is Task_PerformChallenge)))
                 {
                     continue;
+                }
+
+                if (CovensCore.Instance.TryGetModIntegrationData("OrcsPlus", out ModIntegrationData intDataOP) && intDataOP.TypeDict.TryGetValue("OrcCulture", out Type orcCultureType))
+                {
+                    if (uaa.order.GetType() == orcCultureType || uaa.order.GetType().IsSubclassOf(orcCultureType))
+                    {
+                        continue;
+                    }
                 }
 
                 return true;

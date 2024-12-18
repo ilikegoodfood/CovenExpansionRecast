@@ -68,6 +68,9 @@
     <Compile Include="Curse_LivingShadows.cs" />
     <Compile Include="Curse_Lycanthropy.cs" />
     <Compile Include="Curse_Mirror.cs" />
+    <Compile Include="Curse_CollectedMind.cs" />
+    <Compile Include="Curse_Toad.cs" />
+    <Compile Include="Curse_Wanderer.cs" />
     <Compile Include="H_Curseweavers.cs" />
     <Compile Include="I_CraftList.cs" />
     <Compile Include="I_DoomedProphetRing.cs" />
@@ -80,13 +83,17 @@
     <Compile Include="Pr_Lucidity.cs" />
     <Compile Include="Pr_MagicPlague.cs" />
     <Compile Include="Pr_RobbedGraves.cs" />
+    <Compile Include="Rt_Croak.cs" />
     <Compile Include="Sel2_CurseTargetChooser.cs" />
     <Compile Include="T_ Wanderer.cs" />
+    <Compile Include="T_CollectedMind.cs" />
     <Compile Include="T_Flourishing.cs" />
     <Compile Include="T_Generosity.cs" />
     <Compile Include="T_LivingShadow.cs" />
     <Compile Include="T_Mirror.cs" />
     <Compile Include="T_Soulless.cs" />
+    <Compile Include="UAEN_Toad.cs" />
+    <Compile Include="UniversalAgentAIs.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

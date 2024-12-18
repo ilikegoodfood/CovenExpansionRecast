@@ -163,6 +163,7 @@ namespace CovenExpansionRecast
             _modIntegrationData = new Dictionary<string, ModIntegrationData>();
             GetModKernels(map.mods);
             RegisterComLibHooks(map);
+            RegisterAgentAIs(map);
         }
 
         private void GetModKernels(List<ModKernel> kernels)
@@ -212,6 +213,23 @@ namespace CovenExpansionRecast
                             }
                         }
                         break;
+                    case "Orcs_Plus":
+                        Instance.TryAddModIntegrationData("OrcsPlus", new ModIntegrationData(kernel));
+                        Console.WriteLine($"CovenExpansionRecast: OrcsPlus is Enabled");
+
+                        if (Instance.TryGetModIntegrationData("OrcsPlus", out ModIntegrationData intDataOP))
+                        {
+                            Type orcCultureType = intDataOP.Assembly.GetType("Orcs_Plus.HolyOrder_Orcs", false);
+                            if (orcCultureType != null)
+                            {
+                                intDataOP.TypeDict.Add("OrcCulture", orcCultureType);
+                            }
+                            else
+                            {
+                                Console.WriteLine("CovenExpansionRecast: Failed to get orc culture Type from OrcsPlus (Orcs_Plus.HolyOrder_Orcs)");
+                            }
+                        }
+                        break;
                     default:
                         break;
                 }
@@ -221,6 +239,11 @@ namespace CovenExpansionRecast
         private void RegisterComLibHooks(Map map)
         {
             ComLib.RegisterHooks(new ComLibHooks(map));
+        }
+
+        private void RegisterAgentAIs(Map map)
+        {
+            new UniversalAgentAIs(map);
         }
 
         private void BuildSoulItemGroups()
@@ -238,6 +261,48 @@ namespace CovenExpansionRecast
             SingleCraftables.Shuffle();
             DualCraftables.Shuffle();
             DeepOneCraftables.Shuffle();
+        }
+
+        public override double unitAgentAIAttack(Map map, UA ua, Unit other, List<ReasonMsg> reasons, double initialUtility)
+        {
+            double utility = initialUtility;
+            T_Wanderer wanderer = (T_Wanderer)ua.person.traits.FirstOrDefault(t => t is T_Wanderer);
+            if (wanderer != null)
+            {
+                double val = wanderer.AttackCount * 20.0;
+                utility -= val;
+                reasons?.Add(new ReasonMsg("Wanderlust", -val));
+            }
+
+            return utility;
+        }
+
+        public override double unitAgentAIBodyguard(Map map, UA ua, Unit other, List<ReasonMsg> reasons, double initialUtility)
+        {
+            double utility = initialUtility;
+            T_Wanderer wanderer = (T_Wanderer)ua.person.traits.FirstOrDefault(t => t is T_Wanderer);
+            if (wanderer != null)
+            {
+                double val = wanderer.GuardCount * 20.0;
+                utility -= val;
+                reasons?.Add(new ReasonMsg("Wanderlust", -val));
+            }
+
+            return utility;
+        }
+
+        public override double unitAgentAIDisrupt(Map map, UA ua, List<ReasonMsg> reasons, double initialUtility)
+        {
+            double utility = initialUtility;
+            T_Wanderer wanderer = (T_Wanderer)ua.person.traits.FirstOrDefault(t => t is T_Wanderer);
+            if (wanderer != null)
+            {
+                double val = wanderer.DisruptCount * 20.0;
+                utility -= val;
+                reasons?.Add(new ReasonMsg("Wanderlust", -val));
+            }
+
+            return utility;
         }
 
         private bool TryAddModIntegrationData(string name, ModIntegrationData intData)

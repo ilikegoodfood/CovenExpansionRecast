@@ -16,5 +16,10 @@ namespace CovenExpansionRecast
         {
             _map = map;
         }
+
+        public override bool isUnitSubsumed(Unit uOriginal, Unit uSubsuming)
+        {
+            return uSubsuming is UAEN_Toad toad && toad.SubsumedUnit == uOriginal;
+        }
     }
 }

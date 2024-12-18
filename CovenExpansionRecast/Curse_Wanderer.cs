@@ -7,24 +7,30 @@ using System.Threading.Tasks;
 
 namespace CovenExpansionRecast
 {
-    public class T_LivingShadow : Trait
+    public class Curse_Wanderer : Curse
     {
         public override string getName()
         {
-            return "Living Shadow";
+            return "Insatiable Wanderlust";
         }
 
         public override string getDesc()
         {
-            return "The sins of this family have manifested themselves as a living spiteful thing. It watches over them, guiding them to greater ruin.";
+            return "This family suffers from an insatiable longing for the new and unknown. Heroes from this family will seek out progressively stranger quests, never satisfied with doing the same thing twice.";
         }
 
         public override void turnTick(Person p)
         {
             if (p == p.map.awarenessManager.chosenOne?.person || (p.unit != null && p.unit.isCommandable()))
             {
-                p.traits.Remove(this);
                 return;
+            }
+
+            T_Wanderer wanderer = (T_Wanderer)p.traits.FirstOrDefault(t => t is T_Wanderer);
+            if (wanderer == null)
+            {
+                wanderer = new T_Wanderer();
+                p.receiveTrait(wanderer);
             }
         }
     }

@@ -7,29 +7,23 @@ using System.Threading.Tasks;
 
 namespace CovenExpansionRecast
 {
-    public class T_Flourishing : Trait
+    public class T_CollectedMind : Trait
     {
         public override string getName()
         {
-            return "Forced Flourishing";
+            return "Collected Mind";
         }
 
         public override string getDesc()
         {
-            return "Life follows this persons footsteps, increasing the population of wherever they are.";
+            return "The mind of this person has been cracked open and collected. With but a whisper, they will dance to the elder gods wishes.";
         }
 
         public override void turnTick(Person p)
         {
-            if (p == p.map.awarenessManager.chosenOne?.person)
+            if (p == p.map.awarenessManager.chosenOne?.person || (p.unit != null && p.unit.isCommandable()))
             {
                 p.traits.Remove(this);
-                return;
-            }
-
-            if (p.getLocation().settlement is SettlementHuman humanSettlement)
-            {
-                humanSettlement.population++;
             }
         }
     }
