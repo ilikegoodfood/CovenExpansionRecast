@@ -12,7 +12,7 @@ namespace CovenExpansionRecast
         public Pr_MagicPlague(Location loc)
             : base(loc)
         {
-
+            stackStyle = stackStyleEnum.NONE;
         }
     }
 }

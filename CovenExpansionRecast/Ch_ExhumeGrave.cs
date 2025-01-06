@@ -43,7 +43,7 @@ namespace CovenExpansionRecast
 
         public override Sprite getSprite()
         {
-            return EventManager.getImg("CovenExpansion.Icon_Graveyard.png");
+            return EventManager.getImg("CovenExpansionRecast.Icon_Graveyard.png");
         }
 
         public override double getProfile()

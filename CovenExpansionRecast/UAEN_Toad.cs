@@ -29,7 +29,7 @@ namespace CovenExpansionRecast
 
         public override Sprite getPortraitForeground()
         {
-            return EventManager.getImg("CovenExpansion.Icon_FrogCurse.png");
+            return EventManager.getImg("CovenExpansionRecast.Icon_FrogCurse.png");
         }
 
         public override void turnTickAI()

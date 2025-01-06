@@ -12,7 +12,7 @@ namespace CovenExpansionRecast
         public Pr_Lucidity(Location loc)
             : base(loc)
         {
-
+            stackStyle = stackStyleEnum.ADD_CHARGE;
         }
     }
 }

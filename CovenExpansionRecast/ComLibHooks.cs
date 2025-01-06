@@ -21,5 +21,37 @@ namespace CovenExpansionRecast
         {
             return uSubsuming is UAEN_Toad toad && toad.SubsumedUnit == uOriginal;
         }
+
+        public override void onAgentAI_EndOfProcess(UA ua, AgentAI.AIData aiData, List<AgentAI.ChallengeData> validChallengeData, List<AgentAI.TaskData> validTaskData, List<Unit> visibleUnits)
+        {
+            if (ua is UAEN_Pigeon)
+            {
+                if (ua.task == null)
+                {
+                    if (ua.person.gold > 0 || ua.person.items.Any(i => i != null))
+                    {
+                        Pr_ItemCache pr_ItemCache = new Pr_ItemCache(ua.location);
+                        foreach (Item item in ua.person.items)
+                        {
+                            if (item == null)
+                            {
+                                continue;
+                            }
+
+                            pr_ItemCache.addItemToSet(item);
+                        }
+                        pr_ItemCache.gold = ua.person.gold;
+                    }
+
+                    ua.map.addUnifiedMessage(ua, ua.location, "Carrier Pigeon flew away", $"After loosing its owner the pigeon has flown away, leaving any gold or items it was carrying behind.", "PigeonFlewAway");
+                    if (GraphicalMap.selectedUnit == ua)
+                    {
+                        GraphicalMap.selectedUnit = null;
+                    }
+                    ua.disband(ua.map, "Ownerless carrier pigeon dissapeared into the wilds");
+                    return;
+                }
+            }
+        }
     }
 }

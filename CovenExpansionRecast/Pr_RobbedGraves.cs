@@ -22,6 +22,7 @@ namespace CovenExpansionRecast
             : base(loc)
         {
             ChallengeBoostTag = Eleven.random.Next(6) + 100;
+            stackStyle = stackStyleEnum.TO_MAX_CHARGE;
         }
 
         public override string getName()
@@ -41,7 +42,7 @@ namespace CovenExpansionRecast
 
         public override Sprite getSprite(World world)
         {
-            return EventManager.getImg("CovenExpansion.Icon_Graveyard.png");
+            return EventManager.getImg("CovenExpansionRecast.Icon_Graveyard.png");
         }
 
         public override bool deleteOnZero()

@@ -23,7 +23,7 @@ namespace CovenExpansionRecast
 
         public override Sprite getIcon()
         {
-            return EventManager.getImg("CovenExpansion.Icon_Owl.png");
+            return EventManager.getImg("CovenExpansionRecast.Icon_Owl.png");
         }
 
         public override int getCommandCost()

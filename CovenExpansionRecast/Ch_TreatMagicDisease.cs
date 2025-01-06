@@ -30,7 +30,7 @@ namespace CovenExpansionRecast
 
         public override Sprite getSprite()
         {
-            return EventManager.getImg("CovenExpansion.Icon_Lucid.png");
+            return EventManager.getImg("CovenExpansionRecast.Icon_Lucid.png");
         }
 
         public override double getProfile()

@@ -35,7 +35,7 @@ namespace CovenExpansionRecast
 
         public override Sprite getSprite()
         {
-            return EventManager.getImg("CovenExpansion.Icon_PsychIllness.png");
+            return EventManager.getImg("CovenExpansionRecast.Icon_PsychIllness.png");
         }
 
         public override int isGoodTernary()

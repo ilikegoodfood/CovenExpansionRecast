@@ -45,7 +45,7 @@ namespace CovenExpansionRecast
 
         public override Sprite getSprite()
         {
-            return EventManager.getImg("CovenExpansion.Icon_Curseweave.png");
+            return EventManager.getImg("CovenExpansionRecast.Icon_Curseweave.png");
         }
 
         public override int isGoodTernary()
