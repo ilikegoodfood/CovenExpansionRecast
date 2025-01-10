@@ -92,29 +92,8 @@ namespace CovenExpansionRecast
             if (Secrets[Progress] == 1)
             {
                 Progress++;
-                if (Complete)
-                {
-                    map.addUnifiedMessage(p, p.getLocation(), "Tome Satiated", $"{p.getName()} has died while carrying the Secrets of Life and Death, completed the tomes request. The tomb now rests at {p.getLocation()}. Having had its hunger for knowledge satiated, the tome promised great rewards to its future holder.", "TOME QUEST", true);
-                }
-                else
-                {
-                    map.addUnifiedMessage(p, p.getLocation(), "Tome Quest Completed", $"{p.getName()} has died while carrying the Secrets of Life and Death, completed the tomes request. The tomb now rests at {p.getLocation()} and has a new request to be fufilled.", "TOME QUEST", true);
-                }
+                OnComplete(p.getLocation(), p);
             }
-
-            Pr_ItemCache cache = new Pr_ItemCache(p.getLocation());
-            cache.addItemToSet(this);
-
-            for (int i = 0; i < p.items.Length; i++)
-            {
-                if (p.items[i] == this)
-                {
-                    p.items[i] = null;
-                    break;
-                }
-            }
-
-            p.getLocation().properties.Add(cache);
         }
 
         public override void onTravel(Person p, Location current, Location destination)

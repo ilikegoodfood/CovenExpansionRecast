@@ -24,6 +24,11 @@ namespace CovenExpansionRecast
             return "This persons efforts to warn the world are futile and will only spread shadow.";
         }
 
+        public override void onAcquire(Person person)
+        {
+            person.awareness = 1.0;
+        }
+
         public override void turnTick(Person p)
         {
             if (!p.items.Any(i  => i is I_DoomedProphetRing))
@@ -55,15 +60,16 @@ namespace CovenExpansionRecast
                     double baseUtility = (1.0 - humanSettlement.ruler.awareness) * (1.0 - humanSettlement.ruler.shadow) * c.map.awarenessManager.data_awarenessDelta * 1000.0;
                     val += baseUtility;
 
-                    double changes = 10.0;
-
                     // Original penalty calculation
+                    double change = 0.0;
                     double modifier = (humanSettlement.ruler.shadow - 1.0) * c.map.awarenessManager.data_awarenessDelta * 1000.0;
-                    changes -= modifier;
-                    val += changes;
+                    change -= modifier;
+                    val += change;
 
-                    // Scale both base utility and changes to ensure combined result fits within the range of max_getUtility
-                    val /= 1.5;
+                    // Scaling balancing lever.
+                    val *= 1.0;
+
+                    // Apply the original base utility as a negative, as we are completely recalculating it.
                     val -= originalBaseUtiltiy;
 
                     if (humanSettlement.ruler.shadow < 0.99)
@@ -72,7 +78,7 @@ namespace CovenExpansionRecast
                     }
 
                     // Report the change in utility from the original base utility to the new combined utility.
-                    reasons?.Add(new ReasonMsg("Doomed Prophet (Scaled)", val - originalBaseUtiltiy));
+                    reasons?.Add(new ReasonMsg("Doomed Prophet", val - originalBaseUtiltiy));
                 }
             }
 

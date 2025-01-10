@@ -61,7 +61,21 @@ namespace CovenExpansionRecast
 
         public override bool isCommandable()
         {
-            return corrupted;
+            bool result = corrupted;
+
+            if (!result)
+            {
+                foreach (Trait trait in person.traits)
+                {
+                    if (trait.grantsCommand())
+                    {
+                        result = true;
+                        break;
+                    }
+                }
+            }
+
+            return result;
         }
 
         public void GainPigeon(UA target)

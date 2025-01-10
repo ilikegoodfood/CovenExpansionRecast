@@ -78,6 +78,9 @@
     <Compile Include="I_DominionBanner.cs" />
     <Compile Include="I_DoomedProphetRing.cs" />
     <Compile Include="I_EvilBook.cs" />
+    <Compile Include="I_MadBoots.cs" />
+    <Compile Include="I_Panacea.cs" />
+    <Compile Include="I_RatIcon.cs" />
     <Compile Include="I_SettlersWreath.cs" />
     <Compile Include="I_Soulstone.cs" />
     <Compile Include="I_SpiritCage.cs" />
@@ -95,6 +98,8 @@
     <Compile Include="Pr_SoulSnare.cs" />
     <Compile Include="Pr_SpiritTree.cs" />
     <Compile Include="Rti_CallHordes.cs" />
+    <Compile Include="Rti_Panacea.cs" />
+    <Compile Include="Rti_RatIconSteal.cs" />
     <Compile Include="Rt_Croak.cs" />
     <Compile Include="Rt_Haunt.cs" />
     <Compile Include="Sel2_CurseTargetChooser.cs" />
