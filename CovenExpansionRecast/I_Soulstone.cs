@@ -10,12 +10,16 @@ namespace CovenExpansionRecast
 {
     public class I_Soulstone : Item
     {
-        Person CapturedSoul;
+        public Person CapturedSoul;
+
+        public List<Rti_TransposeSoul> TranspositionRituals = new List<Rti_TransposeSoul>();
 
         public I_Soulstone(Map map)
             : base(map)
         {
-
+            challenges.Add(new Rti_TransposeSoul(map.locations[0], this));
+            challenges.Add(new Rti_ReleaseSoul(map.locations[0], this));
+            challenges.Add(new Rti_RiteOfMasks(map.locations[0], this));
         }
 
         public override string getName()
@@ -87,7 +91,7 @@ namespace CovenExpansionRecast
             return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_Inactive.png");
         }
 
-        public string getSoulType()
+        public string GetSoulType()
         {
             if (CapturedSoul != null)
             {
@@ -132,13 +136,102 @@ namespace CovenExpansionRecast
 
                         if (booster.target == Tags.DEEPONES)
                         {
-                            return "Alianist";
+                            return "Alienist";
                         }
                     }
                 }
             }
 
             return "Nothing";
+        }
+
+        public override Sprite getIconBack()
+        {
+            if (CapturedSoul != null)
+            {
+                if (CapturedSoul.shadow > 0.5)
+                {
+                    return CapturedSoul.getPortraitAlt();
+                }
+                return CapturedSoul.getPortrait();
+            }
+
+            return map.world.iconStore.standardBack;
+        }
+
+        public override List<Ritual> getRituals(UA ua)
+        {
+            Dictionary<I_Soulstone, Rti_TransposeSoul> existingTranspositionRituals = new Dictionary<I_Soulstone, Rti_TransposeSoul>();
+
+            if (GetSoulType() != "Nothing")
+            {
+                foreach (Rti_TransposeSoul transpose in TranspositionRituals)
+                {
+                    I_Soulstone otherSoulstone;
+                    if (transpose.SoulstoneA == this)
+                    {
+                        otherSoulstone = transpose.SoulstoneB;
+                    }
+                    else
+                    {
+                        otherSoulstone = transpose.SoulstoneA;
+                    }
+
+                    if (ua.person.items.Contains(otherSoulstone))
+                    {
+                        existingTranspositionRituals.Add(otherSoulstone, transpose);
+                    }
+                }
+            }
+
+            TranspositionRituals.Clear();
+            if (GetSoulType() != "Nothing")
+            {
+                List<I_Soulstone> otherSoulstones = new List<I_Soulstone>();
+                foreach (Item item in ua.person.items)
+                {
+                    if (item != this && item is I_Soulstone soulstone && soulstone.CapturedSoul != null && soulstone.GetSoulType() != GetSoulType())
+                    {
+                        otherSoulstones.Add(soulstone);
+                    }
+                }
+
+                foreach (I_Soulstone otherSoulstone in otherSoulstones)
+                {
+                    if (otherSoulstone.GetSoulType() == "Nothing" || otherSoulstone.GetSoulType() == GetSoulType())
+                    {
+                        continue;
+                    }
+
+                    if (CovensCore.Instance.GetSoulcraftingItemID(GetSoulType(), otherSoulstone.GetSoulType()) != "")
+                    {
+                        if (existingTranspositionRituals.TryGetValue(otherSoulstone, out Rti_TransposeSoul transpose))
+                        {
+                            TranspositionRituals.Add(transpose);
+                        }
+                        else
+                        {
+                            transpose = new Rti_TransposeSoul(ua.location, this, otherSoulstone);
+                            TranspositionRituals.Add(transpose);
+                        }
+                    }
+                }
+            }
+
+            List<Ritual> result = new List<Ritual>(challenges);
+            result.AddRange(TranspositionRituals);
+
+            return result;
+        }
+
+        public override int getLevel()
+        {
+            return LEVEL_COMMON;
+        }
+
+        public override int getMorality()
+        {
+            return MORALITY_NEUTRAL;
         }
     }
 }

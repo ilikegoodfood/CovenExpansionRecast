@@ -65,15 +65,15 @@ namespace CovenExpansionRecast
 
         public readonly List<string> DualCraftables = new List<string>(new string[]
         {
-            "I_barbDominion",
-            "I_cagedSpirit",
-            "I_casVeil",
-            "I_chronoBauble",
-            "I_evilBook",
-            "I_heroicBoot",
-            "I_panacea",
-            "I_RazRatKing",
-            "I_settlersClaim",
+            "I_DominionBanner",
+            "I_SpiritCage",
+            "I_DoomedProphetRing",
+            "I_ChronoBauble",
+            "I_TomeOfSecrets",
+            "I_MadBoots",
+            "I_Panacea",
+            "I_RatIcon",
+            "I_SettlersWreath",
             "I_spiritSeedcone",
             "I_toxVial",
             "I_BagOfBoundlessWealth",
@@ -178,6 +178,7 @@ namespace CovenExpansionRecast
                             throw new InvalidOperationException($"Kernel from the \"CommunityLib\" namespace is not of type \"CommunityLib.ModCore\". It's type is '{kernel.GetType().AssemblyQualifiedName}'");
                         }
                         comLib = modCore;
+                        comLib.registerMagicType(typeof(T_MasteryCurseweaving));
                         break;
                     case "Wonderblunder_DeepOnes":
                         Instance.TryAddModIntegrationData("DeepOnesPlus", new ModIntegrationData(kernel));
@@ -346,6 +347,149 @@ namespace CovenExpansionRecast
             }
 
             return _modIntegrationData.TryGetValue(name, out intData);
+        }
+
+        public string GetSoulcraftingItemID(string soulTypeA, string soulTypeB = "Nothing")
+        {
+            if (soulTypeA != "Alienist" && !SingleSouls.Contains(soulTypeA))
+            {
+                return string.Empty;
+            }
+
+            int index;
+            if (soulTypeB == "Nothing")
+            {
+                index = SingleSouls.IndexOf(soulTypeB);
+                if (index != -1)
+                {
+                    return SingleCraftables[index];
+                }
+            }
+
+            if (soulTypeB != "Alienist" && !SingleSouls.Contains(soulTypeB))
+            {
+                return string.Empty;
+            }
+
+            if  (soulTypeA == "Alienist" || soulTypeB == "Alienist")
+            {
+                string otherSoulType;
+                if (soulTypeA == "Alienist")
+                {
+                    otherSoulType = soulTypeB;
+                }
+                else
+                {
+                    otherSoulType = soulTypeA;
+                }
+
+                index = DeepOneSouls.IndexOf(otherSoulType);
+                if (index < 0 || index >= DeepOneSouls.Count)
+                {
+                    return string.Empty;
+                }
+
+                return DeepOneCraftables[index];
+            }
+
+            Tuple<string, string> tuple = new Tuple<string, string>(soulTypeA, soulTypeB);
+            index = DualSouls.IndexOf(tuple);
+            if (index == -1)
+            {
+                tuple = new Tuple<string, string>(soulTypeB, soulTypeA);
+                index = DualSouls.IndexOf(tuple);
+            }
+
+            if (index < 0 || index >= DualCraftables.Count)
+            {
+                return string.Empty;
+            }
+
+            return DualCraftables[index];
+        }
+
+        public Item GetSoulcraftingItem(Map map, string soulcraftingItemID, UA ua = null)
+        {
+            switch (soulcraftingItemID)
+            {
+                case "I_SkeletonKey":
+                    return new I_SkeletonKey(map);
+                case "I_BagOfPoverty":
+                    return new I_BagOfPoverty(map);
+                case "I_Deathstone":
+                    return new I_Deathstone(map);
+                case "I_DarkStone":
+                    return new I_DarkStone(map);
+                case "I_StudentsManual":
+                    return new I_StudentsManual(map);
+                case "I_PoisonedDagger":
+                    return new I_PoisonedDagger(map);
+                case "I_PortableSkeleton":
+                    return new I_PortableSkeleton(map);
+                case "I_ReliableShield":
+                    return new I_ReliableShield(map);
+                case "I_PotionOfHealing":
+                    return  new I_PotionOfHealing(map);
+                case "I_DominionBanner":
+                    return new I_DominionBanner(map);
+                case "I_SpiritCage":
+                    if (ua == null)
+                    {
+                        return new I_SpiritCage(map);
+                    }
+                    I_SpiritCage cage = new I_SpiritCage(map);
+                    UAE_Spirit spirit = new UAE_Spirit(ua.location, map.soc_dark, new Person(map.soc_dark, null), cage);
+                    return cage;
+                case "I_DoomedProphetRing":
+                    return new I_DoomedProphetRing(map);
+                case "I_ChronoBauble":
+                    return  new I_ChronoBauble(map);
+                case "I_TomeOfSecrets":
+                    return new I_TomeOfSecrets(map);
+                case "I_MadBoots":
+                    return new I_MadBoots(map);
+                case "I_Panacea":
+                    return new I_Panacea(map);
+                case "I_RatIcon":
+                    return new I_RatIcon(map);
+                case "I_SettlersWreath":
+                    return  new I_SettlersWreath(map);
+                case "I_spiritSeedcone":
+                    return null;
+                case "I_toxVial":
+                    return null;
+                case "I_BagOfBoundlessWealth":
+                    return new I_BagOfBoundlessWealth(map);
+                case "I_ExquisiteMask":
+                    return new I_ExquisiteMask(map);
+                case "I_RuinousBlade":
+                    return new I_RuinousBlade(map);
+                case "I_HoodOfShadows":
+                    return new I_HoodOfShadows(map);
+            }
+
+            if (Instance.TryGetModIntegrationData("DeepOnesPlus", out ModIntegrationData intDataDOP))
+            {
+                /*"I_AbyssalTome",
+            "I_DrownedMemento",
+            "I_MesmerizingShell",
+            "I_RitualistShard",
+            "I_WaterloggedCharm",
+            "I_StrangeMeat"*/
+            }
+
+            return null;
+        }
+
+        public Item GetSoulcraftingItem(Map map, string soulTypeA, string soulTypeB = "Nothing", UA ua = null)
+        {
+            string itemID = GetSoulcraftingItemID(soulTypeA, soulTypeB);
+            if (!string.IsNullOrEmpty(itemID))
+            {
+                return GetSoulcraftingItem(map, itemID, ua);
+            }
+
+            return null;
         }
     }
 }
