@@ -30,6 +30,11 @@ namespace CovenExpansionRecast
             return $"Robbed Graves ({ChallengeBooster.getName()})";
         }
 
+        public override string getInvariantName()
+        {
+            return "Robbed Graves";
+        }
+
         public override string getDesc()
         {
             return $"Some of the graves at this locations catacomb have been picked clean. While this modifier is over 100% the unearth challenge can no longer be performed here. Decreases over time if there is a Death modifier with over 20% charge at this location as the graves are slowly refilled. The next body Exhumed here will be a {ChallengeBooster.getName()}.";

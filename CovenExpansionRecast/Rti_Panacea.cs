@@ -85,7 +85,7 @@ namespace CovenExpansionRecast
                 if (pr is Pr_Unrest || pr is Pr_Plague || pr is Pr_Devastation || pr is Pr_PoliticalInstability || pr is Pr_Famine || pr is Pr_Madness)
                 {
                     val = pr.charge / 2.0;
-                    msgs?.Add(new ReasonMsg($"Existing {pr.getName()}", val);
+                    msgs?.Add(new ReasonMsg($"Existing {pr.getName()}", val));
                     utility += val;
                 }
             }
@@ -96,7 +96,7 @@ namespace CovenExpansionRecast
         public override void complete(UA u)
         {
             double attention = 0.0;
-            foreach (Property pr in ua.location.properties)
+            foreach (Property pr in u.location.properties)
             {
                 if (pr is Pr_Unrest || pr is Pr_Plague || pr is Pr_Devastation || pr is Pr_PoliticalInstability || pr is Pr_Famine || pr is Pr_Madness)
                 {

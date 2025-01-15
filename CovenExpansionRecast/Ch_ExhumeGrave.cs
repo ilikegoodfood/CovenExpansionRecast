@@ -416,7 +416,7 @@ namespace CovenExpansionRecast
                     break;
                 case 298:
                     result[0] = new I_PageFromTome(map);
-                    result[1] = new I_EvilBook(map);
+                    result[1] = new I_TomeOfSecrets(map);
                     result[2] = new I_PoisonedDagger(map);
                     break;
                 case 297:
