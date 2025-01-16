@@ -107,7 +107,7 @@ namespace CovenExpansionRecast
                     }
                     else
                     {
-                        // Remove all Capture Soul rituals for soulds that are no longer present
+                        // Remove all Capture Soul rituals for souls that are no longer present at the person's locatiion
                         Person.unit.rituals.Remove(captureSoul);
                         if ((Person.unit.task  is Task_PerformChallenge challenge && challenge.challenge == captureSoul) || (Person.unit.task is Task_GoToPerformChallenge goToChallenge && goToChallenge.challenge == captureSoul))
                         {

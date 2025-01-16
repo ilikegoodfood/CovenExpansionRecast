@@ -264,6 +264,22 @@ namespace CovenExpansionRecast
             DeepOneCraftables.Shuffle();
         }
 
+        public override void onTurnStart(Map map)
+        {
+            foreach (House house in map.houses)
+            {
+                Curse_Toad curse = (Curse_Toad)house.curses.FirstOrDefault(c => c is Curse_Toad toad);
+                if (curse != null)
+                {
+                    curse.Timer--;
+                    if (curse.Timer  <= 0)
+                    {
+                        house.curses.Remove(curse);
+                    }
+                }
+            }
+        }
+
         public override double unitAgentAIAttack(Map map, UA ua, Unit other, List<ReasonMsg> reasons, double initialUtility)
         {
             double utility = initialUtility;

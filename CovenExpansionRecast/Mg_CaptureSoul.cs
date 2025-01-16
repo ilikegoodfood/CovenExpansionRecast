@@ -25,7 +25,7 @@ namespace CovenExpansionRecast
 
         public override string getDesc()
         {
-            return $"Captures the soul of {Target.getName()}, saving it for later use.";
+            return $"Captures the soul of {Target.getName()} in an inactive soulstone, saving it for later use.";
         }
 
         public override string getCastFlavour()
@@ -35,7 +35,7 @@ namespace CovenExpansionRecast
 
         public override string getRestriction()
         {
-            return "Requires an inactive soulstone.";
+            return $"Requires an inactive soulstone and to be at the location of {Target.getName()}'s soul.";
         }
 
         public override Sprite getSprite()

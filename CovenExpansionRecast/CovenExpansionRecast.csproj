@@ -59,7 +59,7 @@
     <Compile Include="Ch_CultivateMagicDisease.cs" />
     <Compile Include="Ch_H_CurseIntrudingAcolyte.cs" />
     <Compile Include="Ch_MagicNovelStrain.cs" />
-    <Compile Include="Ch_SquashFrog.cs" />
+    <Compile Include="Ch_SquashToad.cs" />
     <Compile Include="Ch_TreatMagicDisease.cs" />
     <Compile Include="Ch_ExhumeGrave.cs" />
     <Compile Include="ComLibHooks.cs" />
@@ -86,6 +86,7 @@
     <Compile Include="I_SpiritCage.cs" />
     <Compile Include="I_TomeOfSecrets.cs" />
     <Compile Include="I_ToxicVial.cs" />
+    <Compile Include="Mg_ToadCurse.cs" />
     <Compile Include="ModIntegrationData.cs" />
     <Compile Include="Mt_OwlNightVision.cs" />
     <Compile Include="Mt_CarrierPigeon.cs" />
@@ -103,8 +104,9 @@
     <Compile Include="Rti_Panacea.cs" />
     <Compile Include="Rti_RatIconSteal.cs" />
     <Compile Include="Rti_ReleaseSoul.cs" />
-    <Compile Include="Rti_RiteOfMasks.cs" />
-    <Compile Include="Rti_TransposeSoul.cs" />
+    <Compile Include="Mg_RiteOfMasks.cs" />
+    <Compile Include="Mg_TransposeSoul.cs" />
+    <Compile Include="Mg_Wanderlust.cs" />
     <Compile Include="Rt_Croak.cs" />
     <Compile Include="Rt_Haunt.cs" />
     <Compile Include="Rti_OrganizeSettlers.cs" />
@@ -120,6 +122,7 @@
     <Compile Include="T_MurderOfCrows.cs" />
     <Compile Include="T_DoomedProphetsCurse.cs" />
     <Compile Include="T_Soulless.cs" />
+    <Compile Include="T_Toad.cs" />
     <Compile Include="UAEN_Pigeon.cs" />
     <Compile Include="UAEN_Toad.cs" />
     <Compile Include="UAE_Spirit.cs" />

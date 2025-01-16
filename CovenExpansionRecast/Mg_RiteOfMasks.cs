@@ -8,11 +8,11 @@ using UnityEngine;
 
 namespace CovenExpansionRecast
 {
-    public class Rti_RiteOfMasks : Ritual
+    public class Mg_RiteOfMasks : Ritual
     {
         public I_Soulstone Soulstone;
 
-        public Rti_RiteOfMasks(Location location, I_Soulstone soulstone)
+        public Mg_RiteOfMasks(Location location, I_Soulstone soulstone)
             : base(location)
         {
             Soulstone = soulstone;
@@ -20,7 +20,7 @@ namespace CovenExpansionRecast
 
         public override string getName()
         {
-            if (Soulstone == null || Soulstone.CapturedSoul == null || Soulstone.CapturedSoul.house == null)
+            if (Soulstone == null || Soulstone.CapturedSoul == null || Soulstone.CapturedSoul.house == null || Soulstone.CapturedSoul.society is SG_AgentWanderers || Soulstone.CapturedSoul.society == map.soc_dark)
             {
                 return "Curseweaving: Rite of Masks";
             }
@@ -30,12 +30,12 @@ namespace CovenExpansionRecast
 
         public override string getDesc()
         {
-            if (Soulstone == null || Soulstone.CapturedSoul == null)
+            if (Soulstone == null || Soulstone.CapturedSoul == null || Soulstone.CapturedSoul.house == null || Soulstone.CapturedSoul.society is SG_AgentWanderers || Soulstone.CapturedSoul.society == map.soc_dark)
             {
-                return "Changes the casters house and society to the house and society of a soul trapped within a soulstone. While they are in a location with a ruler of the new house that location loses 1 security.";
+                return "Changes the casters house and society to the house and society of a soul trapped within a soulstone. While in a location with a ruler of the new house that location loses 1 security.";
             }
 
-            return $"Changes the casters house to {Soulstone.CapturedSoul.house.name}. While they are in a location with a ruler of house {Soulstone.CapturedSoul.house.name}, the location loses 1 security.";
+            return $"Changes the casters house and society to mathc that of {Soulstone.CapturedSoul.getFullName()}. While in a location with a ruler of house {Soulstone.CapturedSoul.house.name}, the location loses 1 security.";
         }
 
         public override string getCastFlavour()
@@ -45,7 +45,7 @@ namespace CovenExpansionRecast
 
         public override string getRestriction()
         {
-            return "Requires a soulstone containing a soul of a person that belongs to a house.";
+            return "Requires Mastery of Curseweaving at least 1 and a soulstone containing a soul. The soul must not belong to The Dark, or to a monstrous population.";
         }
 
         public override Sprite getSprite()
@@ -60,7 +60,7 @@ namespace CovenExpansionRecast
 
         public override bool valid()
         {
-            return Soulstone != null && Soulstone.CapturedSoul != null &&  Soulstone.CapturedSoul.house != null;
+            return Soulstone != null && Soulstone.CapturedSoul != null && Soulstone.CapturedSoul.house != null && !(Soulstone.CapturedSoul.society is SG_AgentWanderers) && Soulstone.CapturedSoul.society != map.soc_dark;
         }
 
         public override bool validFor(UA ua)

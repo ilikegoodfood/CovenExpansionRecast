@@ -12,19 +12,20 @@ namespace CovenExpansionRecast
     {
         public Unit SubsumedUnit;
 
-        public Ch_SquashFrog Ch_SquashToad;
+        public Ch_SquashToad Ch_SquashToad;
 
         public Rt_Croak Rt_Croak;
 
-        public int Timer = 5;
+        public int Timer;
 
-        public UAEN_Toad(Location loc, Society sg, Person p)
+        public UAEN_Toad(Location loc, Society sg, Person p, int duration = 5)
             : base(loc, sg, p)
         {
-            Ch_SquashToad = new Ch_SquashFrog(loc, p);
+            Ch_SquashToad = new Ch_SquashToad(loc, p);
             Rt_Croak = new Rt_Croak(loc, this);
             rituals.Add(Rt_Croak);
             corrupted = false;
+            Timer = duration;
         }
 
         public override Sprite getPortraitForeground()
@@ -53,9 +54,17 @@ namespace CovenExpansionRecast
                 location.units.Add(SubsumedUnit);
                 map.units.Add(SubsumedUnit);
                 person.unit = SubsumedUnit;
+
+                T_Toad toadTrait = (T_Toad)person.traits.FirstOrDefault(t => t is T_Toad);
+                if (toadTrait != null)
+                {
+                    person.traits.Remove(toadTrait);
+                }
+
                 person = null;
 
                 disband(map, "Toad returned to human form.");
+                return;
             }
         }
 

@@ -8,11 +8,11 @@ using UnityEngine;
 
 namespace CovenExpansionRecast
 {
-    public class Ch_SquashFrog : Challenge
+    public class Ch_SquashToad : Challenge
     {
         public Person Person;
 
-        public Ch_SquashFrog(Location loc, Person p)
+        public Ch_SquashToad(Location loc, Person p)
             : base(loc)
         {
             Person = p;
@@ -25,7 +25,7 @@ namespace CovenExpansionRecast
                 return $"Squash {Person.getName()}";
             }
 
-            return "Squash a Frog";
+            return "Squash a Toad";
         }
 
         public override string getDesc()
@@ -45,7 +45,7 @@ namespace CovenExpansionRecast
 
         public override string getRestriction()
         {
-            return "Requires a frog to be present";
+            return "Requires a toad to be present";
         }
 
         public override Sprite getSprite()
@@ -60,7 +60,12 @@ namespace CovenExpansionRecast
 
         public override bool valid()
         {
-            return location.person() != null &&  location.person() == Person;
+            bool valid = Person != null && Person.traits.Any(t => t is T_Toad toad && (toad.Timer == -1 || toad.Timer > 0)) && ((Person.unit is UAEN_Toad && Person.unit.location == location) || location.person() == Person);
+            if (!valid && location.settlement != null)
+            {
+                location.settlement.customChallenges.Remove(this);
+            }
+            return valid;
         }
 
         public override double getComplexity()

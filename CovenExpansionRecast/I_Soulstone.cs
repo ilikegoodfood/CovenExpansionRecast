@@ -12,14 +12,16 @@ namespace CovenExpansionRecast
     {
         public Person CapturedSoul;
 
-        public List<Rti_TransposeSoul> TranspositionRituals = new List<Rti_TransposeSoul>();
+        public List<Mg_TransposeSoul> TranspositionRituals = new List<Mg_TransposeSoul>();
 
         public I_Soulstone(Map map)
             : base(map)
         {
-            challenges.Add(new Rti_TransposeSoul(map.locations[0], this));
-            challenges.Add(new Rti_ReleaseSoul(map.locations[0], this));
-            challenges.Add(new Rti_RiteOfMasks(map.locations[0], this));
+            Location location = map.locations[0];
+            challenges.Add(new Mg_TransposeSoul(location, this));
+            challenges.Add(new Rti_ReleaseSoul(location, this));
+            challenges.Add(new Mg_RiteOfMasks(location, this));
+            challenges.Add(new Mg_ToadCurse(location, this));
         }
 
         public override string getName()
@@ -161,11 +163,11 @@ namespace CovenExpansionRecast
 
         public override List<Ritual> getRituals(UA ua)
         {
-            Dictionary<I_Soulstone, Rti_TransposeSoul> existingTranspositionRituals = new Dictionary<I_Soulstone, Rti_TransposeSoul>();
+            Dictionary<I_Soulstone, Mg_TransposeSoul> existingTranspositionRituals = new Dictionary<I_Soulstone, Mg_TransposeSoul>();
 
             if (GetSoulType() != "Nothing")
             {
-                foreach (Rti_TransposeSoul transpose in TranspositionRituals)
+                foreach (Mg_TransposeSoul transpose in TranspositionRituals)
                 {
                     I_Soulstone otherSoulstone;
                     if (transpose.SoulstoneA == this)
@@ -205,13 +207,13 @@ namespace CovenExpansionRecast
 
                     if (CovensCore.Instance.GetSoulcraftingItemID(GetSoulType(), otherSoulstone.GetSoulType()) != "")
                     {
-                        if (existingTranspositionRituals.TryGetValue(otherSoulstone, out Rti_TransposeSoul transpose))
+                        if (existingTranspositionRituals.TryGetValue(otherSoulstone, out Mg_TransposeSoul transpose))
                         {
                             TranspositionRituals.Add(transpose);
                         }
                         else
                         {
-                            transpose = new Rti_TransposeSoul(ua.location, this, otherSoulstone);
+                            transpose = new Mg_TransposeSoul(ua.location, this, otherSoulstone);
                             TranspositionRituals.Add(transpose);
                         }
                     }
