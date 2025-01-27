@@ -74,6 +74,10 @@
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="H_Aviaries.cs" />
     <Compile Include="H_Curseweavers.cs" />
+    <Compile Include="H_Initiation.cs" />
+    <Compile Include="H_OutcastShelters.cs" />
+    <Compile Include="H_SharedKnowledge.cs" />
+    <Compile Include="H_Soulweavers.cs" />
     <Compile Include="I_ChronoBauble.cs" />
     <Compile Include="I_CraftList.cs" />
     <Compile Include="I_DominionBanner.cs" />
@@ -87,7 +91,9 @@
     <Compile Include="I_SpiritSeed.cs" />
     <Compile Include="I_TomeOfSecrets.cs" />
     <Compile Include="I_ToxicVial.cs" />
+    <Compile Include="Mg_Rti_Curse_CollectMind.cs" />
     <Compile Include="Mg_Rti_Curse_Flourishing.cs" />
+    <Compile Include="Mg_Rti_Curse_Lycanthropy.cs" />
     <Compile Include="Mg_Rti_Curse_Mirror.cs" />
     <Compile Include="Mg_Rti_Curse_Toad.cs" />
     <Compile Include="Mg_MagicPlague.cs" />
@@ -103,6 +109,7 @@
     <Compile Include="Pr_RobbedGraves.cs" />
     <Compile Include="Pr_SoulSnare.cs" />
     <Compile Include="Pr_SpiritTree.cs" />
+    <Compile Include="P_OpenMind.cs" />
     <Compile Include="Rti_CallHordes.cs" />
     <Compile Include="Mg_CaptureSoul.cs" />
     <Compile Include="Rti_MassSettlement.cs" />

@@ -3,9 +3,7 @@ using Assets.Code.Modding;
 using CommunityLib;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,6 +20,8 @@ namespace CovenExpansionRecast
         public static ModCore ComLib => comLib;
 
         private Dictionary<string, ModIntegrationData> _modIntegrationData;
+
+        public P_OpenMind OpenMindPower;
 
         public static bool Opt_Curseweaving = true;
 
@@ -154,6 +154,7 @@ namespace CovenExpansionRecast
             instance = this;
 
             GameInitialisation(map);
+            OpenMindPower = new P_OpenMind(map);
             BuildSoulItemGroups();
             BuildSoulItemRecipeList(map);
         }
@@ -357,6 +358,8 @@ namespace CovenExpansionRecast
 
         public override void onTurnStart(Map map)
         {
+            OpenMindPower.Cost = 0;
+
             foreach (House house in map.houses)
             {
                 Curse_Toad curse = (Curse_Toad)house.curses.FirstOrDefault(c => c is Curse_Toad toad);

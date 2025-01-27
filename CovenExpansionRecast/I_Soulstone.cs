@@ -24,6 +24,11 @@ namespace CovenExpansionRecast
             challenges.Add(new Mg_Rti_Curse_Toad(location, this));
             challenges.Add(new Mg_Rti_Curse_Flourishing(location, this));
             challenges.Add(new Mg_Rti_Curse_Mirror(location, this));
+            
+            if (CovensCore.Instance.TryGetModIntegrationData("LivingWilds", out _))
+            {
+                challenges.Add(new Mg_Rti_Curse_Lycanthropy(location, this));
+            }
         }
 
         public override string getName()

@@ -149,7 +149,7 @@ namespace CovenExpansionRecast
 
         public override bool validFor(UA ua)
         {
-            return Soulstone.CapturedSoul.house != ua.person.house && ua.person.traits.Any(t => t is T_MasteryCurseweaving curseweaving && curseweaving.level > 1);
+            return ua.person.traits.Any(t => t is T_MasteryCurseweaving curseweaving && curseweaving.level > 1);
         }
 
         public override double getComplexity()
