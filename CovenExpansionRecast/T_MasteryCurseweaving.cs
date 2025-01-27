@@ -38,14 +38,14 @@ namespace CovenExpansionRecast
             Person = person;
             ProcessCaptureRituals(person.getLocation());
 
-            UA ua = person.unit as UA;
-            if (ua != null)
+            if (Person.unit is UA ua)
             {
-                ua.rituals.Add(new Rt_soulTrap(ua.location));
-                ua.rituals.Add(new Rt_studyCurseweaving(ua.location, ua));
+                ua.rituals.Add(new Mg_MagicPlague(ua.location));
+                ua.rituals.Add(new Mg_SoulTrap(ua.location));
+                ua.rituals.Add(new Rt_StudyCurseweaving(ua.location, ua));
             }
 
-            if (level == 1)
+            if (level > 0)
             {
                 I_Soulstone item = new I_Soulstone(person.map);
                 person.gainItem(item, false);
@@ -77,8 +77,8 @@ namespace CovenExpansionRecast
                 return;
             }
 
-            // Get or create  Capture SOul ritual for each Soul present.
-            List<Mg_CaptureSoul>  captureSoulRituals = new List<Mg_CaptureSoul>();
+            // Get or create Capture SOul ritual for each Soul present.
+            List<Mg_CaptureSoul> captureSoulRituals = new List<Mg_CaptureSoul>();
             foreach (Property property in location.properties)
             {
                 if (!(property is Pr_FallenHuman soul))

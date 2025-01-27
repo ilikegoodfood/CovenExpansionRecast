@@ -8,11 +8,11 @@ using UnityEngine;
 
 namespace CovenExpansionRecast
 {
-    public class Mg_Wanderlust : Ritual
+    public class Mg_Curse_Wanderlust : Ritual
     {
         public I_Soulstone Soulstone;
 
-        public Mg_Wanderlust(Location location, I_Soulstone soulstone)
+        public Mg_Curse_Wanderlust(Location location, I_Soulstone soulstone)
             : base(location)
         {
             Soulstone = soulstone;

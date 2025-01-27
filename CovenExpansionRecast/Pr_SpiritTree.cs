@@ -55,6 +55,11 @@ namespace CovenExpansionRecast
 
         public override void turnTick()
         {
+            if (charge > 300.0)
+            {
+                charge = 300.0;
+            }
+
             for (int i = Armies.Count -1; i >= 0; i--)
             {
                 if (Armies[i] == null || Armies[i].isDead)

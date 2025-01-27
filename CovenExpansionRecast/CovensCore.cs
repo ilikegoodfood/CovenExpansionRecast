@@ -3,7 +3,9 @@ using Assets.Code.Modding;
 using CommunityLib;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -74,8 +76,8 @@ namespace CovenExpansionRecast
             "I_Panacea",
             "I_RatIcon",
             "I_SettlersWreath",
-            "I_spiritSeedcone",
-            "I_toxVial",
+            "I_SpiritSeed",
+            "I_ToxicVial",
             "I_BagOfBoundlessWealth",
             "I_ExquisiteMask",
             "I_RuinousBlade",
@@ -101,6 +103,10 @@ namespace CovenExpansionRecast
             "I_WaterloggedCharm",
             "I_StrangeMeat"
         });
+
+        public readonly List<String> RecipeList = new List<String>();
+
+        private HashSet<Type> _psychogenicIllnessPropertyBlacklist = new HashSet<Type>();
 
         public CovensCore()
         {
@@ -149,6 +155,7 @@ namespace CovenExpansionRecast
 
             GameInitialisation(map);
             BuildSoulItemGroups();
+            BuildSoulItemRecipeList(map);
         }
 
         public override void afterLoading(Map map)
@@ -161,9 +168,12 @@ namespace CovenExpansionRecast
         private void GameInitialisation(Map map)
         {
             _modIntegrationData = new Dictionary<string, ModIntegrationData>();
+            _psychogenicIllnessPropertyBlacklist = new HashSet<Type>();
             GetModKernels(map.mods);
             RegisterComLibHooks(map);
             RegisterAgentAIs(map);
+
+            BlacklistPropertyForPsychogenicIllness(typeof(Pr_PoliticalInstability));
         }
 
         private void GetModKernels(List<ModKernel> kernels)
@@ -193,6 +203,66 @@ namespace CovenExpansionRecast
                             else
                             {
                                 Console.WriteLine($"CovenExpansionRecast - InvalidOperatinException: '{typeof(ModIntegrationData).Name}' for Key \"DeepOnesPlus\" did not contain Key \"Kernel\" in TypeDict");
+                            }
+
+                            Type abyssalTomeType = intDataDOP.Assembly.GetType("Wonderblunder_DeepOnes.I_AbyssalTome", false);
+                            if (abyssalTomeType != null)
+                            {
+                                intDataDOP.TypeDict.Add("AbyssalTome", abyssalTomeType);
+                            }
+                            else
+                            {
+                                Console.WriteLine($"CovenExpansionRecast: Failed to get Abyssal Tome item type from DeepOnes Plus (`Wonderblunder_DeepOnes.I_AbyssalTome`)");
+                            }
+
+                            Type momentoType = intDataDOP.Assembly.GetType("Wonderblunder_DeepOnes.I_DrownedMemento", false);
+                            if (momentoType != null)
+                            {
+                                intDataDOP.TypeDict.Add("DrownedMomento", momentoType);
+                            }
+                            else
+                            {
+                                Console.WriteLine($"CovenExpansionRecast: Failed to get Drowned Momento item type from DeepOnes Plus (`Wonderblunder_DeepOnes.I_DrownedMemento`)");
+                            }
+
+                            Type shellType = intDataDOP.Assembly.GetType("Wonderblunder_DeepOnes.I_MesmerizingShell", false);
+                            if (shellType != null)
+                            {
+                                intDataDOP.TypeDict.Add("MesmerizingShell", shellType);
+                            }
+                            else
+                            {
+                                Console.WriteLine($"CovenExpansionRecast: Failed to get Mesmerizing Shell item type from DeepOnes Plus (`Wonderblunder_DeepOnes.I_MesmerizingShell`)");
+                            }
+
+                            Type ritualShardType = intDataDOP.Assembly.GetType("Wonderblunder_DeepOnes.I_RitualistShard", false);
+                            if (ritualShardType != null)
+                            {
+                                intDataDOP.TypeDict.Add("RitualistShard", ritualShardType);
+                            }
+                            else
+                            {
+                                Console.WriteLine($"CovenExpansionRecast: Failed to get Ritualist Shard item type from DeepOnes Plus (`Wonderblunder_DeepOnes.I_RitualistShard`)");
+                            }
+
+                            Type strangeMeatType = intDataDOP.Assembly.GetType("Wonderblunder_DeepOnes.I_StrangeMeat", false);
+                            if (strangeMeatType != null)
+                            {
+                                intDataDOP.TypeDict.Add("StrangeMeat", strangeMeatType);
+                            }
+                            else
+                            {
+                                Console.WriteLine($"CovenExpansionRecast: Failed to get Strange Meat item type from DeepOnes Plus (`Wonderblunder_DeepOnes.I_StrangeMeat`)");
+                            }
+
+                            Type charmType = intDataDOP.Assembly.GetType("Wonderblunder_DeepOnes.I_WaterloggedCharm", false);
+                            if (charmType != null)
+                            {
+                                intDataDOP.TypeDict.Add("WaterloggedCharm", charmType);
+                            }
+                            else
+                            {
+                                Console.WriteLine($"CovenExpansionRecast: Failed to get Waterlogged Charm item type from DeepOnes Plus (`Wonderblunder_DeepOnes.I_WaterloggedCharm`)");
                             }
                         }
                         break;
@@ -262,6 +332,27 @@ namespace CovenExpansionRecast
             SingleCraftables.Shuffle();
             DualCraftables.Shuffle();
             DeepOneCraftables.Shuffle();
+        }
+
+        public void BuildSoulItemRecipeList(Map map)
+        {
+            for (int i = 0; i < SingleSouls.Count; i++)
+            {
+                RecipeList.Add($"{SingleSouls[i]} => {GetSoulcraftingItemName(SingleCraftables[i])}");
+            }
+
+            for (int i = 0; i < DualSouls.Count; i++)
+            {
+                RecipeList.Add($"{DualSouls[i].Item1} + {DualSouls[i].Item2} => {GetSoulcraftingItemName(DualCraftables[i])}");
+            }
+
+            if (Instance.TryGetModIntegrationData("DeepOnesPlus", out _))
+            {
+                for (int i = 0; i < DeepOneSouls.Count; i++)
+                {
+                    RecipeList.Add($"Alienist + {DeepOneSouls[i]} => {GetSoulcraftingItemName(DeepOneCraftables[i])}");
+                }
+            }
         }
 
         public override void onTurnStart(Map map)
@@ -367,7 +458,17 @@ namespace CovenExpansionRecast
 
         public string GetSoulcraftingItemID(string soulTypeA, string soulTypeB = "Nothing")
         {
+            if (string.IsNullOrEmpty(soulTypeB))
+            {
+                soulTypeB = "Nothing";
+            }
+
             if (soulTypeA != "Alienist" && !SingleSouls.Contains(soulTypeA))
+            {
+                return string.Empty;
+            }
+
+            if (soulTypeA == soulTypeB)
             {
                 return string.Empty;
             }
@@ -375,11 +476,12 @@ namespace CovenExpansionRecast
             int index;
             if (soulTypeB == "Nothing")
             {
-                index = SingleSouls.IndexOf(soulTypeB);
-                if (index != -1)
+                index = SingleSouls.IndexOf(soulTypeA);
+                if (index < 0 && index >= SingleCraftables.Count)
                 {
-                    return SingleCraftables[index];
+                    return string.Empty;
                 }
+                return SingleCraftables[index];
             }
 
             if (soulTypeB != "Alienist" && !SingleSouls.Contains(soulTypeB))
@@ -424,7 +526,7 @@ namespace CovenExpansionRecast
             return DualCraftables[index];
         }
 
-        public Item GetSoulcraftingItem(Map map, string soulcraftingItemID, UA ua = null)
+        public Item GetSoulcraftingItem(Map map, string soulcraftingItemID, UA ua)
         {
             switch (soulcraftingItemID)
             {
@@ -470,10 +572,10 @@ namespace CovenExpansionRecast
                     return new I_RatIcon(map);
                 case "I_SettlersWreath":
                     return  new I_SettlersWreath(map);
-                case "I_spiritSeedcone":
-                    return null;
-                case "I_toxVial":
-                    return null;
+                case "I_SpiritSeed":
+                    return new I_SpiritSeed(map);
+                case "I_ToxicVial":
+                    return new I_ToxicVial(map);
                 case "I_BagOfBoundlessWealth":
                     return new I_BagOfBoundlessWealth(map);
                 case "I_ExquisiteMask":
@@ -486,18 +588,51 @@ namespace CovenExpansionRecast
 
             if (Instance.TryGetModIntegrationData("DeepOnesPlus", out ModIntegrationData intDataDOP))
             {
-                /*"I_AbyssalTome",
-            "I_DrownedMemento",
-            "I_MesmerizingShell",
-            "I_RitualistShard",
-            "I_WaterloggedCharm",
-            "I_StrangeMeat"*/
+                switch(soulcraftingItemID)
+                {
+                    case "I_AbyssalTome":
+                        if (ua != null && intDataDOP.TypeDict.TryGetValue("AbyssalTome", out Type abyssalTomeType))
+                        {
+                            return (Item)Activator.CreateInstance(abyssalTomeType, new object[] { map, ua });
+                        }
+                        return null;
+                    case "I_DrownedMemento":
+                        if (ua != null && intDataDOP.TypeDict.TryGetValue("DrownedMomento", out Type drownedMomentoType))
+                        {
+                            return (Item)Activator.CreateInstance(drownedMomentoType, new object[] { map, ua });
+                        }
+                        return null;
+                    case "I_MesmerizingShell":
+                        if (intDataDOP.TypeDict.TryGetValue("MesmerizingShell", out Type mesmirizingShellType))
+                        {
+                            return (Item)Activator.CreateInstance(mesmirizingShellType, new object[] { map });
+                        }
+                        return null;
+                    case "I_RitualistShard":
+                        if (ua != null && intDataDOP.TypeDict.TryGetValue("RitualistShard", out Type ritualistShardType))
+                        {
+                            return (Item)Activator.CreateInstance(ritualistShardType, new object[] { map, ua });
+                        }
+                        return null;
+                    case "I_StrangeMeat":
+                        if (ua != null && intDataDOP.TypeDict.TryGetValue("StrangeMeat", out Type strangeMeatType))
+                        {
+                            return (Item)Activator.CreateInstance(strangeMeatType, new object[] { map, ua });
+                        }
+                        return null;
+                    case "I_WaterloggedCharm":
+                        if (ua != null && intDataDOP.TypeDict.TryGetValue("WaterloggedCharm", out Type waterloggedCharmType))
+                        {
+                            return (Item)Activator.CreateInstance(waterloggedCharmType, new object[] { map, ua });
+                        }
+                        return null;
+                }
             }
 
             return null;
         }
 
-        public Item GetSoulcraftingItem(Map map, string soulTypeA, string soulTypeB = "Nothing", UA ua = null)
+        public Item GetSoulcraftingItem(Map map, UA ua, string soulTypeA, string soulTypeB = "Nothing")
         {
             string itemID = GetSoulcraftingItemID(soulTypeA, soulTypeB);
             if (!string.IsNullOrEmpty(itemID))
@@ -506,6 +641,101 @@ namespace CovenExpansionRecast
             }
 
             return null;
+        }
+
+        public string GetSoulcraftingItemName(string soulcraftingItemID)
+        {
+            switch (soulcraftingItemID)
+            {
+                case "I_SkeletonKey":
+                    return "Skeleton Key";
+                case "I_BagOfPoverty":
+                    return "Jar of Poverty";
+                case "I_Deathstone":
+                    return "Deathstone";
+                case "I_DarkStone":
+                    return "Dark Stone";
+                case "I_StudentsManual":
+                    return "Student's Manual";
+                case "I_PoisonedDagger":
+                    return "Poisoned Dagger";
+                case "I_PortableSkeleton":
+                    return "Portable Skeleton";
+                case "I_ReliableShield":
+                    return "Reliable Shield";
+                case "I_PotionOfHealing":
+                    return "Potion of Healing";
+                case "I_DominionBanner":
+                    return "Banner of Barberous Dominion";
+                case "I_SpiritCage":
+                    return "Spirit Cage";
+                case "I_DoomedProphetRing":
+                    return "Doomed Prophet's Ring";
+                case "I_ChronoBauble":
+                    return "Chronobauble";
+                case "I_TomeOfSecrets":
+                    return $"Secrets of Life and Death";
+                case "I_MadBoots":
+                    return "Madcap Boots";
+                case "I_Panacea":
+                    return "The Panacea";
+                case "I_RatIcon":
+                    return "Razor Icon";
+                case "I_SettlersWreath":
+                    return "Wreath of Manifest";
+                case "I_SpiritSeed":
+                    return "Spirit Tree Seed";
+                case "I_ToxicVial":
+                    return "Phthisical Vial";
+                case "I_BagOfBoundlessWealth":
+                    return "Bag of Boundless Wealth";
+                case "I_ExquisiteMask":
+                    return "Exquisite Mask";
+                case "I_RuinousBlade":
+                    return "The Ruinous Blade";
+                case "I_HoodOfShadows":
+                    return "Hood of Shadows";
+                case "I_AbyssalTome":
+                    return "Abyssal Tome";
+                case "I_DrownedMemento":
+                    return "Drowned Memento";
+                case "I_MesmerizingShell":
+                    return "Mesmerizing Shell";
+                case "I_RitualistShard":
+                    return "Ritualist Shard";
+                case "I_StrangeMeat":
+                    return "Strange Meat";
+                case "I_WaterloggedCharm":
+                    return "Waterlogged Charm";
+            }
+
+            return  string.Empty;
+        }
+
+        public string GetSoulcraftingItemName(string soulTypeA, string soulTypeB = "Nothing")
+        {
+            string itemID = GetSoulcraftingItemID(soulTypeA, soulTypeB);
+            return GetSoulcraftingItemName(itemID);
+        }
+
+        public void BlacklistPropertyForPsychogenicIllness(Type propertyType)
+        {
+            _psychogenicIllnessPropertyBlacklist.Add(propertyType);
+        }
+
+        public void BlacklistPropertyForPsychogenicIllness(Property property)
+        {
+            BlacklistPropertyForPsychogenicIllness(property.GetType());
+        }
+
+        public bool IsBlacklistedForPsychogenicIllness(Type propertyType)
+        {
+            return _psychogenicIllnessPropertyBlacklist.Contains(propertyType);
+        }
+
+        public bool IsBlacklistedForPsychogenicIllness(Property property)
+        {
+            return IsBlacklistedForPsychogenicIllness(property.GetType());
         }
     }
 }

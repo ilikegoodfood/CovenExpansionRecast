@@ -8,13 +8,13 @@ using UnityEngine;
 
 namespace CovenExpansionRecast
 {
-    public class Mg_TransposeSoul : Ritual
+    public class Mg_Rti_TransposeSoul : Ritual
     {
         public I_Soulstone SoulstoneA;
 
         public I_Soulstone SoulstoneB;
 
-        public Mg_TransposeSoul(Location location, I_Soulstone soulstoneA, I_Soulstone soulstone_B = null)
+        public Mg_Rti_TransposeSoul(Location location, I_Soulstone soulstoneA, I_Soulstone soulstone_B = null)
             : base(location)
         {
             SoulstoneA = soulstoneA;

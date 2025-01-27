@@ -12,20 +12,44 @@ namespace CovenExpansionRecast
     {
         public Person CapturedSoul;
 
-        public List<Mg_TransposeSoul> TranspositionRituals = new List<Mg_TransposeSoul>();
+        public List<Mg_Rti_TransposeSoul> TranspositionRituals = new List<Mg_Rti_TransposeSoul>();
 
         public I_Soulstone(Map map)
             : base(map)
         {
             Location location = map.locations[0];
-            challenges.Add(new Mg_TransposeSoul(location, this));
+            challenges.Add(new Mg_Rti_TransposeSoul(location, this));
             challenges.Add(new Rti_ReleaseSoul(location, this));
-            challenges.Add(new Mg_RiteOfMasks(location, this));
-            challenges.Add(new Mg_ToadCurse(location, this));
+            challenges.Add(new Mg_Rti_RiteOfMasks(location, this));
+            challenges.Add(new Mg_Rti_Curse_Toad(location, this));
+            challenges.Add(new Mg_Rti_Curse_Flourishing(location, this));
+            challenges.Add(new Mg_Rti_Curse_Mirror(location, this));
         }
 
         public override string getName()
         {
+            switch (GetSoulType())
+            {
+                case "Werewolf":
+                    return "Soulstone (Werewolf)";
+                case "Mage":
+                    return "Soulstone (Mage)";
+                case "OrcSlayer":
+                    return "Soulstone(Orc Slayer)";
+                case "Mediateor":
+                    return "Soulstone (Mediator)";
+                case "Physician":
+                    return "Soulstone (Physician)";
+                case "Lightbringer":
+                    return "Soulstone (Lightbringer)";
+                case "Exorcist":
+                    return "Soulstone (Exorcist)";
+                case "Alienist":
+                    return "Soulstone (Alienist)";
+                case "Nothing":
+                    return "Soulstone";
+            }
+
             return "Soulstone";
         }
 
@@ -163,11 +187,11 @@ namespace CovenExpansionRecast
 
         public override List<Ritual> getRituals(UA ua)
         {
-            Dictionary<I_Soulstone, Mg_TransposeSoul> existingTranspositionRituals = new Dictionary<I_Soulstone, Mg_TransposeSoul>();
+            Dictionary<I_Soulstone, Mg_Rti_TransposeSoul> existingTranspositionRituals = new Dictionary<I_Soulstone, Mg_Rti_TransposeSoul>();
 
             if (GetSoulType() != "Nothing")
             {
-                foreach (Mg_TransposeSoul transpose in TranspositionRituals)
+                foreach (Mg_Rti_TransposeSoul transpose in TranspositionRituals)
                 {
                     I_Soulstone otherSoulstone;
                     if (transpose.SoulstoneA == this)
@@ -207,13 +231,13 @@ namespace CovenExpansionRecast
 
                     if (CovensCore.Instance.GetSoulcraftingItemID(GetSoulType(), otherSoulstone.GetSoulType()) != "")
                     {
-                        if (existingTranspositionRituals.TryGetValue(otherSoulstone, out Mg_TransposeSoul transpose))
+                        if (existingTranspositionRituals.TryGetValue(otherSoulstone, out Mg_Rti_TransposeSoul transpose))
                         {
                             TranspositionRituals.Add(transpose);
                         }
                         else
                         {
-                            transpose = new Mg_TransposeSoul(ua.location, this, otherSoulstone);
+                            transpose = new Mg_Rti_TransposeSoul(ua.location, this, otherSoulstone);
                             TranspositionRituals.Add(transpose);
                         }
                     }

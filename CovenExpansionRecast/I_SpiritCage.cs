@@ -59,10 +59,10 @@ namespace CovenExpansionRecast
         {
             if (HasSpirit)
             {
-                return EventManager.getImg("CovenExpansionRecast.Icon_SpiritCage_Full.png");
+                return EventManager.getImg("CovenExpansionRecast.Fore_SpiritCage_Full.png");
             }
 
-            return EventManager.getImg("CovenExpansionRecast.Icon_SpiritCage_Empty.png");
+            return EventManager.getImg("CovenExpansionRecast.Fore_SpiritCage_Empty.png");
         }
 
         public override void turnTick(Person owner)

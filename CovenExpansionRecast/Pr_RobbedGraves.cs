@@ -50,6 +50,14 @@ namespace CovenExpansionRecast
             return EventManager.getImg("CovenExpansionRecast.Icon_Graveyard.png");
         }
 
+        public override void turnTick()
+        {
+            if (charge > 100.0)
+            {
+                charge = 100.0;
+            }
+        }
+
         public override bool deleteOnZero()
         {
             return false;
@@ -60,6 +68,19 @@ namespace CovenExpansionRecast
             T_ChallengeBooster result = ChallengeBooster;
             ChallengeBoostTag = Eleven.random.Next(6) + 100;
             return result;
+        }
+
+        public static void addToProperty(string cause, double amount, Location loc)
+        {
+            Pr_RobbedGraves graves = (Pr_RobbedGraves)loc.properties.FirstOrDefault(pr => pr is Pr_RobbedGraves);
+            if (graves == null)
+            {
+                graves = new Pr_RobbedGraves(loc);
+                graves.charge = 0.0;
+                loc.properties.Add(graves);
+            }
+
+            graves.influences.Add(new ReasonMsg(cause, amount));
         }
     }
 }

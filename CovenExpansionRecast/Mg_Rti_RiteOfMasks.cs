@@ -8,11 +8,11 @@ using UnityEngine;
 
 namespace CovenExpansionRecast
 {
-    public class Mg_RiteOfMasks : Ritual
+    public class Mg_Rti_RiteOfMasks : Ritual
     {
         public I_Soulstone Soulstone;
 
-        public Mg_RiteOfMasks(Location location, I_Soulstone soulstone)
+        public Mg_Rti_RiteOfMasks(Location location, I_Soulstone soulstone)
             : base(location)
         {
             Soulstone = soulstone;

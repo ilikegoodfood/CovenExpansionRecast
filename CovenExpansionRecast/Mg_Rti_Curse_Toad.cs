@@ -8,11 +8,11 @@ using UnityEngine;
 
 namespace CovenExpansionRecast
 {
-    public class Mg_ToadCurse : Ritual
+    public class Mg_Rti_Curse_Toad : Ritual
     {
         public I_Soulstone Soulstone;
 
-        public Mg_ToadCurse(Location location, I_Soulstone soulstone)
+        public Mg_Rti_Curse_Toad(Location location, I_Soulstone soulstone)
             : base(location)
         {
             Soulstone = soulstone;
@@ -22,10 +22,10 @@ namespace CovenExpansionRecast
         {
             if (Soulstone == null || Soulstone.CapturedSoul == null || Soulstone.CapturedSoul.house == null || Soulstone.CapturedSoul.society is SG_AgentWanderers || Soulstone.CapturedSoul.society == map.soc_dark)
             {
-                return "Curseweaving: Curse of Frog";
+                return "Curseweaving: Curse of Toads";
             }
 
-            return $"Curseweaving: Curse of Frog (House {Soulstone.CapturedSoul.house.name})";
+            return $"Curseweaving: Curse of Toads (House {Soulstone.CapturedSoul.house.name})";
         }
 
         public override string getDesc()
@@ -73,9 +73,9 @@ namespace CovenExpansionRecast
             return 40.0;
         }
 
-        public override Challenge.challengeStat getChallengeType()
+        public override challengeStat getChallengeType()
         {
-            return Challenge.challengeStat.LORE;
+            return challengeStat.LORE;
         }
 
         public override double getProgressPerTurnInner(UA unit, List<ReasonMsg> msgs)
