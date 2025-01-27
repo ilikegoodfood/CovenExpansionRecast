@@ -213,32 +213,24 @@ namespace CovenExpansionRecast
             TranspositionRituals.Clear();
             if (GetSoulType() != "Nothing")
             {
-                List<I_Soulstone> otherSoulstones = new List<I_Soulstone>();
-                foreach (Item item in ua.person.items)
+                for (int i = 0; i < ua.person.items.Length; i++)
                 {
-                    if (item != this && item is I_Soulstone soulstone && soulstone.CapturedSoul != null && soulstone.GetSoulType() != GetSoulType())
+                    if (ua.person.items[i] is I_Soulstone soulstone)
                     {
-                        otherSoulstones.Add(soulstone);
-                    }
-                }
-
-                foreach (I_Soulstone otherSoulstone in otherSoulstones)
-                {
-                    if (otherSoulstone.GetSoulType() == "Nothing" || otherSoulstone.GetSoulType() == GetSoulType())
-                    {
-                        continue;
-                    }
-
-                    if (CovensCore.Instance.GetSoulcraftingItemID(GetSoulType(), otherSoulstone.GetSoulType()) != "")
-                    {
-                        if (existingTranspositionRituals.TryGetValue(otherSoulstone, out Mg_Rti_TransposeSoul transpose))
+                        if (soulstone != this && soulstone.GetSoulType() != "Nothing" && soulstone.GetSoulType() != GetSoulType())
                         {
-                            TranspositionRituals.Add(transpose);
-                        }
-                        else
-                        {
-                            transpose = new Mg_Rti_TransposeSoul(ua.location, this, otherSoulstone);
-                            TranspositionRituals.Add(transpose);
+                            if (CovensCore.Instance.GetSoulcraftingItemID(GetSoulType(), soulstone.GetSoulType()) != string.Empty)
+                            {
+                                if (existingTranspositionRituals.TryGetValue(soulstone, out Mg_Rti_TransposeSoul transpose))
+                                {
+                                    TranspositionRituals.Add(transpose);
+                                }
+                                else
+                                {
+                                    transpose = new Mg_Rti_TransposeSoul(ua.location, this, soulstone);
+                                    TranspositionRituals.Add(transpose);
+                                }
+                            }
                         }
                     }
                 }

@@ -23,7 +23,16 @@ namespace CovenExpansionRecast
 
         public override string getName()
         {
-            return "Transpose Souls";
+            if (SoulstoneA == null)
+            {
+                return $"Transpose Souls";
+            }
+
+            if (SoulstoneB == null)
+            {
+                return $"Transpose Souls ({SoulstoneA.GetSoulType()})";
+            }
+            return $"Transpose Souls ({SoulstoneA.GetSoulType()}, {SoulstoneB.GetSoulType()})";
         }
 
         public override string getDesc()
@@ -58,7 +67,17 @@ namespace CovenExpansionRecast
 
         public override bool validFor(UA ua)
         {
-            return ua.location.settlement is Set_MinorOther && ua.location.settlement.subs.Any(sub => sub is Sub_WitchCoven || (sub is Sub_Temple temple && temple.order is HolyOrder_Witches));
+            if (ua.location == null)
+            {
+                return false;
+            }
+
+            if (!(ua.location.settlement is Set_MinorOther) && !(ua.location.settlement is SettlementHuman))
+            {
+                return false;
+            }
+
+            return location.settlement.subs.Any(sub => sub is Sub_Temple temple && temple.order.tenets.Any(ht => ht is H_Soulweavers && ht.status < 0));
         }
 
         public override double getComplexity()
@@ -87,7 +106,7 @@ namespace CovenExpansionRecast
 
         public override void complete(UA u)
         {
-            Item item = CovensCore.Instance.GetSoulcraftingItem(map, SoulstoneA.GetSoulType(), SoulstoneB?.GetSoulType()  ?? "Nothing", u);
+            Item item = CovensCore.Instance.GetSoulcraftingItem(map, u, SoulstoneA.GetSoulType(), SoulstoneB?.GetSoulType()  ?? "Nothing");
             
             for (int i = 0; i < u.person.items.Length; i++)
             {
