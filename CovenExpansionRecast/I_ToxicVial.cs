@@ -48,7 +48,7 @@ namespace CovenExpansionRecast
 
         public override int getLevel()
         {
-            return LEVEL_ARTEFACT;
+            return LEVEL_RARE;
         }
 
         public override int getMorality()

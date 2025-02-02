@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static SortedDictionaryProvider;
 
 namespace CovenExpansionRecast
 {
@@ -21,6 +22,10 @@ namespace CovenExpansionRecast
 
         private Dictionary<string, ModIntegrationData> _modIntegrationData;
 
+        private HashSet<Type> _tenetDistributionTypeBalcklist = new HashSet<Type> { typeof(H_W_HumanSacrifice), typeof(H_Healers), typeof(H_MusicOfTheOuterSpheres), typeof(H_Doomsayers), typeof(H_IntransigentFaith) };
+
+        private Map _map;
+
         public P_OpenMind OpenMindPower;
 
         public static bool Opt_Curseweaving = true;
@@ -29,7 +34,7 @@ namespace CovenExpansionRecast
 
         public static bool Opt_LimitedInfluenceGain = true;
 
-        public static int Opt_LimitedInfluenceGainMax = 2;
+        public static int Opt_LimitedInfluenceGainCutoff = 2;
 
         public static bool Opt_FindableArtifacts = true;
 
@@ -142,7 +147,7 @@ namespace CovenExpansionRecast
             switch(optName)
             {
                 case "Influence Cap":
-                    Opt_LimitedInfluenceGainMax = value;
+                    Opt_LimitedInfluenceGainCutoff = value;
                     break;
                 default:
                     break;
@@ -152,6 +157,7 @@ namespace CovenExpansionRecast
         public override void beforeMapGen(Map map)
         {
             instance = this;
+            _map = map;
 
             GameInitialisation(map);
             OpenMindPower = new P_OpenMind(map);
@@ -162,6 +168,7 @@ namespace CovenExpansionRecast
         public override void afterLoading(Map map)
         {
             instance = this;
+            _map = map;
 
             GameInitialisation(map);
         }
@@ -267,6 +274,14 @@ namespace CovenExpansionRecast
                             }
                         }
                         break;
+                    case "SOFGKeeperItemRebalanceAndAdditions":
+                        Instance.TryAddModIntegrationData("KeeperItemMod", new ModIntegrationData(kernel));
+                        Console.WriteLine($"CovenExpansionRecast: Keeper's Item Rebalance is Enabled");
+                        break;
+                    case "LivingSocieties":
+                        Instance.TryAddModIntegrationData("LivingSocieties", new ModIntegrationData(kernel));
+                        Console.WriteLine($"CovenExpansionRecast: Living Societies is Enabled");
+                        break;
                     case "LivingWilds":
                         Instance.TryAddModIntegrationData("LivingWilds", new ModIntegrationData(kernel));
                         Console.WriteLine($"CovenExpansionRecast: Living Wilds is Enabled");
@@ -356,6 +371,73 @@ namespace CovenExpansionRecast
             }
         }
 
+        public override void afterMapGenAfterHistorical(Map map)
+        {
+            if (!Opt_AdditionalTenets)
+            {
+                return;
+            }
+
+            foreach(SocialGroup sg in map.socialGroups)
+            {
+                if (sg is HolyOrder_Witches witches)
+                {
+                    witches.tenets.Add(new H_SharedKnowledge(witches));
+                    witches.tenets.Add(new H_OutcastShelters(witches));
+                    witches.tenets.Add(new H_Aviaries(witches));
+                    witches.tenets.Add(new H_Initiation(witches));
+                    if (Opt_Curseweaving)
+                    {
+                        witches.tenets.Add(new H_Curseweavers(witches));
+                    }
+                }
+            }
+        }
+
+        public void EstablishInitialTenetSpread(HolyOrder_Witches witches)
+        {
+            List<HolyTenet> positiveTenets = new List<HolyTenet>();
+            List<HolyTenet> negativeTenets = new List<HolyTenet>();
+
+            foreach (HolyTenet tenet in witches.tenets)
+            {
+                if (tenet.structuralTenet() || IsTenetTypeBlacklistedForRandomisedInitialStatus(tenet))
+                {
+                    continue;
+                }
+
+                if (tenet.status < tenet.getMaxPositiveInfluence())
+                {
+                    positiveTenets.Add(tenet);
+                }
+                if (tenet.status > tenet.getMaxNegativeInfluence())
+                {
+                    negativeTenets.Add(tenet);
+                }
+            }
+
+            int tenetCount = 1 + Eleven.random.Next(2);
+            for (int i = 0; i < tenetCount; i++)
+            {
+                if (positiveTenets.Count > 0)
+                {
+                    HolyTenet tenet = positiveTenets[Eleven.random.Next(positiveTenets.Count)];
+                    tenet.status++;
+                    positiveTenets.Remove(tenet);
+                    negativeTenets.Remove(tenet);
+                }
+                
+
+                if (negativeTenets.Count > 0)
+                {
+                    HolyTenet tenet = negativeTenets[Eleven.random.Next(negativeTenets.Count)];
+                    tenet.status--;
+                    positiveTenets.Remove(tenet);
+                    negativeTenets.Remove(tenet);
+                }
+            }
+        }
+
         public override void onTurnStart(Map map)
         {
             foreach (Unit unit in map.units)
@@ -371,6 +453,160 @@ namespace CovenExpansionRecast
                     {
                         ua.rituals.Add(new Rt_StudyCurseweaving(ua.location, ua));
                     }
+                }
+            }
+        }
+
+        public override Item optionToReturnItemFromRandomPool(int itemRarity)
+        {
+            if (Eleven.random.NextDouble() >= 0.35)
+            {
+                return null;
+            }
+
+            if (itemRarity == Item.LEVEL_RARE && (!TryGetModIntegrationData("KeeperItemMod", out _) || !TryGetModIntegrationData("LivingSocieties", out _)))
+            {
+                switch (Eleven.random.Next(10))
+                {
+                    case 0:
+                        return new I_SpiritSeed(_map);
+                    case 1:
+                        return new I_TomeOfSecrets(_map);
+                    case 2:
+                        return new I_MadBoots(_map);
+                    case 3:
+                        return new I_ToxicVial(_map);
+                    case 4:
+                        return new I_DoomedProphetRing(_map);
+                    case 5:
+                        return new I_ChronoBauble(_map);
+                    case 6:
+                        return new I_DominionBanner(_map);
+                    case 7:
+                        return new I_RatIcon(_map);
+                    case 8:
+                        return new I_Panacea(_map);
+                    case 9:
+                        return new I_SettlersWreath(_map);
+                }
+            }
+
+            if (itemRarity == Item.LEVEL_RARE)
+            {
+                switch (Eleven.random.Next(5))
+                {
+                    case 0:
+                        return new I_SpiritSeed(_map);
+                    case 1:
+                        return new I_TomeOfSecrets(_map);
+                    case 2:
+                        return new I_MadBoots(_map);
+                    case 3:
+                        return new I_ToxicVial(_map);
+                    case 4:
+                        return new I_DoomedProphetRing(_map);
+                }
+            }
+            else if (itemRarity == Item.LEVEL_ARTEFACT)
+            {
+                switch (Eleven.random.Next(5))
+                {
+                    case 0:
+                        return new I_ChronoBauble(_map);
+                    case 1:
+                        return new I_DominionBanner(_map);
+                    case 2:
+                        return new I_RatIcon(_map);
+                    case 3:
+                        return new I_Panacea(_map);
+                    case 4:
+                        return new I_SettlersWreath(_map);
+                }
+            }
+
+            return null;
+        }
+
+        public override void populatingChallenges(Location location, List<Challenge> standardChallenges)
+        {
+            if (location.settlement == null)
+            {
+                return;
+            }
+
+            Sub_Catacombs catacombs = null;
+            Sub_Temple temple = null;
+            Sub_WitchCoven coven = null;
+
+            foreach (Subsettlement sub in location.settlement.subs)
+            {
+                if (catacombs == null && sub is Sub_Catacombs cata)
+                {
+                    catacombs = cata;
+                    continue;
+                }
+
+                if (temple == null && sub is Sub_Temple temp)
+                {
+                    temple = temp;
+                    continue;
+                }
+
+                if (coven == null && sub is Sub_WitchCoven cov)
+                {
+                    coven = cov;
+                    continue;
+                }
+            }
+
+            if (catacombs != null)
+            {
+                Ch_ExhumeGrave exhume = (Ch_ExhumeGrave)location.settlement.customChallenges.FirstOrDefault(ch => ch is Ch_ExhumeGrave);
+                if (exhume == null)
+                {
+                    exhume = new Ch_ExhumeGrave(location);
+                    location.settlement.customChallenges.Add(exhume);
+                }
+
+                Pr_RobbedGraves robbed = (Pr_RobbedGraves)location.properties.FirstOrDefault(pr => pr is Pr_RobbedGraves);
+                if (robbed == null)
+                {
+                    robbed = new Pr_RobbedGraves(location);
+                    robbed.charge = 0.0;
+                    location.properties.Add(robbed);
+                }
+            }
+
+            if (temple != null || coven != null)
+            {
+                Ch_RecruitMinion recruitPigeon = (Ch_RecruitMinion)location.settlement.customChallenges.FirstOrDefault(ch => ch is Ch_RecruitMinion recruit && recruit.exemplar is M_Pigeon);
+                if (recruitPigeon == null)
+                {
+                    if (temple != null)
+                    {
+                        recruitPigeon = new Ch_RecruitMinion(location, new M_Pigeon(location.map), -1, temple);
+                        location.settlement.customChallenges.Add(recruitPigeon);
+                    }
+
+                    if (coven != null)
+                    {
+                        recruitPigeon = new Ch_RecruitMinion(location, new M_Pigeon(location.map), -1, coven);
+                        location.settlement.customChallenges.Add(recruitPigeon);
+                    }
+                }
+                
+                Ch_BuySoulstone buySoulstone = (Ch_BuySoulstone)location.settlement.customChallenges.FirstOrDefault(ch => ch is Ch_BuySoulstone);
+                if (buySoulstone == null)
+                {
+                    buySoulstone = new Ch_BuySoulstone(location);
+                    location.settlement.customChallenges.Add(buySoulstone);
+                }
+
+                Ch_BuyCraftList buyCraftList = (Ch_BuyCraftList)location.settlement.customChallenges.FirstOrDefault(c => c is Ch_BuyCraftList);
+                if (buyCraftList == null)
+                {
+                    buyCraftList= new Ch_BuyCraftList(location);
+                    location.settlement.customChallenges.Add(buyCraftList);
                 }
             }
         }
@@ -426,6 +662,30 @@ namespace CovenExpansionRecast
                     ua.rituals.Add(new Rt_StudyCurseweaving(ua.location, ua));
                 }
             }
+        }
+
+        public override int adjustHolyInfluenceDark(HolyOrder order, int inf, List<ReasonMsg> msgs)
+        {
+            if (!Opt_LimitedInfluenceGain || !(order is HolyOrder_Witches coven))
+            {
+                return 0;
+            }
+
+            if (inf > coven.nWorshippers  - coven.nAcolytes + Opt_LimitedInfluenceGainCutoff)
+            {
+                int result = order.nWorshippers - order.nAcolytes - inf + Opt_LimitedInfluenceGainCutoff;
+                if (msgs.Any(msg => msg.msg.StartsWith("Prophet: ")))
+                {
+                    result += 4;
+                }
+                if (result < 0)
+                {
+                    msgs.Add(new ReasonMsg("Small Religion", result));
+                    return result;
+                }
+            }
+
+            return 0;
         }
 
         private bool TryAddModIntegrationData(string name, ModIntegrationData intData)
@@ -751,6 +1011,26 @@ namespace CovenExpansionRecast
         public bool IsBlacklistedForPsychogenicIllness(Property property)
         {
             return IsBlacklistedForPsychogenicIllness(property.GetType());
+        }
+
+        public void BlacklistTenetTypeForRandomisedInitialStatus(Type type)
+        {
+            _tenetDistributionTypeBalcklist.Add(type);
+        }
+
+        public void BlacklistTenetTypeForRandomisedInitialStatus(HolyTenet tenet)
+        {
+            BlacklistTenetTypeForRandomisedInitialStatus(tenet.GetType());
+        }
+
+        public bool IsTenetTypeBlacklistedForRandomisedInitialStatus(Type type)
+        {
+            return _tenetDistributionTypeBalcklist.Contains(type);
+        }
+
+        public bool IsTenetTypeBlacklistedForRandomisedInitialStatus(HolyTenet tenet)
+        {
+            return IsTenetTypeBlacklistedForRandomisedInitialStatus(tenet.GetType());
         }
 
         public bool TryBlacklistPropertyTypeAsActionSourceForOpenMindPower(Type sourceType)

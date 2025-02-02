@@ -189,9 +189,19 @@ namespace CovenExpansionRecast
             }
         }
 
+        public override int getLoreBonus()
+        {
+            if (Complete)
+            {
+                return 2;
+            }
+
+            return 0;
+        }
+
         public override int getLevel()
         {
-            return LEVEL_ARTEFACT;
+            return LEVEL_RARE;
         }
 
         public override int getMorality()
