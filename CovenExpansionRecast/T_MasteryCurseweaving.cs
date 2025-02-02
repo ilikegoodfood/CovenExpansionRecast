@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CovenExpansionRecast
 {
-    public class T_MasteryCurseweaving : Trait
+    public class T_MasteryCurseweaving : CommunityLib.T_MagicMastery
     {
         public Person Person;
 
@@ -25,10 +25,7 @@ namespace CovenExpansionRecast
 
         public override void turnTick(Person p)
         {
-            if (p.map.opt_allowMagicalArmsRace && p.unit != null && p.unit.isCommandable())
-            {
-                p.map.overmind.magicalArmsRace = Math.Max(level, p.map.overmind.magicalArmsRace);
-            }
+            base.turnTick(p);
 
             ProcessCaptureRituals(p.getLocation());
         }
@@ -36,7 +33,6 @@ namespace CovenExpansionRecast
         public override void onAcquire(Person person)
         {
             Person = person;
-            ProcessCaptureRituals(person.getLocation());
 
             if (Person.unit is UA ua)
             {
@@ -62,6 +58,8 @@ namespace CovenExpansionRecast
                     person.receiveTrait(arcaneKnowledge);
                 }
             }
+
+            ProcessCaptureRituals(person.getLocation());
         }
 
         public override void onMove(Location current, Location dest)
@@ -124,11 +122,6 @@ namespace CovenExpansionRecast
                 CaptureSoulRituals.Add(captureSoul);
                 Person.unit.rituals.Add(captureSoul);
             }
-        }
-
-        public override int getMaxLevel()
-        {
-            return 3;
         }
 
         public override int[] getTags()

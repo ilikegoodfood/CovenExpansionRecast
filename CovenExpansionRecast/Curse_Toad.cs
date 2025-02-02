@@ -12,6 +12,8 @@ namespace CovenExpansionRecast
     {
         public int Timer = 10;
 
+        public int TurnLastChecked = 0;
+
         public override string getName()
         {
             return "Curse of Toad";
@@ -24,6 +26,18 @@ namespace CovenExpansionRecast
 
         public override void turnTick(Person p)
         {
+            if (p.map.turn > TurnLastChecked)
+            {
+                TurnLastChecked = p.map.turn;
+                Timer--;
+
+                if (Timer <= 0)
+                {
+                    p.house.curses.Remove(this);
+                    return;
+                }
+            }
+
             if (Timer > 0)
             {
                 if (p == p.map.awarenessManager.chosenOne?.person)

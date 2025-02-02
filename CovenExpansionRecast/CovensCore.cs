@@ -356,24 +356,6 @@ namespace CovenExpansionRecast
             }
         }
 
-        public override void onTurnStart(Map map)
-        {
-            OpenMindPower.Cost = 0;
-
-            foreach (House house in map.houses)
-            {
-                Curse_Toad curse = (Curse_Toad)house.curses.FirstOrDefault(c => c is Curse_Toad toad);
-                if (curse != null)
-                {
-                    curse.Timer--;
-                    if (curse.Timer  <= 0)
-                    {
-                        house.curses.Remove(curse);
-                    }
-                }
-            }
-        }
-
         public override double unitAgentAIAttack(Map map, UA ua, Unit other, List<ReasonMsg> reasons, double initialUtility)
         {
             double utility = initialUtility;
@@ -739,6 +721,42 @@ namespace CovenExpansionRecast
         public bool IsBlacklistedForPsychogenicIllness(Property property)
         {
             return IsBlacklistedForPsychogenicIllness(property.GetType());
+        }
+
+        public bool TryBlacklistPropertyTypeAsActionSourceForOpenMindPower(Type sourceType)
+        {
+            if (OpenMindPower == null)
+            {
+                return false;
+            }
+
+            if (OpenMindPower.PropertyTypeBlacklist.Contains(sourceType))
+            {
+                return false;
+            }
+
+            OpenMindPower.PropertyTypeBlacklist.Add(sourceType);
+            return true;
+        }
+
+        public bool TryBlacklistPropertyTypeAsActionSourceForOpenMindPower(Property property)
+        {
+            return TryBlacklistPropertyTypeAsActionSourceForOpenMindPower(property.GetType());
+        }
+
+        public bool IsPropertyTypeBlacklistedForOpenMindPower(Type sourceType)
+        {
+            if (OpenMindPower == null)
+            {
+                return false;
+            }
+
+            return OpenMindPower.PropertyTypeBlacklist.Contains(sourceType);
+        }
+
+        public bool IsPropertyTypeBlacklistedForOpenMindPower(Property property)
+        {
+            return IsPropertyTypeBlacklistedForOpenMindPower(property.GetType());
         }
     }
 }

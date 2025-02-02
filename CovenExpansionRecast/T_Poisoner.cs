@@ -65,4 +65,5 @@ namespace CovenExpansionRecast
         {
             return 1;
         }
+    }
 }
