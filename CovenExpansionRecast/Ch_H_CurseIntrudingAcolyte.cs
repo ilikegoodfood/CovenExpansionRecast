@@ -183,7 +183,7 @@ namespace CovenExpansionRecast
                 return;
             }
 
-            map.world.ui.addBlocker(map.world.prefabStore.getScrollSetText(targetLabels, false, new Sel2_CurseTargetChooser(map, this, targets), "Select an intruding acolyte to curse").gameObject);
+            map.world.ui.addBlocker(map.world.prefabStore.getScrollSetText(targetLabels, false, new Sel2_CurseTargetSelector(map, this, targets), "Select an intruding acolyte to curse").gameObject);
         }
 
         public override void complete(UA u)

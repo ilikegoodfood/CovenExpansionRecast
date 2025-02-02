@@ -53,5 +53,33 @@ namespace CovenExpansionRecast
                 }
             }
         }
+
+        public override void onAgentLevelup_GetTraits(UA ua, List<Trait> availableTraits, bool startingTraits)
+        {
+            if (!startingTraits && ua.corrupted && (ua is UAG || ua is UAA))
+            {
+                bool knowsCurseweaving = false;
+                bool isMaster = false;
+
+                foreach(Trait trait in ua.person.traits)
+                {
+                    if (trait is T_TransmutationMaster)
+                    {
+                        isMaster = true;
+                        break;
+                    }
+
+                    if (trait is T_MasteryCurseweaving)
+                    {
+                        knowsCurseweaving = true;
+                    }
+                }
+
+                if (!isMaster && knowsCurseweaving)
+                {
+                    availableTraits.Add(new T_TransmutationMaster());
+                }
+            }
+        }
     }
 }

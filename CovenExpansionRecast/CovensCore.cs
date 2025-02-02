@@ -356,6 +356,25 @@ namespace CovenExpansionRecast
             }
         }
 
+        public override void onTurnStart(Map map)
+        {
+            foreach (Unit unit in map.units)
+            {
+                if (!(unit is UA ua))
+                {
+                    continue;
+                }
+
+                if (ua.person.traits.Any(t => t is T_ArcaneKnowledge))
+                {
+                    if (!ua.rituals.Any(rt => rt is Rt_StudyCurseweaving))
+                    {
+                        ua.rituals.Add(new Rt_StudyCurseweaving(ua.location, ua));
+                    }
+                }
+            }
+        }
+
         public override double unitAgentAIAttack(Map map, UA ua, Unit other, List<ReasonMsg> reasons, double initialUtility)
         {
             double utility = initialUtility;
@@ -396,6 +415,17 @@ namespace CovenExpansionRecast
             }
 
             return utility;
+        }
+
+        public override void onChallengeComplete(Challenge challenge, UA ua, Task_PerformChallenge task_PerformChallenge)
+        {
+            if (ua.person.traits.Any(t => t is T_ArcaneKnowledge))
+            {
+                if (!ua.rituals.Any(rt => rt is Rt_StudyCurseweaving))
+                {
+                    ua.rituals.Add(new Rt_StudyCurseweaving(ua.location, ua));
+                }
+            }
         }
 
         private bool TryAddModIntegrationData(string name, ModIntegrationData intData)

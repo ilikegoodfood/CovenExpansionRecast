@@ -14,11 +14,11 @@ namespace CovenExpansionRecast
 
         public I_Soulstone SoulstoneB;
 
-        public Mg_Rti_TransposeSoul(Location location, I_Soulstone soulstoneA, I_Soulstone soulstone_B = null)
+        public Mg_Rti_TransposeSoul(Location location, I_Soulstone soulstoneA, I_Soulstone soulstoneB = null)
             : base(location)
         {
             SoulstoneA = soulstoneA;
-            SoulstoneB = soulstone_B;
+            SoulstoneB = soulstoneB;
         }
 
         public override string getName()
@@ -107,14 +107,29 @@ namespace CovenExpansionRecast
         public override void complete(UA u)
         {
             Item item = CovensCore.Instance.GetSoulcraftingItem(map, u, SoulstoneA.GetSoulType(), SoulstoneB?.GetSoulType()  ?? "Nothing");
-            
-            for (int i = 0; i < u.person.items.Length; i++)
+
+            if (SoulstoneB != null)
             {
-                if (u.person.items[i] == SoulstoneA || u.person.items[i] == SoulstoneB)
+                if (u.person.traits.Any(t => t is T_TransmutationMaster))
                 {
-                    u.person.items[i] = null;
+                    List<string> labels = new List<string> { $"{SoulstoneA.CapturedSoul.getName()} ({SoulstoneA.GetSoulType()})", $"{SoulstoneB.CapturedSoul.getName()} ({SoulstoneB.GetSoulType()})" };
+                    Sel2_SaveSoulSelector selector = new Sel2_SaveSoulSelector(new List<I_Soulstone> { SoulstoneA, SoulstoneB });
+                    map.world.prefabStore.getScrollSetText(labels, false, selector, "Save Soul", "Choose which soul will ot be consumed by this ritual. On dismiss, a random soul will not be consumed.");
+                }
+                else
+                {
+                    SoulstoneA.CapturedSoul = null;
+                    if (SoulstoneB != null)
+                    {
+                        SoulstoneB.CapturedSoul = null;
+                    }
                 }
             }
+            else
+            {
+                SoulstoneA.CapturedSoul = null;
+            }
+            
 
             if (item == null)
             {

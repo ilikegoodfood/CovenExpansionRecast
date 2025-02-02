@@ -10,10 +10,13 @@ namespace CovenExpansionRecast
 {
     public class M_Pigeon : Minion
     {
+        public Rtm_SendCarrierPigeon SendRitual;
+
         public M_Pigeon(Map map)
             : base(map)
         {
             traits.Add(new Mt_CarrierPigeon());
+            SendRitual = new Rtm_SendCarrierPigeon(map.locations[0]);
         }
 
         public override string getName()
@@ -43,6 +46,16 @@ namespace CovenExpansionRecast
         public override int getAttack()
         {
             return 1;
+        }
+
+        public override void turnTick(UA ua)
+        {
+            base.turnTick(ua);
+
+            if (!ua.rituals.Any(rt => rt is Rtm_SendCarrierPigeon))
+            {
+                ua.rituals.Add(SendRitual);
+            }
         }
 
         public override int getGoldCost()

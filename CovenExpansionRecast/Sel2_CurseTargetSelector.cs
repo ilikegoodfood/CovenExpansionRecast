@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace CovenExpansionRecast
 {
-    public class Sel2_CurseTargetChooser : SelectClickReceiver
+    public class Sel2_CurseTargetSelector : SelectClickReceiver
     {
         public List<UAA> Targets;
 
         public Ch_H_CurseIntrudingAcolyte Challenge;
 
-        public Sel2_CurseTargetChooser(Map map, Ch_H_CurseIntrudingAcolyte challenge, List<UAA> opts)
+        public Sel2_CurseTargetSelector(Map map, Ch_H_CurseIntrudingAcolyte challenge, List<UAA> opts)
         {
             Challenge = challenge;
             Targets = opts;
