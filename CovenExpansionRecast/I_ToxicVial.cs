@@ -28,7 +28,7 @@ namespace CovenExpansionRecast
 
         public override Sprite getIconFore()
         {
-            return EventManager.getImg("CovenExpansion.Icon_ToxicVial.png");
+            return EventManager.getImg("CovenExpansionRecast.Icon_ToxicVial.png");
         }
 
         public override int getIntrigueBonus()

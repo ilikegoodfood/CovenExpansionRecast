@@ -9,14 +9,21 @@ namespace CovenExpansionRecast
 {
     public class Sel2_DisplayInertSelection : SelectClickReceiver
     {
+        public World World;
+
+        public Sel2_DisplayInertSelection(Map map)
+        {
+            World = map.world;
+        }
+
         public void cancelled()
         {
-            return;
+            
         }
 
         public void selectableClicked(string text, int index)
         {
-            return;
+            
         }
     }
 }

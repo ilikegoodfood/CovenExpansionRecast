@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace CovenExpansionRecast
 {
@@ -28,6 +29,11 @@ namespace CovenExpansionRecast
         public override string getCastFlavour()
         {
             return "Centuries of study and experimentaion have gone into descovering the recipes transcribed on this simple sheet of parchment.";
+        }
+
+        public override Sprite getSprite()
+        {
+            return EventManager.getImg("CovenExpansionRecast.Fore_List.png");
         }
 
         public override int isGoodTernary()
@@ -64,7 +70,7 @@ namespace CovenExpansionRecast
         public override void onImmediateBegin(UA uA)
         {
             uA.task = null;
-            Sel2_DisplayInertSelection selector = new Sel2_DisplayInertSelection();
+            Sel2_DisplayInertSelection selector = new Sel2_DisplayInertSelection(uA.map);
             uA.map.world.prefabStore.getScrollSetText(CovensCore.Instance.RecipeList, false, selector, "Soul Transposition Recipes", "This list displays all soul transposition recipes.");
         }
     }

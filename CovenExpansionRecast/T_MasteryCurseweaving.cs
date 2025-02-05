@@ -11,7 +11,7 @@ namespace CovenExpansionRecast
     {
         public Person Person;
 
-        public List<Mg_CaptureSoul>CaptureSoulRituals;
+        public List<Mg_CaptureSoul>CaptureSoulRituals = new List<Mg_CaptureSoul>();
 
         public override string getName()
         {
@@ -69,7 +69,7 @@ namespace CovenExpansionRecast
 
         public void ProcessCaptureRituals(Location location)
         {
-            if (Person == null || Person.unit == null)
+            if (Person.unit == null)
             {
                 CaptureSoulRituals.Clear();
                 return;

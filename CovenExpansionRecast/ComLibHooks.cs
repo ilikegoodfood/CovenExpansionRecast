@@ -56,28 +56,38 @@ namespace CovenExpansionRecast
 
         public override void onAgentLevelup_GetTraits(UA ua, List<Trait> availableTraits, bool startingTraits)
         {
-            if (!startingTraits && ua.corrupted && (ua is UAG || ua is UAA))
+            if (startingTraits)
             {
-                bool knowsCurseweaving = false;
-                bool isMaster = false;
-
-                foreach(Trait trait in ua.person.traits)
+                if (ua is UAE_Warlock)
                 {
-                    if (trait is T_TransmutationMaster)
-                    {
-                        isMaster = true;
-                        break;
-                    }
-
-                    if (trait is T_MasteryCurseweaving)
-                    {
-                        knowsCurseweaving = true;
-                    }
+                    availableTraits.Add(new T_MasteryCurseweaving());
                 }
-
-                if (!isMaster && knowsCurseweaving)
+            }
+            else
+            {
+                if (ua.corrupted && (ua is UAG || ua is UAA))
                 {
-                    availableTraits.Add(new T_TransmutationMaster());
+                    bool knowsCurseweaving = false;
+                    bool isMaster = false;
+
+                    foreach (Trait trait in ua.person.traits)
+                    {
+                        if (trait is T_TransmutationMaster)
+                        {
+                            isMaster = true;
+                            break;
+                        }
+
+                        if (trait is T_MasteryCurseweaving)
+                        {
+                            knowsCurseweaving = true;
+                        }
+                    }
+
+                    if (!isMaster && knowsCurseweaving)
+                    {
+                        availableTraits.Add(new T_TransmutationMaster());
+                    }
                 }
             }
         }

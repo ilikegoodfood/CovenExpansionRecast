@@ -47,7 +47,7 @@ namespace CovenExpansionRecast
         {
             if (Soulstone == null || Soulstone.CapturedSoul == null)
             {
-                return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_Inactive");
+                return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_Inactive.png");
             }
 
             if (Soulstone.CapturedSoul.shadow > 0.5)

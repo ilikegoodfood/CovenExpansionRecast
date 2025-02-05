@@ -9,10 +9,13 @@ namespace CovenExpansionRecast
 {
     public class Sel2_SaveSoulSelector : SelectClickReceiver
     {
+        Map Map;
+
         List<I_Soulstone> Soulstones;
 
-        public Sel2_SaveSoulSelector(List<I_Soulstone> soulstones)
+        public Sel2_SaveSoulSelector(Map map, List<I_Soulstone> soulstones)
         {
+            Map = map;
             Soulstones = soulstones;
         }
 

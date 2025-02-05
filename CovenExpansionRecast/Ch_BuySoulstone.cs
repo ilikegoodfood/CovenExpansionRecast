@@ -10,6 +10,7 @@ namespace CovenExpansionRecast
     public class Ch_BuySoulstone : Ch_BuyItem
     {
         public int cost = 15;
+
         public Ch_BuySoulstone(Location loc)
             : base(loc)
         {

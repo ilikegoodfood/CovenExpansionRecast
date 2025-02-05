@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static SortedDictionaryProvider;
 
 namespace CovenExpansionRecast
 {
@@ -34,7 +33,7 @@ namespace CovenExpansionRecast
 
         public static bool Opt_LimitedInfluenceGain = true;
 
-        public static int Opt_LimitedInfluenceGainCutoff = 2;
+        public static int Opt_LimitedInfluenceGainCap = 2;
 
         public static bool Opt_FindableArtifacts = true;
 
@@ -147,11 +146,18 @@ namespace CovenExpansionRecast
             switch(optName)
             {
                 case "Influence Cap":
-                    Opt_LimitedInfluenceGainCutoff = value;
+                    Opt_LimitedInfluenceGainCap = value;
                     break;
                 default:
                     break;
             }
+        }
+
+        public override void onStartGamePresssed(Map map, List<God> gods)
+        {
+            _modIntegrationData?.Clear();
+            DualSouls?.Clear();
+            RecipeList?.Clear();
         }
 
         public override void beforeMapGen(Map map)
@@ -373,7 +379,7 @@ namespace CovenExpansionRecast
 
         public override void afterMapGenAfterHistorical(Map map)
         {
-            if (!Opt_AdditionalTenets)
+            if (!Opt_AdditionalTenets && !Opt_Curseweaving)
             {
                 return;
             }
@@ -382,10 +388,14 @@ namespace CovenExpansionRecast
             {
                 if (sg is HolyOrder_Witches witches)
                 {
-                    witches.tenets.Add(new H_SharedKnowledge(witches));
-                    witches.tenets.Add(new H_OutcastShelters(witches));
-                    witches.tenets.Add(new H_Aviaries(witches));
-                    witches.tenets.Add(new H_Initiation(witches));
+                    if (Opt_AdditionalTenets)
+                    {
+                        witches.tenets.Add(new H_SharedKnowledge(witches));
+                        witches.tenets.Add(new H_OutcastShelters(witches));
+                        witches.tenets.Add(new H_Aviaries(witches));
+                        witches.tenets.Add(new H_Initiation(witches));
+                    }
+
                     if (Opt_Curseweaving)
                     {
                         witches.tenets.Add(new H_Curseweavers(witches));
@@ -546,7 +556,7 @@ namespace CovenExpansionRecast
                     continue;
                 }
 
-                if (temple == null && sub is Sub_Temple temp)
+                if (temple == null && sub is Sub_Temple temp && temp.order is HolyOrder_Witches)
                 {
                     temple = temp;
                     continue;
@@ -607,6 +617,23 @@ namespace CovenExpansionRecast
                 {
                     buyCraftList= new Ch_BuyCraftList(location);
                     location.settlement.customChallenges.Add(buyCraftList);
+                }
+            }
+            else
+            {
+                foreach (Challenge challenge in location.settlement.customChallenges.ToList())
+                {
+                    if (challenge is Ch_RecruitMinion recruit && recruit.exemplar is M_Pigeon)
+                    {
+                        location.settlement.customChallenges.Remove(challenge);
+                        continue;
+                    }
+
+                    if (challenge is Ch_BuySoulstone || challenge is Ch_BuyCraftList)
+                    {
+                        location.settlement.customChallenges.Remove(challenge);
+                        continue;
+                    }
                 }
             }
         }
@@ -671,16 +698,17 @@ namespace CovenExpansionRecast
                 return 0;
             }
 
-            if (inf > coven.nWorshippers  - coven.nAcolytes + Opt_LimitedInfluenceGainCutoff)
+            if (inf > coven.nWorshippers  - coven.nAcolytes + Opt_LimitedInfluenceGainCap)
             {
-                int result = order.nWorshippers - order.nAcolytes - inf + Opt_LimitedInfluenceGainCutoff;
-                if (msgs.Any(msg => msg.msg.StartsWith("Prophet: ")))
+                int result = coven.nWorshippers - coven.nAcolytes - inf + Opt_LimitedInfluenceGainCap;
+                if (CommunityLib.ModCore.Get().checkIsProphetPlayerAligned(coven))
                 {
                     result += 4;
                 }
+
                 if (result < 0)
                 {
-                    msgs.Add(new ReasonMsg("Small Religion", result));
+                    msgs?.Add(new ReasonMsg("Small Religion", result));
                     return result;
                 }
             }

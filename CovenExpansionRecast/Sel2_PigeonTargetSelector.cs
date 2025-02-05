@@ -24,7 +24,7 @@ namespace CovenExpansionRecast
 
         public void cancelled()
         {
-            
+
         }
 
         public void selectableClicked(string text, int index)
