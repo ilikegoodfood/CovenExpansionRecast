@@ -77,7 +77,7 @@ namespace CovenExpansionRecast
                 return false;
             }
 
-            return location.settlement.subs.Any(sub => sub is Sub_Temple temple && temple.order.tenets.Any(ht => ht is H_Soulweavers && ht.status < 0));
+            return location.settlement.subs.Any(sub => sub is Sub_Temple temple && temple.order is HolyOrder_Witches);
         }
 
         public override double getComplexity()
@@ -114,7 +114,7 @@ namespace CovenExpansionRecast
                 {
                     List<string> labels = new List<string> { $"{SoulstoneA.CapturedSoul.getName()} ({SoulstoneA.GetSoulType()})", $"{SoulstoneB.CapturedSoul.getName()} ({SoulstoneB.GetSoulType()})" };
                     Sel2_SaveSoulSelector selector = new Sel2_SaveSoulSelector(u.map, new List<I_Soulstone> { SoulstoneA, SoulstoneB });
-                    map.world.prefabStore.getScrollSetText(labels, false, selector, "Save Soul", "Choose which soul will ot be consumed by this ritual. On dismiss, a random soul will not be consumed.");
+                    map.world.ui.addBlocker(map.world.prefabStore.getScrollSetText(labels, false, selector, "Save Soul", "Choose which soul will ot be consumed by this ritual. On dismiss, a random soul will not be consumed.").gameObject);
                 }
                 else
                 {

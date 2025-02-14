@@ -117,6 +117,8 @@ namespace CovenExpansionRecast
                         }
                     }
                 }
+
+                return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone.png");
             }
 
             return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_Inactive.png");

@@ -39,7 +39,7 @@ namespace CovenExpansionRecast
 
         public override bool structuralTenet()
         {
-            return false;
+            return true;
         }
 
         public override void turnTick(UAA ua)

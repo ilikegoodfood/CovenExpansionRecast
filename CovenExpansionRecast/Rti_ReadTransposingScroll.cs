@@ -48,7 +48,7 @@ namespace CovenExpansionRecast
 
         public override bool validFor(UA ua)
         {
-            return ua.isCommandable();
+            return ua.isCommandable() && ua.person.items.Any(i => i is I_CraftList);
         }
 
         public override double getComplexity()
@@ -69,9 +69,14 @@ namespace CovenExpansionRecast
 
         public override void onImmediateBegin(UA uA)
         {
+            complete(uA);
             uA.task = null;
-            Sel2_DisplayInertSelection selector = new Sel2_DisplayInertSelection(uA.map);
-            uA.map.world.prefabStore.getScrollSetText(CovensCore.Instance.RecipeList, false, selector, "Soul Transposition Recipes", "This list displays all soul transposition recipes.");
+        }
+
+        public override void complete(UA u)
+        {
+            Sel2_DisplayInertSelection selector = new Sel2_DisplayInertSelection(u.map);
+            map.world.ui.addBlocker(map.world.prefabStore.getScrollSetText(CovensCore.Instance.RecipeList, false, selector, "Soul Transposition Recipes", "This list displays all soul transposition recipes.").gameObject);
         }
     }
 }

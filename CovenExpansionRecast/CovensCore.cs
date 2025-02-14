@@ -393,12 +393,19 @@ namespace CovenExpansionRecast
                         witches.tenets.Add(new H_SharedKnowledge(witches));
                         witches.tenets.Add(new H_OutcastShelters(witches));
                         witches.tenets.Add(new H_Aviaries(witches));
-                        witches.tenets.Add(new H_Initiation(witches));
-                    }
-
-                    if (Opt_Curseweaving)
-                    {
                         witches.tenets.Add(new H_Curseweavers(witches));
+
+                        H_Dogmantic dogmatic = (H_Dogmantic)witches.tenets.FirstOrDefault(t => t is H_Dogmantic);
+                        if (dogmatic == null)
+                        {
+                            witches.tenets.Add(new H_Initiation(witches));
+                        }
+                        else
+                        {
+                            int index = witches.tenets.IndexOf(dogmatic);
+                            witches.tenets[index] = new H_Initiation(witches);
+                            witches.tenets.Add(dogmatic);
+                        }
                     }
                 }
             }

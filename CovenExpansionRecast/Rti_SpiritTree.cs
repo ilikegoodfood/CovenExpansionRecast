@@ -98,7 +98,7 @@ namespace CovenExpansionRecast
 
             if (ua.location.index == ua.homeLocation)
             {
-                msgs.Add(new ReasonMsg("Benefit to my home location", 30.0));
+                msgs?.Add(new ReasonMsg("Benefit to my home location", 30.0));
                 utility += 30.0;
             }
 

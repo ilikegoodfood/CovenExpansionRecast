@@ -36,7 +36,7 @@ namespace CovenExpansionRecast
         public override string getRestriction()
         {
             T_MasteryCurseweaving curseweaving = (T_MasteryCurseweaving)Caster.person.traits.FirstOrDefault(t => t is T_MasteryCurseweaving);
-            if (curseweaving.level < 3)
+            if (curseweaving == null ||  curseweaving.level < 3)
             {
                 return $"Requires {GetArcaneSecretsRequired()} Arcane Knowledge";
             }
@@ -75,7 +75,7 @@ namespace CovenExpansionRecast
             }
 
             T_MasteryCurseweaving curseweaving = (T_MasteryCurseweaving)Caster.person.traits.FirstOrDefault(t => t is T_MasteryCurseweaving);
-            if (curseweaving.level >= curseweaving.getMaxLevel())
+            if (curseweaving != null && curseweaving.level >= curseweaving.getMaxLevel())
             {
                 return false;
             }

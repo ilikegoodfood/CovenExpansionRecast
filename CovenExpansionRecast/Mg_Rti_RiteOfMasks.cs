@@ -32,10 +32,10 @@ namespace CovenExpansionRecast
         {
             if (Soulstone == null || Soulstone.CapturedSoul == null || Soulstone.CapturedSoul.house == null || Soulstone.CapturedSoul.society is SG_AgentWanderers || Soulstone.CapturedSoul.society == map.soc_dark)
             {
-                return "Changes the casters house and society to the house and society of a soul trapped within a soulstone. While in a location with a ruler of the new house that location loses 1 security.";
+                return "Changes the caster's house and society to the house and society of a soul trapped within a soulstone. While in a location with a ruler of the new house that location loses 1 security.";
             }
 
-            return $"Changes the casters house and society to mathc that of {Soulstone.CapturedSoul.getFullName()}. While in a location with a ruler of house {Soulstone.CapturedSoul.house.name}, the location loses 1 security.";
+            return $"Changes the caster's house and society to match that of {Soulstone.CapturedSoul.getFullName()}. While in a location with a ruler of house {Soulstone.CapturedSoul.house.name}, the location loses 1 security.";
         }
 
         public override string getCastFlavour()
