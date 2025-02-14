@@ -90,7 +90,7 @@ namespace CovenExpansionRecast
                 utility += 20.0;
             }
 
-            if (ua.location.settlement is Set_City || ua.location.settlement is Set_DwarvenCity)
+            if (ua.location.settlement is Set_City)
             {
                 msgs?.Add(new ReasonMsg("Benefit to City", 40.0));
                 utility += 40.0;

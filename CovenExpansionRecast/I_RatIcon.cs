@@ -74,7 +74,7 @@ namespace CovenExpansionRecast
                             continue;
                         }
 
-                        if (ua.location.settlement is Set_City || ua.location.settlement is Set_DwarvenCity)
+                        if (ua.location.settlement is Set_City)
                         {
                             prowler.charge = 0;
 

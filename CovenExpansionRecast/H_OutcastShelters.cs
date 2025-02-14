@@ -51,7 +51,7 @@ namespace CovenExpansionRecast
                 }
 
                 Species species = unit.person.species;
-                if (species != settlementHuman.map.species_human && species != settlementHuman.map.species_elf && species != settlementHuman.map.species_dwarf)
+                if (species != settlementHuman.map.species_human && species != settlementHuman.map.species_elf)
                 {
                     unit.addProfile(0.8 * status);
                     unit.addMenace(0.3 * status);
