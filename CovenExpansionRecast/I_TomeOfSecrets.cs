@@ -11,7 +11,7 @@ namespace CovenExpansionRecast
 {
     public class I_TomeOfSecrets : Item
     {
-        public List<int> Secrets;
+        public int[] Secrets;
 
         public int Progress = 0;
 
@@ -26,8 +26,8 @@ namespace CovenExpansionRecast
         public I_TomeOfSecrets(Map map)
             : base(map)
         {
-            Secrets = new List<int>(8);
-            for (int i = 0; i < Secrets.Count; i++)
+            Secrets = new int[8];
+            for (int i = 0; i < Secrets.Length; i++)
             {
                 Secrets[i] = i;
             }
@@ -43,7 +43,7 @@ namespace CovenExpansionRecast
         {
             if (Progress >= 3)
             {
-                return " An inscrutable tome that demands knowledge as much as it offers. +2 <b>Lore</b>. The tome is satiated.";
+                return "An inscrutable tome that demands knowledge as much as it offers. +2 <b>Lore</b>. The tome is satiated.";
             }
 
             string taskString = "Nothing";

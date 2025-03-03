@@ -38,7 +38,11 @@ namespace CovenExpansionRecast
             {
                 ua.rituals.Add(new Mg_MagicPlague(ua.location));
                 ua.rituals.Add(new Mg_SoulTrap(ua.location));
-                ua.rituals.Add(new Rt_StudyCurseweaving(ua.location, ua));
+
+                if (!ua.rituals.Any(rt => rt is Rt_StudyCurseweaving))
+                {
+                    ua.rituals.Add(new Rt_StudyCurseweaving(ua.location, ua));
+                }
             }
 
             if (level > 0)

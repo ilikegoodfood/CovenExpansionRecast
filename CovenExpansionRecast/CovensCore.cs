@@ -459,12 +459,12 @@ namespace CovenExpansionRecast
         {
             foreach (Unit unit in map.units)
             {
-                if (!(unit is UA ua))
+                if (!(unit is UA ua) || ua.isDead || ua.person == null)
                 {
                     continue;
                 }
 
-                if (ua.person.traits.Any(t => t is T_ArcaneKnowledge))
+                if (ua.person.traits.Any(t => t is T_ArcaneKnowledge || t is T_MasteryCurseweaving))
                 {
                     if (!ua.rituals.Any(rt => rt is Rt_StudyCurseweaving))
                     {

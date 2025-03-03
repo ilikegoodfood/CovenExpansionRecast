@@ -38,7 +38,7 @@ namespace CovenExpansionRecast
             T_MasteryCurseweaving curseweaving = (T_MasteryCurseweaving)Caster.person.traits.FirstOrDefault(t => t is T_MasteryCurseweaving);
             if (curseweaving == null ||  curseweaving.level < 3)
             {
-                return $"Requires {GetArcaneSecretsRequired()} Arcane Knowledge";
+                return $"Requires {GetArcaneSecretsRequired(curseweaving)} Arcane Knowledge";
             }
             else
             {
@@ -48,16 +48,26 @@ namespace CovenExpansionRecast
 
         public int GetArcaneSecretsRequired()
         {
+            T_MasteryCurseweaving curseweaving = (T_MasteryCurseweaving)Caster.person.traits.FirstOrDefault(t => t is T_MasteryCurseweaving);
+            return GetArcaneSecretsRequired(curseweaving);
+        }
+
+        public int GetArcaneSecretsRequired(T_MasteryCurseweaving curseweaving)
+        {
             int[] array = new int[]
             {
                 1,
                 2,
                 3
             };
-            T_MasteryCurseweaving curseweaving = (T_MasteryCurseweaving)Caster.person.traits.FirstOrDefault(t => t is T_MasteryCurseweaving);
+
             if (curseweaving == null)
             {
                 return array[0];
+            }
+            if (curseweaving.level >= 3)
+            {
+                return 10000;
             }
             return array[curseweaving.level];
         }
@@ -74,14 +84,14 @@ namespace CovenExpansionRecast
                 return false;
             }
 
-            T_MasteryCurseweaving curseweaving = (T_MasteryCurseweaving)Caster.person.traits.FirstOrDefault(t => t is T_MasteryCurseweaving);
+            T_MasteryCurseweaving curseweaving = (T_MasteryCurseweaving)ua.person.traits.FirstOrDefault(t => t is T_MasteryCurseweaving);
             if (curseweaving != null && curseweaving.level >= curseweaving.getMaxLevel())
             {
                 return false;
             }
 
-            T_ArcaneKnowledge arcaneKnowledge = (T_ArcaneKnowledge)ua.person.traits.FirstOrDefault(t => t is T_ArcaneKnowledge);
-            if (arcaneKnowledge == null || arcaneKnowledge.level < GetArcaneSecretsRequired())
+            T_ArcaneKnowledge arcaneKnowledge = (T_ArcaneKnowledge)ua.person.traits.FirstOrDefault(t => t is T_ArcaneKnowledge && t.level >= GetArcaneSecretsRequired(curseweaving));
+            if (arcaneKnowledge == null)
             {
                 return false;
             }
@@ -120,14 +130,14 @@ namespace CovenExpansionRecast
 
         public override void complete(UA u)
         {
-            T_ArcaneKnowledge arcaneKnowledge = (T_ArcaneKnowledge)u.person.traits.FirstOrDefault(t => t is T_ArcaneKnowledge);
-            T_MasteryCurseweaving curseweaving = (T_MasteryCurseweaving)Caster.person.traits.FirstOrDefault(t => t is T_MasteryCurseweaving);
-            if (arcaneKnowledge == null || arcaneKnowledge.level < GetArcaneSecretsRequired() || (curseweaving != null && curseweaving.level >= curseweaving.getMaxLevel()))
+            T_MasteryCurseweaving curseweaving = (T_MasteryCurseweaving)u.person.traits.FirstOrDefault(t => t is T_MasteryCurseweaving);
+            T_ArcaneKnowledge arcaneKnowledge = (T_ArcaneKnowledge)u.person.traits.FirstOrDefault(t => t is T_ArcaneKnowledge && t.level >= GetArcaneSecretsRequired(curseweaving));
+            if (arcaneKnowledge == null || (curseweaving != null && curseweaving.level >= curseweaving.getMaxLevel()))
             {
                 return;
             }
 
-            arcaneKnowledge.level -= GetArcaneSecretsRequired();
+            arcaneKnowledge.level -= GetArcaneSecretsRequired(curseweaving);
 
             if (curseweaving == null)
             {
