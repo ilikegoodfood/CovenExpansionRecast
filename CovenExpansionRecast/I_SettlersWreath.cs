@@ -31,7 +31,7 @@ namespace CovenExpansionRecast
 
         public override string getShortDesc()
         {
-            if (Society == null)
+            if (Society != null)
             {
                 return $"A kingdom contained in a laurel wreath. Currently can be used to settle a large territory all at once for the kingdom of {Society.getName()}.";
             }
