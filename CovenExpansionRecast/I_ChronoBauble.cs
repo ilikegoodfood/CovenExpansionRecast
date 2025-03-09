@@ -33,7 +33,7 @@ namespace CovenExpansionRecast
 
         public override void turnTick(Person owner)
         {
-            foreach (Trait trait in owner.traits)
+            foreach (Trait trait in owner.traits.ToList())
             {
                 trait.turnTick(owner);
             }
