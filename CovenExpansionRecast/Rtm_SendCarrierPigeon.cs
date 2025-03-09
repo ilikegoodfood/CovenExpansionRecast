@@ -1,4 +1,5 @@
 ﻿using Assets.Code;
+using CommunityLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -64,7 +65,7 @@ namespace CovenExpansionRecast
         {
             if (!ua.minions.Any(m => m is M_Pigeon))
             {
-                ua.rituals.Remove(this);
+                CovensCore.Instance.RitualRemovalData.Add(new Tuple<UA, Ritual>( ua, this ));
                 return false;
             }
 
