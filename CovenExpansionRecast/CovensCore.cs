@@ -179,6 +179,7 @@ namespace CovenExpansionRecast
             _map = map;
 
             GameInitialisation(map);
+            UpdateSave(map);
         }
 
         private void GameInitialisation(Map map)
@@ -191,6 +192,14 @@ namespace CovenExpansionRecast
             RegisterAgentAIs(map);
 
             BlacklistPropertyForPsychogenicIllness(typeof(Pr_PoliticalInstability));
+        }
+
+        private void UpdateSave(Map map)
+        {
+            if (RitualRemovalData == null)
+            {
+                RitualRemovalData = new List<Tuple<UA, Ritual>>();
+            }
         }
 
         private void GetModKernels(List<ModKernel> kernels)
