@@ -27,6 +27,8 @@ namespace CovenExpansionRecast
 
         public P_OpenMind OpenMindPower;
 
+        public List<Tuple<UA, Ritual>> RitualRemovalData;
+
         public static bool Opt_Curseweaving = true;
 
         public static bool Opt_SoulWeaving = true;
@@ -183,6 +185,7 @@ namespace CovenExpansionRecast
         {
             _modIntegrationData = new Dictionary<string, ModIntegrationData>();
             _psychogenicIllnessPropertyBlacklist = new HashSet<Type>();
+            RitualRemovalData = new List<Tuple<UA, Ritual>>();
             GetModKernels(map.mods);
             RegisterComLibHooks(map);
             RegisterAgentAIs(map);
@@ -471,6 +474,11 @@ namespace CovenExpansionRecast
                         ua.rituals.Add(new Rt_StudyCurseweaving(ua.location, ua));
                     }
                 }
+            }
+
+            foreach (Tuple<UA, Ritual> tuple in RitualRemovalData)
+            {
+                tuple.Item1.rituals.Remove(tuple.Item2);
             }
         }
 
