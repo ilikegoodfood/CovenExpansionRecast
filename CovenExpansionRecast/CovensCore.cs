@@ -489,6 +489,7 @@ namespace CovenExpansionRecast
             {
                 tuple.Item1.rituals.Remove(tuple.Item2);
             }
+            RitualRemovalData.Clear();
         }
 
         public override Item optionToReturnItemFromRandomPool(int itemRarity)
