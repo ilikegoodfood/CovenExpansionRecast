@@ -112,8 +112,8 @@ namespace CovenExpansionRecast
                 return -utilityModifier;
             }
 
-            reasons?.Add(new ReasonMsg("Wonderlust", utilityModifier));
-            return utilityModifier;
+            reasons?.Add(new ReasonMsg("Wonderlust", 0.0));
+            return 0.0;
         }
 
         public override void completeChallenge(Challenge challenge)
