@@ -80,7 +80,7 @@ namespace CovenExpansionRecast
             }
 
             List<Type> typesToRemove = new List<Type>();
-            foreach (Type ChallengeType in ChallengeTypeDict.Keys)
+            foreach (Type ChallengeType in ChallengeTypeDict.Keys.ToList())
             {
                 ChallengeTypeDict[ChallengeType] -= decayRate;
 
