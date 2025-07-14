@@ -91,5 +91,18 @@ namespace CovenExpansionRecast
                 }
             }
         }
+
+        public override int onUnitAI_GetsDistanceToLocation(Unit u, Location target, Location[] pathTo, int travelTime)
+        {
+            if (u.person != null)
+            {
+                if (u.person.items.Any(i => i is I_MadBoots))
+                {
+                    travelTime = (int)Math.Ceiling(travelTime / (u.getMaxMoves() + 2.0));
+                }
+            }
+
+            return travelTime;
+        }
     }
 }

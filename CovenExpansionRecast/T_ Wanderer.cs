@@ -50,6 +50,8 @@ namespace CovenExpansionRecast
                     {
                         AttackCount++;
                         Attacking = true;
+                        Guarding = false;
+                        Disrupting = false;
                     }
                     break;
                 case Task_Bodyguard _:
@@ -57,6 +59,8 @@ namespace CovenExpansionRecast
                     {
                         GuardCount++;
                         Guarding = true;
+                        Attacking = false;
+                        Disrupting = false;
                     }
                     break;
                 case Task_DisruptUA _:
@@ -64,6 +68,8 @@ namespace CovenExpansionRecast
                     {
                         DisruptCount++;
                         Disrupting = true;
+                        Attacking = false;
+                        Guarding = false;
                     }
                     break;
                 default:
@@ -76,14 +82,17 @@ namespace CovenExpansionRecast
             List<Type> typesToRemove = new List<Type>();
             foreach (Type ChallengeType in ChallengeTypeDict.Keys)
             {
+                ChallengeTypeDict[ChallengeType] -= decayRate;
+
                 if (ChallengeTypeDict[ChallengeType] < 1.0)
                 {
                     typesToRemove.Add(ChallengeType);
                 }
-                else
-                {
-                    ChallengeTypeDict[ChallengeType] -= decayRate;
-                }
+            }
+
+            foreach (Type ChallengeType in typesToRemove)
+            {
+                ChallengeTypeDict.Remove(ChallengeType);
             }
 
             if (p.map.turn % 50 == 0)
