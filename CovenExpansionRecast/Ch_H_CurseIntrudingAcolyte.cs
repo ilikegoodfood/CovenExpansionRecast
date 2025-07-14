@@ -215,11 +215,11 @@ namespace CovenExpansionRecast
                     T_Generosity generosity = new T_Generosity(Order);
                     if (u.isCommandable())
                     {
-                        msgString = $"{Target.getName()} has disrupted the faith at {location.getName()} and has been cursed as a result. {u.getName()} has cursed them with the curse of generosity, and will constantly gonate funds to the coven that cursed them.";
+                        msgString = $"{Target.getName()} has disrupted the faith at {location.getName()} and has been cursed as a result. {u.getName()} has cursed them with the curse of generosity, and will constantly donate funds to the coven that cursed them.";
                     }
                     else
                     {
-                        map.addUnifiedMessage(Target, u, "Curse of Generosity", $"{Target.getName()} has disrupted the faith at {location.getName()} and has been cursed as a result. {u.getName()} has cursed them with the curse of generosity, and will constantly gonate funds to the coven that cursed them.", "Witch Curses Acolyte", true);
+                        map.addUnifiedMessage(Target, u, "Curse of Generosity", $"{Target.getName()} has disrupted the faith at {location.getName()} and has been cursed as a result. {u.getName()} has cursed them with the curse of generosity, and will constantly donate funds to the coven that cursed them.", "Witch Curses Acolyte", true);
                     }
                     Target.person.receiveTrait(generosity);
                     break;
