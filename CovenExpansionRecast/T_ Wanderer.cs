@@ -79,20 +79,14 @@ namespace CovenExpansionRecast
                     break;
             }
 
-            List<Type> typesToRemove = new List<Type>();
             foreach (Type ChallengeType in ChallengeTypeDict.Keys.ToList())
             {
                 ChallengeTypeDict[ChallengeType] -= decayRate;
 
                 if (ChallengeTypeDict[ChallengeType] < 1.0)
                 {
-                    typesToRemove.Add(ChallengeType);
+                    ChallengeTypeDict.Remove(ChallengeType);
                 }
-            }
-
-            foreach (Type ChallengeType in typesToRemove)
-            {
-                ChallengeTypeDict.Remove(ChallengeType);
             }
 
             if (p.map.turn % 50 == 0)
