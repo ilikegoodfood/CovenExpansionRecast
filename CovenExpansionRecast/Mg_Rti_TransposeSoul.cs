@@ -67,7 +67,7 @@ namespace CovenExpansionRecast
 
         public override bool validFor(UA ua)
         {
-            if (ua.location == null)
+            if (ua.location == null || ua.location.settlement == null)
             {
                 return false;
             }
@@ -77,7 +77,7 @@ namespace CovenExpansionRecast
                 return false;
             }
 
-            return location.settlement.subs.Any(sub => sub is Sub_Temple temple && temple.order is HolyOrder_Witches);
+            return ua.location.settlement.subs.Any(sub => sub is Sub_Temple temple && temple.order is HolyOrder_Witches);
         }
 
         public override double getComplexity()
