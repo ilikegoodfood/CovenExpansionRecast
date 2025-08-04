@@ -14,6 +14,7 @@ namespace CovenExpansionRecast
             : base(map)
         {
             challenges.Add(new Rti_ReadTransposingScroll(map.locations[0]));
+            challenges.Add(new Rti_SoulSearch(map.locations[0]));
         }
 
         public override string getName()
@@ -23,7 +24,7 @@ namespace CovenExpansionRecast
 
         public override string getShortDesc()
         {
-            return "A scroll containing recipes for soul transposition. Can be read to view all transposition recipes. Also increases the rate of transposition rituals by 1 per turn.";
+            return "A scroll containing recipes for soul transposition. Can be read to view all transposition recipes, or used to search for souls of specific types. Also increases the rate of transposition rituals by 1 per turn.";
         }
 
         public override Sprite getIconFore()

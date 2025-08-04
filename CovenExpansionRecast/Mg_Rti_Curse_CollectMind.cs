@@ -45,7 +45,7 @@ namespace CovenExpansionRecast
 
         public override string getRestriction()
         {
-            return "Requires Mastery of Curseweaving at least 3 and a soulstone containing a Physician or Mediator soul. The soul must not belong to The Dark, or to a monstrous population, and their house must not already suffer the curse.";
+            return $"Requires Mastery of Curseweaving at least 3 and a soulstone containing a {SoulTypeUtils.GetTitle(SoulType.Physician)} or {SoulTypeUtils.GetTitle(SoulType.Mediator)} soul. The soul must not belong to The Dark, or to a monstrous population, and their house must not already suffer the curse.";
         }
 
         public override Sprite getSprite()
@@ -60,7 +60,7 @@ namespace CovenExpansionRecast
 
         public override bool valid()
         {
-            return Soulstone != null && Soulstone.CapturedSoul != null && (Soulstone.GetSoulType() == "Physician" || Soulstone.GetSoulType() == "Mediator") && Soulstone.CapturedSoul.house != null && !(Soulstone.CapturedSoul.society is SG_AgentWanderers) && Soulstone.CapturedSoul.society != map.soc_dark && !Soulstone.CapturedSoul.house.curses.Any(c => c is Curse_CollectedMind);
+            return Soulstone != null && Soulstone.CapturedSoul != null && (Soulstone.GetSoulType() == SoulType.Physician || Soulstone.GetSoulType() == SoulType.Mediator) && Soulstone.CapturedSoul.house != null && !(Soulstone.CapturedSoul.society is SG_AgentWanderers) && Soulstone.CapturedSoul.society != map.soc_dark && !Soulstone.CapturedSoul.house.curses.Any(c => c is Curse_CollectedMind);
         }
 
         public override bool validFor(UA ua)

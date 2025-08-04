@@ -124,6 +124,7 @@
     <Compile Include="Mg_Rti_RiteOfMasks.cs" />
     <Compile Include="Mg_Rti_TransposeSoul.cs" />
     <Compile Include="Mg_Curse_Wanderlust.cs" />
+    <Compile Include="Rti_SoulSearch.cs" />
     <Compile Include="Rti_SpiritTree.cs" />
     <Compile Include="Rtm_SendCarrierPigeon.cs" />
     <Compile Include="Rt_Croak.cs" />
@@ -141,6 +142,9 @@
     <Compile Include="Sel2_OpenMind_NationalActionSelector.cs" />
     <Compile Include="Sel2_OpenMind_TypeSelector.cs" />
     <Compile Include="Sel2_PigeonTargetSelector.cs" />
+    <Compile Include="Sel2_SoulFinder.cs" />
+    <Compile Include="SoulType.cs" />
+    <Compile Include="SoulTypeUtils.cs" />
     <Compile Include="T_ Wanderer.cs" />
     <Compile Include="T_CollectedMind.cs" />
     <Compile Include="T_PhthisicalPoisoned.cs" />

@@ -45,15 +45,16 @@ namespace CovenExpansionRecast
         // The DUalSouls list is built dynamically in beforeMapGen
         // The lists of craftables are randomiised in beforeMapGen
         // Craftables lists must be of at least the length of the corresponding souls lists.
-        public readonly List<string> SingleSouls = new List<string>(new string[]
+        public readonly List<SoulType> SingleSouls = new List<SoulType>
         {
-            "Physician",
-            "Mediator",
-            "Exorcist",
-            "Lightbringer",
-            "Orc-slayer",
-            "Mage"
-        });
+            SoulType.Physician,
+            SoulType.Mediator,
+            SoulType.Exorcist,
+            SoulType.Lightbringer,
+            SoulType.OrcSlayer,
+            SoulType.Mage,
+            SoulType.Alienist
+        };
 
         public readonly List<string> SingleCraftables = new List<string>(new string[]
         {
@@ -69,7 +70,7 @@ namespace CovenExpansionRecast
         });
 
         // Given SimpleSouls has 6 items, DualSouls will have 15 items.
-        public readonly List<Tuple<string, string>> DualSouls = new List<Tuple<string, string>>();
+        public readonly List<Tuple<SoulType, SoulType>> DualSouls = new List<Tuple<SoulType, SoulType>>();
 
         public readonly List<string> DualCraftables = new List<string>(new string[]
         {
@@ -90,15 +91,16 @@ namespace CovenExpansionRecast
             "I_HoodOfShadows"
         });
 
-        public readonly List<string> DeepOneSouls = new List<string>(new string[]
+        public readonly List<SoulType> DeepOneSouls = new List<SoulType>
         {
-            "Physician",
-            "Mediator",
-            "Exorcist",
-            "Lightbringer",
-            "Orc-slayer",
-            "Mage"
-        });
+            SoulType.Physician,
+            SoulType.Mediator,
+            SoulType.Exorcist,
+            SoulType.Lightbringer,
+            SoulType.OrcSlayer,
+            SoulType.Mage,
+            SoulType.Alienist
+        };
 
         public readonly List<string> DeepOneCraftables = new List<string>(new string[]
         {
@@ -358,33 +360,35 @@ namespace CovenExpansionRecast
             {
                 for (int j = i + 1; j < SingleSouls.Count; j++)
                 {
-                    DualSouls.Add(new Tuple<string, string>(SingleSouls[i], SingleSouls[j]));
+                    DualSouls.Add(new Tuple<SoulType, SoulType>(SingleSouls[i], SingleSouls[j]));
                 }
             }
 
             // Shuffle craftables collection, ensuring that the soul-craftable pairs are unique each game.
             SingleCraftables.Shuffle();
             DualCraftables.Shuffle();
-            DeepOneCraftables.Shuffle();
+
+            // In the case of DeepOnes, there are more SoulTypes than craftables, therefore, the soul types are shuffled instead of the craftables.
+            DeepOneSouls.Shuffle();
         }
 
         public void BuildSoulItemRecipeList(Map map)
         {
-            for (int i = 0; i < SingleSouls.Count; i++)
+            for (int i = 0; i < SingleSouls.Count && i < SingleCraftables.Count; i++)
             {
-                RecipeList.Add($"{SingleSouls[i]} => {GetSoulcraftingItemName(SingleCraftables[i])}");
+                RecipeList.Add($"{SoulTypeUtils.GetTitle(SingleSouls[i])} => {GetSoulcraftingItemName(SingleCraftables[i])}");
             }
 
-            for (int i = 0; i < DualSouls.Count; i++)
+            for (int i = 0; i < DualSouls.Count && i < DualCraftables.Count; i++)
             {
-                RecipeList.Add($"{DualSouls[i].Item1} + {DualSouls[i].Item2} => {GetSoulcraftingItemName(DualCraftables[i])}");
+                RecipeList.Add($"{SoulTypeUtils.GetTitle(DualSouls[i].Item1)} + {SoulTypeUtils.GetTitle(DualSouls[i].Item2)} => {GetSoulcraftingItemName(DualCraftables[i])}");
             }
 
             if (Instance.TryGetModIntegrationData("DeepOnesPlus", out _))
             {
-                for (int i = 0; i < DeepOneSouls.Count; i++)
+                for (int i = 0; i < DeepOneSouls.Count && i < DeepOneCraftables.Count; i++)
                 {
-                    RecipeList.Add($"Alienist + {DeepOneSouls[i]} => {GetSoulcraftingItemName(DeepOneCraftables[i])}");
+                    RecipeList.Add($"Pelagist + {SoulTypeUtils.GetTitle(DeepOneSouls[i])} => {GetSoulcraftingItemName(DeepOneCraftables[i])}");
                 }
             }
         }
@@ -784,14 +788,14 @@ namespace CovenExpansionRecast
             return _modIntegrationData.TryGetValue(name, out intData);
         }
 
-        public string GetSoulcraftingItemID(string soulTypeA, string soulTypeB = "Nothing")
+        public string GetSoulcraftingItemID(SoulType soulTypeA, SoulType soulTypeB = SoulType.Nothing)
         {
-            if (string.IsNullOrEmpty(soulTypeB))
+            if (soulTypeA == soulTypeB)
             {
-                soulTypeB = "Nothing";
+                return string.Empty;
             }
 
-            if (soulTypeA != "Alienist" && !SingleSouls.Contains(soulTypeA))
+            if (soulTypeA != SoulType.Pelagist && !SingleSouls.Contains(soulTypeA))
             {
                 return string.Empty;
             }
@@ -802,7 +806,7 @@ namespace CovenExpansionRecast
             }
 
             int index;
-            if (soulTypeB == "Nothing")
+            if (soulTypeB == SoulType.Nothing)
             {
                 index = SingleSouls.IndexOf(soulTypeA);
                 if (index < 0 && index >= SingleCraftables.Count)
@@ -812,15 +816,17 @@ namespace CovenExpansionRecast
                 return SingleCraftables[index];
             }
 
-            if (soulTypeB != "Alienist" && !SingleSouls.Contains(soulTypeB))
+            if (soulTypeB != SoulType.Pelagist && !SingleSouls.Contains(soulTypeB))
             {
                 return string.Empty;
             }
 
-            if  (soulTypeA == "Alienist" || soulTypeB == "Alienist")
+            
+
+            if  (soulTypeA == SoulType.Pelagist || soulTypeB == SoulType.Pelagist)
             {
-                string otherSoulType;
-                if (soulTypeA == "Alienist")
+                SoulType otherSoulType;
+                if (soulTypeA == SoulType.Pelagist)
                 {
                     otherSoulType = soulTypeB;
                 }
@@ -838,11 +844,11 @@ namespace CovenExpansionRecast
                 return DeepOneCraftables[index];
             }
 
-            Tuple<string, string> tuple = new Tuple<string, string>(soulTypeA, soulTypeB);
+            Tuple<SoulType, SoulType> tuple = new Tuple<SoulType, SoulType>(soulTypeA, soulTypeB);
             index = DualSouls.IndexOf(tuple);
             if (index == -1)
             {
-                tuple = new Tuple<string, string>(soulTypeB, soulTypeA);
+                tuple = new Tuple<SoulType, SoulType>(soulTypeB, soulTypeA);
                 index = DualSouls.IndexOf(tuple);
             }
 
@@ -960,7 +966,7 @@ namespace CovenExpansionRecast
             return null;
         }
 
-        public Item GetSoulcraftingItem(Map map, UA ua, string soulTypeA, string soulTypeB = "Nothing")
+        public Item GetSoulcraftingItem(Map map, UA ua, SoulType soulTypeA, SoulType soulTypeB = SoulType.Nothing)
         {
             string itemID = GetSoulcraftingItemID(soulTypeA, soulTypeB);
             if (!string.IsNullOrEmpty(itemID))
@@ -1040,7 +1046,7 @@ namespace CovenExpansionRecast
             return  string.Empty;
         }
 
-        public string GetSoulcraftingItemName(string soulTypeA, string soulTypeB = "Nothing")
+        public string GetSoulcraftingItemName(SoulType soulTypeA, SoulType soulTypeB = SoulType.Nothing)
         {
             string itemID = GetSoulcraftingItemID(soulTypeA, soulTypeB);
             return GetSoulcraftingItemName(itemID);
