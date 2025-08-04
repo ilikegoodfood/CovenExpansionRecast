@@ -75,7 +75,7 @@ namespace CovenExpansionRecast
 
         public override void complete(UA u)
         {
-            Sel2_DisplayInertSelection selector = new Sel2_DisplayInertSelection(u.map);
+            Sel2_DisplayInertSelection selector = new Sel2_DisplayInertSelection();
             map.world.ui.addBlocker(map.world.prefabStore.getScrollSetText(CovensCore.Instance.RecipeList, false, selector, "Soul Transposition Recipes", "This list displays all soul transposition recipes.").gameObject);
         }
     }

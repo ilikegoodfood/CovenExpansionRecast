@@ -33,26 +33,9 @@ namespace CovenExpansionRecast
 
         public override string getName()
         {
-            switch (GetSoulType())
+            if (CapturedSoul != null)
             {
-                case "Werewolf":
-                    return "Soulstone (Werewolf)";
-                case "Mage":
-                    return "Soulstone (Mage)";
-                case "OrcSlayer":
-                    return "Soulstone(Orc Slayer)";
-                case "Mediateor":
-                    return "Soulstone (Mediator)";
-                case "Physician":
-                    return "Soulstone (Physician)";
-                case "Lightbringer":
-                    return "Soulstone (Lightbringer)";
-                case "Exorcist":
-                    return "Soulstone (Exorcist)";
-                case "Alienist":
-                    return "Soulstone (Alienist)";
-                case "Nothing":
-                    return "Soulstone";
+                return $"Soulstone ({SoulTypeUtils.GetTitle(CapturedSoul)})";
             }
 
             return "Soulstone";
@@ -72,110 +55,42 @@ namespace CovenExpansionRecast
         {
             if (CapturedSoul != null)
             {
-                foreach (Trait trait in CapturedSoul.traits)
+                switch(SoulTypeUtils.GetSoulType(CapturedSoul))
                 {
-                    if (trait.getName().Contains("Lycanthropy"))
-                    {
-                        return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_Werewolf.png");
-                    }
-                    
-                    if (trait is T_MasteryGeomancy)
-                    {
+                    case SoulType.Alienist:
+                        return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_Alienist.png");
+                    case SoulType.Pelagist:
+                        return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_Alienist.png");
+                    case SoulType.Exorcist:
+                        return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_Exorcist.png");
+                    case SoulType.Lightbringer:
+                        return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_Lightbringer.png");
+                    case SoulType.Mediator:
+                        return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_Mediator.png");
+                    case SoulType.Mage:
                         return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_Mage.png");
-                    }
-
-                    if (trait is T_ChallengeBooster booster)
-                    {
-                        if (booster.target == Tags.ORC)
-                        {
-                            return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_OrcSlayer.png");
-                        }
-
-                        if (booster.target == Tags.DISCORD)
-                        {
-                            return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_Mediator.png");
-                        }
-
-                        if (booster.target == Tags.DISEASE)
-                        {
-                            return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_Doctor.png");
-                        }
-
-                        if (booster.target == Tags.SHADOW)
-                        {
-                            return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_Lightbringer.png");
-                        }
-
-                        if (booster.target == Tags.UNDEAD)
-                        {
-                            return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_Exorcist.png");
-                        }
-
-                        if (booster.target == Tags.DEEPONES)
-                        {
-                            return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_Alianist.png");
-                        }
-                    }
+                    case SoulType.OrcSlayer:
+                        return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_OrcSlayer.png");
+                    case SoulType.Physician:
+                        return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_Doctor.png");
+                    case SoulType.Werewolf:
+                        return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_Werewolf.png");
+                    default:
+                        return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone.png");
                 }
-
-                return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone.png");
             }
 
             return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_Inactive.png");
         }
 
-        public string GetSoulType()
+        public SoulType GetSoulType()
         {
             if (CapturedSoul != null)
             {
-                foreach (Trait trait in CapturedSoul.traits)
-                {
-                    if (trait.getName().Contains("Lycanthropy"))
-                    {
-                        return "Werewolf";
-                    }
-
-                    if (trait is T_MasteryGeomancy)
-                    {
-                        return "Mage";
-                    }
-
-                    if (trait is T_ChallengeBooster booster)
-                    {
-                        if (booster.target == Tags.ORC)
-                        {
-                            return "OrcSlayer";
-                        }
-
-                        if (booster.target == Tags.DISCORD)
-                        {
-                            return "Mediator";
-                        }
-
-                        if (booster.target == Tags.DISEASE)
-                        {
-                            return "Physician";
-                        }
-
-                        if (booster.target == Tags.SHADOW)
-                        {
-                            return "Lightbringer";
-                        }
-
-                        if (booster.target == Tags.UNDEAD)
-                        {
-                            return "Exorcist";
-                        }
-
-                        if (booster.target == Tags.DEEPONES)
-                        {
-                            return "Alienist";
-                        }
-                    }
-                }
+                return SoulTypeUtils.GetSoulType(CapturedSoul);
             }
 
-            return "Nothing";
+            return SoulType.Nothing;
         }
 
         public override Sprite getIconBack()
@@ -196,7 +111,7 @@ namespace CovenExpansionRecast
         {
             Dictionary<I_Soulstone, Mg_Rti_TransposeSoul> existingTranspositionRituals = new Dictionary<I_Soulstone, Mg_Rti_TransposeSoul>();
 
-            if (GetSoulType() != "Nothing")
+            if (GetSoulType() != SoulType.Nothing)
             {
                 foreach (Mg_Rti_TransposeSoul transpose in TranspositionRituals)
                 {
@@ -218,13 +133,13 @@ namespace CovenExpansionRecast
             }
 
             TranspositionRituals.Clear();
-            if (GetSoulType() != "Nothing")
+            if (GetSoulType() != SoulType.Nothing)
             {
                 for (int i = 0; i < ua.person.items.Length; i++)
                 {
                     if (ua.person.items[i] is I_Soulstone soulstone)
                     {
-                        if (soulstone != this && soulstone.GetSoulType() != "Nothing" && soulstone.GetSoulType() != GetSoulType())
+                        if (soulstone != this && soulstone.GetSoulType() != SoulType.Nothing && soulstone.GetSoulType() != GetSoulType())
                         {
                             if (CovensCore.Instance.GetSoulcraftingItemID(GetSoulType(), soulstone.GetSoulType()) != string.Empty)
                             {

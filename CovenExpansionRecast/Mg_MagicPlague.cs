@@ -118,7 +118,6 @@ namespace CovenExpansionRecast
             if (soulstones.Count == 0)
             {
                 msgString = "You did not not posses a Soulstone carrying the required soul.";
-                return;
             }
             else if (soulstones.Count == 1)
             {
@@ -127,7 +126,6 @@ namespace CovenExpansionRecast
             else
             {
                 PopSoulSelect(u);
-                return;
             }
         }
 
