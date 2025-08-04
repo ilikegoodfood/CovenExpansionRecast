@@ -22,7 +22,7 @@ namespace CovenExpansionRecast
             GraphicalMap.selectedUnit = null;
             GraphicalMap.selectedHex = soul.location.hex;
             GraphicalMap.panTo(soul.location.hex);
-            GraphicalMap.checkData();
+            GraphicalMap.world.ui.checkData();
         }
     }
 }
