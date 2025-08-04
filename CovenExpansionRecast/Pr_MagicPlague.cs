@@ -2,9 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace CovenExpansionRecast
@@ -144,13 +141,10 @@ namespace CovenExpansionRecast
 
                 if (targetProperty.charge < PlaguePropertyCharge)
                 {
-                    double chargeDelta = 3.0;
-                    if (targetProperty.charge <= 3.0)
-                    {
-                        chargeDelta = PlaguePropertyCharge / 10.0;
-                    }
+                    double chargeDelta = targetProperty.charge <= 3.0 ? PlaguePropertyCharge / 10.0 : 3.0;
+                    chargeDelta = Math.Min(chargeDelta, PlaguePropertyCharge - targetProperty.charge);
 
-                    targetProperty.influences.Add(new ReasonMsg("Psychogenic Illness", deltaCharge));
+                    targetProperty.influences.Add(new ReasonMsg("Psychogenic Illness", chargeDelta));
                 }
             }
         }

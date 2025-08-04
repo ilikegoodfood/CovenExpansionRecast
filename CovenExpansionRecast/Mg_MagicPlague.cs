@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -48,7 +49,7 @@ namespace CovenExpansionRecast
 
         public override string getRestriction()
         {
-            return "Requires Mastery of Curseweaving at least 2 and a soulstone containing a soul. The soul must not belong to The Dark, or to a monstrous population, and their house must not already suffer the curse.";
+            return "Requires Mastery of Curseweaving at least 2 and a soulstone containing a Mediator or Physician soul. The soul must not belong to The Dark, or to a monstrous population, and their house must not already suffer the curse.";
         }
 
         public override Sprite getSprite()
@@ -112,7 +113,7 @@ namespace CovenExpansionRecast
 
         public override void complete(UA u)
         {
-            List<I_Soulstone> soulstones = u.person.items.OfType<I_Soulstone>().Where(i => i is I_Soulstone stone && stone.CapturedSoul != null && stone.CapturedSoul.traits.Any(t => t is T_ChallengeBooster booster && (booster.target == Tags.DISCORD || booster.target == Tags.DISEASE))).ToList();
+            List<I_Soulstone> soulstones = u.person.items.OfType<I_Soulstone>().Where(stone => stone.CapturedSoul != null && stone.CapturedSoul.traits.Any(t => t is T_ChallengeBooster booster && (booster.target == Tags.DISCORD || booster.target == Tags.DISEASE))).ToList();
 
             if (soulstones.Count == 0)
             {
@@ -150,9 +151,10 @@ namespace CovenExpansionRecast
         {
             List<Property> properties = new List<Property>();
             List<string> optionLabels = new List<string>();
+            Type propertyType;
             foreach (Property property in caster.location.properties)
             {
-                Type propertyType = property.GetType();
+                propertyType = property.GetType();
                 if (CovensCore.Instance.IsBlacklistedForPsychogenicIllness(propertyType))
                 {
                     continue;
@@ -164,7 +166,7 @@ namespace CovenExpansionRecast
                     continue;
                 }
 
-                if (property.GetType().GetConstructors().Any(c => c.GetParameters().Length == 1 && c.GetParameters()[0].ParameterType == typeof(Location)))
+                if (propertyType.GetConstructors(BindingFlags.Public | BindingFlags.Instance).Any(c => c.GetParameters().Length == 1 && c.GetParameters()[0].ParameterType == typeof(Location)))
                 {
                     CompatibleProperties.Add(propertyType);
                     properties.Add(property);
