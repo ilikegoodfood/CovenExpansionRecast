@@ -49,7 +49,7 @@ namespace CovenExpansionRecast
 
         public override string getRestriction()
         {
-            return "Requires Mastery of Curseweaving at least 2 and a soulstone containing a Mediator or Physician soul. The soul must not belong to The Dark, or to a monstrous population, and their house must not already suffer the curse.";
+            return "Requires Mastery of Curseweaving at least 2 and a soulstone containing a Mediator or Physician soul.";
         }
 
         public override Sprite getSprite()
@@ -69,7 +69,7 @@ namespace CovenExpansionRecast
 
         public override bool validFor(UA ua)
         {
-            return ua.isCommandable() && ua.location.settlement is SettlementHuman && ua.person != null && ua.person.items.Any(i => i is I_Soulstone soulstone && soulstone.CapturedSoul != null && soulstone.CapturedSoul.traits.Any(t => t is T_ChallengeBooster booster && (booster.target == Tags.DISCORD || booster.target == Tags.DISEASE)));
+            return ua.isCommandable() && ua.location.settlement is SettlementHuman && ua.person != null && ua.person.items.Any(i => i is I_Soulstone soulstone && (soulstone.GetSoulType() == SoulType.Mediator || soulstone.GetSoulType() == SoulType.Physician));
         }
 
         public override double getComplexity()
@@ -113,7 +113,7 @@ namespace CovenExpansionRecast
 
         public override void complete(UA u)
         {
-            List<I_Soulstone> soulstones = u.person.items.OfType<I_Soulstone>().Where(stone => stone.CapturedSoul != null && stone.CapturedSoul.traits.Any(t => t is T_ChallengeBooster booster && (booster.target == Tags.DISCORD || booster.target == Tags.DISEASE))).ToList();
+            List<I_Soulstone> soulstones = u.person.items.OfType<I_Soulstone>().Where(stone => stone.GetSoulType() == SoulType.Mediator || stone.GetSoulType() == SoulType.Physician).ToList();
 
             if (soulstones.Count == 0)
             {
@@ -131,7 +131,7 @@ namespace CovenExpansionRecast
 
         public static void PopSoulSelect(UA caster)
         {
-            List<I_Soulstone> soulstones = caster.person.items.OfType<I_Soulstone>().Where(i => i is I_Soulstone stone && stone.CapturedSoul != null && stone.CapturedSoul.traits.Any(t => t is T_ChallengeBooster booster && (booster.target == Tags.DISCORD || booster.target == Tags.DISEASE))).ToList();
+            List<I_Soulstone> soulstones = caster.person.items.OfType<I_Soulstone>().Where(stone => stone.GetSoulType() == SoulType.Mediator || stone.GetSoulType() == SoulType.Physician).ToList();
 
             List<string> optionLabels = new List<string>();
             foreach (I_Soulstone soulstone in soulstones)

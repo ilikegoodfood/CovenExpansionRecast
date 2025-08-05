@@ -37,7 +37,7 @@ namespace CovenExpansionRecast
 
         public override string getDesc()
         {
-            return "Combines two souls together forging an item from their combined essence. The rarity of the item will depend on the profession of the souls with the highest quality items being composed of two souls with unique professions.";
+            return "Combines two souls together, forging an item from their combined essence. The rarity of the item will depend on the profession of the souls, with the highest quality items being composed of two souls with unique professions.";
         }
 
         public override string getCastFlavour()
@@ -47,7 +47,7 @@ namespace CovenExpansionRecast
 
         public override string getRestriction()
         {
-            return "Requires two soulstones that contain souls.  Must be performed at a witches coven";
+            return "Requires one or two soulstones that contain souls. Must be performed at a witches coven.";
         }
 
         public override Sprite getSprite()

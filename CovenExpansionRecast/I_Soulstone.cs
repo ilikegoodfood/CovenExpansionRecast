@@ -35,7 +35,18 @@ namespace CovenExpansionRecast
         {
             if (CapturedSoul != null)
             {
-                return $"Soulstone ({SoulTypeUtils.GetTitle(CapturedSoul)})";
+                string name = $"Soulstone ({SoulTypeUtils.GetTitle(CapturedSoul)})";
+
+                if (CapturedSoul.society == map.soc_dark)
+                {
+                    name += $" - Agent of The Dark";
+                }
+                else if (CapturedSoul.society is SG_AgentWanderers)
+                {
+                    name += $" - Monstrous Soul";
+                }
+
+                return name;
             }
 
             return "Soulstone";
@@ -59,7 +70,7 @@ namespace CovenExpansionRecast
                 {
                     case SoulType.Alienist:
                         return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_Alienist.png");
-                    case SoulType.Pelagist:
+                    case SoulType.DeepOneSpecialist:
                         return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_Alienist.png");
                     case SoulType.Exorcist:
                         return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_Exorcist.png");

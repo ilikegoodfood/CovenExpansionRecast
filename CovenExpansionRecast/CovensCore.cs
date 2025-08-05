@@ -795,7 +795,7 @@ namespace CovenExpansionRecast
                 return string.Empty;
             }
 
-            if (soulTypeA != SoulType.Pelagist && !SingleSouls.Contains(soulTypeA))
+            if (soulTypeA != SoulType.DeepOneSpecialist && !SingleSouls.Contains(soulTypeA))
             {
                 return string.Empty;
             }
@@ -816,17 +816,17 @@ namespace CovenExpansionRecast
                 return SingleCraftables[index];
             }
 
-            if (soulTypeB != SoulType.Pelagist && !SingleSouls.Contains(soulTypeB))
+            if (soulTypeB != SoulType.DeepOneSpecialist && !SingleSouls.Contains(soulTypeB))
             {
                 return string.Empty;
             }
 
             
 
-            if  (soulTypeA == SoulType.Pelagist || soulTypeB == SoulType.Pelagist)
+            if  (soulTypeA == SoulType.DeepOneSpecialist || soulTypeB == SoulType.DeepOneSpecialist)
             {
                 SoulType otherSoulType;
-                if (soulTypeA == SoulType.Pelagist)
+                if (soulTypeA == SoulType.DeepOneSpecialist)
                 {
                     otherSoulType = soulTypeB;
                 }
