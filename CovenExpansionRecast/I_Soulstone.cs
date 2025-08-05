@@ -59,7 +59,18 @@ namespace CovenExpansionRecast
         {
             if (CapturedSoul != null)
             {
-                return $"A gemstone carved into a magical cage. It contains the captured soul of {CapturedSoul.getName()}.";
+                string result = $"A gemstone carved into a magical cage. It contains the captured soul of {CapturedSoul.getName()} ({SoulTypeUtils.GetTitle(CapturedSoul)}).";
+
+                if (CapturedSoul.society == map.soc_dark)
+                {
+                    result += $"They are an Agent of The Dark, and cannot be cursed.";
+                }
+                else if (CapturedSoul.society is SG_AgentWanderers)
+                {
+                    result += $"They have a Mounstrous Soul, and cannot be cursed.";
+                }
+
+                return result;
             }
 
             return "A gemstone carved into a magical cage that can be used to capture and release souls.";
@@ -156,7 +167,7 @@ namespace CovenExpansionRecast
                     {
                         if (soulstone != this && soulstone.GetSoulType() != SoulType.Nothing && soulstone.GetSoulType() != GetSoulType())
                         {
-                            if (CovensCore.Instance.GetSoulcraftingItemID(GetSoulType(), soulstone.GetSoulType()) != string.Empty)
+                            if (CovensCore.Instance.GetSoulcraftingItemID(GetSoulType(), soulstone.GetSoulType(), false) != string.Empty)
                             {
                                 if (existingTranspositionRituals.TryGetValue(soulstone, out Mg_Rti_TransposeSoul transpose))
                                 {

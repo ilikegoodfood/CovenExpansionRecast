@@ -799,13 +799,8 @@ namespace CovenExpansionRecast
             return _modIntegrationData.TryGetValue(name, out intData);
         }
 
-        public string GetSoulcraftingItemID(SoulType soulTypeA, SoulType soulTypeB = SoulType.Nothing)
+        public string GetSoulcraftingItemID(SoulType soulTypeA, SoulType soulTypeB = SoulType.Nothing, bool checkReverseRecipe = true)
         {
-            if (soulTypeA == soulTypeB)
-            {
-                return string.Empty;
-            }
-
             if (soulTypeA != SoulType.DeepOneSpecialist && !SingleSouls.Contains(soulTypeA))
             {
                 return string.Empty;
@@ -820,7 +815,7 @@ namespace CovenExpansionRecast
             if (soulTypeB == SoulType.Nothing)
             {
                 index = SingleSouls.IndexOf(soulTypeA);
-                if (index < 0 && index >= SingleCraftables.Count)
+                if (index < 0 || index >= SingleCraftables.Count)
                 {
                     return string.Empty;
                 }
@@ -832,9 +827,7 @@ namespace CovenExpansionRecast
                 return string.Empty;
             }
 
-            
-
-            if  (soulTypeA == SoulType.DeepOneSpecialist || soulTypeB == SoulType.DeepOneSpecialist)
+            if  (soulTypeA == SoulType.DeepOneSpecialist || (checkReverseRecipe && soulTypeB == SoulType.DeepOneSpecialist))
             {
                 SoulType otherSoulType;
                 if (soulTypeA == SoulType.DeepOneSpecialist)
@@ -847,7 +840,7 @@ namespace CovenExpansionRecast
                 }
 
                 index = DeepOneSouls.IndexOf(otherSoulType);
-                if (index < 0 || index >= DeepOneSouls.Count)
+                if (index < 0 || index >= DeepOneCraftables.Count)
                 {
                     return string.Empty;
                 }
@@ -857,7 +850,7 @@ namespace CovenExpansionRecast
 
             Tuple<SoulType, SoulType> tuple = new Tuple<SoulType, SoulType>(soulTypeA, soulTypeB);
             index = DualSouls.IndexOf(tuple);
-            if (index == -1)
+            if (checkReverseRecipe && (index < 0 || index >= DualCraftables.Count))
             {
                 tuple = new Tuple<SoulType, SoulType>(soulTypeB, soulTypeA);
                 index = DualSouls.IndexOf(tuple);

@@ -20,17 +20,28 @@ namespace CovenExpansionRecast
 
         public override string getName()
         {
-            return "Capture Soul";
+            return $"Capture {SoulTypeUtils.GetTitle(map.persons[Target.personIndex])} Soul";
         }
 
         public override string getDesc()
         {
-            return $"Captures the soul of {Target.getName()} in an inactive soulstone, saving it for later use.";
+            string result = $"Captures the soul of {map.persons[Target.personIndex].getFullName()} ({SoulTypeUtils.GetTitle(map.persons[Target.personIndex])}) in an inactive soulstone, saving it for later use.";
+
+            if (map.persons[Target.personIndex].society == map.soc_dark)
+            {
+                result += $"They are an Agent of The Dark, and cannot be cursed.";
+            }
+            else if (map.persons[Target.personIndex].society is SG_AgentWanderers)
+            {
+                result += $"They have a Mounstrous Soul, and cannot be cursed.";
+            }
+
+            return result;
         }
 
         public override string getCastFlavour()
         {
-            return "The afterlife can wait, we still have use for this one.";
+            return "The afterlife can wait. We still have use for this one.";
         }
 
         public override string getRestriction()
