@@ -202,6 +202,17 @@ namespace CovenExpansionRecast
             {
                 RitualRemovalData = new List<Tuple<UA, Ritual>>();
             }
+
+            foreach (Person person in map.persons)
+            {
+                for (int i = 0; i < person.items.Length; i++)
+                {
+                    if (person.items[i] is I_Soulstone soulstone && soulstone.Rti_TransposeSoul == null)
+                    {
+                        soulstone.Rti_TransposeSoul = (Mg_Rti_TransposeSoul)soulstone.challenges.FirstOrDefault(ch => ch is Mg_Rti_TransposeSoul transpose && transpose.SoulstoneB == null);
+                    }
+                }
+            }
         }
 
         private void GetModKernels(List<ModKernel> kernels)
