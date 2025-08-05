@@ -27,13 +27,13 @@ namespace CovenExpansionRecast
         {
             if (SoulstoneA == null)
             {
-                return $"Transpose Souls";
+                return $"Transpose Soul(s)";
             }
 
             string name;
             if (SoulstoneB == null)
             {
-                name = $"Transpose Souls ({SoulTypeUtils.GetTitle(SoulstoneA.GetSoulType())})";
+                name = $"Transpose Soul ({SoulTypeUtils.GetTitle(SoulstoneA.GetSoulType())})";
             }
             else
             {
@@ -50,17 +50,29 @@ namespace CovenExpansionRecast
 
         public override string getDesc()
         {
+            if (SoulstoneB == null)
+            {
+                return "Forging an item from the essence of a soul. The rarity of the item produced will be low, with the highest quality items being composed of two souls with unique professions.";
+            }
             return "Combines two souls together, forging an item from their combined essence. The rarity of the item will depend on the profession of the souls, with the highest quality items being composed of two souls with unique professions.";
         }
 
         public override string getCastFlavour()
         {
-            return "The fire crackles and pops as the two souls coalesce, and a new relic is born from their fused essence.";
+            if (SoulstoneB == null)
+            {
+                return "The fire crackles and pops as the soul coalesces, and a new relic is born from its essence.";
+            }
+            return "The fire crackles and pops as the two souls coalesce, and a new relic is born from their fused essences.";
         }
 
         public override string getRestriction()
         {
-            return "Requires one or two soulstones that contain souls. Must be performed at a witches coven.";
+            if (SoulstoneB == null)
+            {
+                return "Requires a soulstones that contains a soul of a specific type. Must be performed at a witches coven.";
+            }
+            return "Requires two soulstones that contain souls of a specific type. Must be performed at a witches coven.";
         }
 
         public override Sprite getSprite()
