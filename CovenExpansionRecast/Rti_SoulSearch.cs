@@ -23,7 +23,7 @@ namespace CovenExpansionRecast
 
         public override string getDesc()
         {
-            return "View a list of all souls present on the map, including information such as the soul's type and whether it is an agent of the dark.";
+            return "Displays a list of all souls on the map, indicating their type and whether they are an agent of The Dark or belong to a Monstrous population. Souls marked with 'Agent of The Dark' or 'Monstrous Soul' cannot be cursed.";
         }
 
         public override string getCastFlavour()
@@ -97,7 +97,18 @@ namespace CovenExpansionRecast
                     {
                         person = map.persons[soul.personIndex];
                         selector.TargetList.Add(soul);
-                        optionLabels.Add($"{person.getName()} ({SoulTypeUtils.GetTitle(person)})");
+
+                        string label = $"{person.getName()} ({SoulTypeUtils.GetTitle(person)})";
+                        if (person.society == map.soc_dark)
+                        {
+                            label += $" - Agent of The Dark";
+                        }
+                        else if (person.society is SG_AgentWanderers)
+                        {
+                            label += $" - Monstrous Soul";
+                        }
+
+                        optionLabels.Add(label);
                     }
                 }
             }

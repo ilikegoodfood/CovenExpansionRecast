@@ -91,7 +91,7 @@ namespace CovenExpansionRecast
             }
             else if (val < 0.0)
             {
-                msgs?.Add(new ReasonMsg("Desire for firend to rest in peace", val));
+                msgs?.Add(new ReasonMsg("Desire for friend to rest in peace", val));
             }
             utility += val;
 

@@ -10,7 +10,7 @@
         Physician,
         Lightbringer,
         Exorcist,
-        Pelagist,
+        DeepOneSpecialist,
         Alienist
     }
 }

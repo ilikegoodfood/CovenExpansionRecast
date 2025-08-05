@@ -67,7 +67,7 @@ namespace CovenExpansionRecast
 
                     if (booster.target == Tags.DEEPONES)
                     {
-                        return SoulType.Pelagist;
+                        return SoulType.DeepOneSpecialist;
                     }
                 }
             }
@@ -91,8 +91,8 @@ namespace CovenExpansionRecast
                     return "Mediator";
                 case SoulType.OrcSlayer:
                     return "Orc-slayer";
-                case SoulType.Pelagist:
-                    return "Pelagist";
+                case SoulType.DeepOneSpecialist:
+                    return "Deep One Specialist";
                 case SoulType.Physician:
                     return "Physician";
                 case SoulType.Werewolf:
