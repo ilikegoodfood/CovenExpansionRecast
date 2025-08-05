@@ -143,6 +143,7 @@ namespace CovenExpansionRecast
                 }
             }
 
+            bool hasTranspositionScroll = false;
             TranspositionRituals.Clear();
             if (GetSoulType() != SoulType.Nothing)
             {
@@ -166,6 +167,15 @@ namespace CovenExpansionRecast
                             }
                         }
                     }
+                    else if (ua.person.items[i] is I_CraftList)
+                    {
+                        hasTranspositionScroll = true;
+                    }
+                }
+
+                foreach (Mg_Rti_TransposeSoul transpose in TranspositionRituals)
+                {
+                    transpose.DisplayResult = hasTranspositionScroll;
                 }
             }
 

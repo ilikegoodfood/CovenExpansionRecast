@@ -14,6 +14,8 @@ namespace CovenExpansionRecast
 
         public I_Soulstone SoulstoneB;
 
+        public bool DisplayResult;
+
         public Mg_Rti_TransposeSoul(Location location, I_Soulstone soulstoneA, I_Soulstone soulstoneB = null)
             : base(location)
         {
@@ -28,11 +30,22 @@ namespace CovenExpansionRecast
                 return $"Transpose Souls";
             }
 
+            string name;
             if (SoulstoneB == null)
             {
-                return $"Transpose Souls ({SoulTypeUtils.GetTitle(SoulstoneA.GetSoulType())})";
+                name = $"Transpose Souls ({SoulTypeUtils.GetTitle(SoulstoneA.GetSoulType())})";
             }
-            return $"Transpose Souls ({SoulTypeUtils.GetTitle(SoulstoneA.GetSoulType())}, {SoulTypeUtils.GetTitle(SoulstoneB.GetSoulType())})";
+            else
+            {
+                name = $"Transpose Souls ({SoulTypeUtils.GetTitle(SoulstoneA.GetSoulType())}, {SoulTypeUtils.GetTitle(SoulstoneB.GetSoulType())})";
+            }
+
+            if (DisplayResult)
+            {
+                name += $" into {CovensCore.Instance.GetSoulcraftingItemName(SoulstoneA.GetSoulType(), SoulstoneB?.GetSoulType() ?? SoulType.Nothing)}";
+            }
+
+            return name;
         }
 
         public override string getDesc()
