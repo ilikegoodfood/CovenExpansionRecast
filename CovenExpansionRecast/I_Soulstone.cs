@@ -12,13 +12,16 @@ namespace CovenExpansionRecast
     {
         public Person CapturedSoul;
 
+        public Mg_Rti_TransposeSoul Rti_TransposeSoul;
+
         public List<Mg_Rti_TransposeSoul> TranspositionRituals = new List<Mg_Rti_TransposeSoul>();
 
         public I_Soulstone(Map map)
             : base(map)
         {
             Location location = map.locations[0];
-            challenges.Add(new Mg_Rti_TransposeSoul(location, this));
+            Rti_TransposeSoul = new Mg_Rti_TransposeSoul(location, this);
+            challenges.Add(Rti_TransposeSoul);
             challenges.Add(new Rti_ReleaseSoul(location, this));
             challenges.Add(new Mg_Rti_RiteOfMasks(location, this));
             challenges.Add(new Mg_Rti_Curse_Toad(location, this));
@@ -179,6 +182,7 @@ namespace CovenExpansionRecast
                 }
             }
 
+            Rti_TransposeSoul.DisplayResult = hasTranspositionScroll;
             List<Ritual> result = new List<Ritual>(challenges);
             result.AddRange(TranspositionRituals);
 
