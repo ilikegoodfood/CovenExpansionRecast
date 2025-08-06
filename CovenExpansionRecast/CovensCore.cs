@@ -319,7 +319,7 @@ namespace CovenExpansionRecast
 
                         if (Instance.TryGetModIntegrationData("LivingWilds", out ModIntegrationData intDataLW))
                         {
-                            Type lycanthropyTraitType = intDataLW.Assembly.GetType("Living_Wilds.T_Nature_Lycanthropy", false);
+                            Type lycanthropyTraitType = intDataLW.Assembly.GetType("LivingWilds.T_Nature_Lycanthropy", false);
                             if (lycanthropyTraitType != null)
                             {
                                 intDataLW.MethodInfoDict.Add("T_Lycanthropy.InfectPerson", lycanthropyTraitType.GetMethod("infectPerson", new Type[] { typeof(Person), typeof(bool), typeof(bool) }));
