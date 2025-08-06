@@ -20,7 +20,7 @@ namespace CovenExpansionRecast
 
         public override string getName()
         {
-            return $"Capture {SoulTypeUtils.GetTitle(map.persons[Target.personIndex])} Soul";
+            return $"Capture Soul ({SoulTypeUtils.GetTitle(map.persons[Target.personIndex])})";
         }
 
         public override string getDesc()
