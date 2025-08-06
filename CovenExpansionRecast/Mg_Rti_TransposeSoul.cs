@@ -96,36 +96,30 @@ namespace CovenExpansionRecast
 
         public override bool validFor(UA ua)
         {
-            if ((ua.task is Task_PerformChallenge perform && perform.challenge == this) || (ua.task is Task_GoToPerformChallenge goPerform && goPerform.challenge == this))
+            if (ua.task != null && (ua.task is Task_PerformChallenge perform && perform.challenge == this) || (ua.task is Task_GoToPerformChallenge goPerform && goPerform.challenge == this))
             {
                 SoulType soulType = SoulstoneA.GetSoulType();
-                if (lastTurnTypeA != SoulType.Nothing)
+                if (lastTurnTypeA != SoulType.Nothing && lastTurnTypeA != soulType)
                 {
-                    if (lastTurnTypeA != soulType)
-                    {
-                        map.addMessage($"{ua.getName()} cancelled Transpose {(SoulstoneB == null ? "Soul" : "Souls")} because the type of the{(SoulstoneB == null ? " " : " first ")}soul being used changed from {SoulTypeUtils.GetTitle(lastTurnTypeA)} to {SoulTypeUtils.GetTitle(soulType)}, invalidating the recipe.", 0.0, false, ua.location.hex);
-                        lastTurnTypeA = soulType;
-                        return false;
-                    }
+                    map.addMessage($"{ua.getName()} cancelled Transpose {(SoulstoneB == null ? "Soul" : "Souls")} because the type of the{(SoulstoneB == null ? " " : " first ")}soul being used changed from {SoulTypeUtils.GetTitle(lastTurnTypeA)} to {SoulTypeUtils.GetTitle(soulType)}, invalidating the recipe.", 0.0, false, ua.location.hex);
+                    lastTurnTypeA = soulType;
+                    return false;
                 }
 
                 if (SoulstoneB != null)
                 {
                     soulType = SoulstoneB.GetSoulType();
-                    if (lastTurnTypeB != SoulType.Nothing)
+                    if (lastTurnTypeB != SoulType.Nothing && lastTurnTypeB != soulType)
                     {
-                        if (lastTurnTypeB != soulType)
-                        {
-                            map.addMessage($"{ua.getName()} cancelled Transpose Souls because the type of the second soul being used changed from {SoulTypeUtils.GetTitle(lastTurnTypeB)} to {SoulTypeUtils.GetTitle(soulType)}, invalidating the recipe.", 0.0, false, ua.location.hex);
-                            lastTurnTypeB = soulType;
-                            return false;
-                        }
+                        map.addMessage($"{ua.getName()} cancelled Transpose Souls because the type of the second soul being used changed from {SoulTypeUtils.GetTitle(lastTurnTypeB)} to {SoulTypeUtils.GetTitle(soulType)}, invalidating the recipe.", 0.0, false, ua.location.hex);
+                        lastTurnTypeB = soulType;
+                        return false;
                     }
                 }
             }
 
             lastTurnTypeA = SoulstoneA.GetSoulType();
-            lastTurnTypeB = SoulstoneB.GetSoulType();
+            lastTurnTypeB = SoulstoneB?.GetSoulType() ?? SoulType.Nothing;
 
             if (ua.location == null || ua.location.settlement == null)
             {
