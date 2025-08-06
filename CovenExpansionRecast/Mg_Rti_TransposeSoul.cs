@@ -172,7 +172,7 @@ namespace CovenExpansionRecast
             {
                 if (u.person.traits.Any(t => t is T_TransmutationMaster))
                 {
-                    List<string> labels = new List<string> { $"{SoulstoneA.CapturedSoul.getName()} ({SoulTypeUtils.GetTitle(SoulstoneA.GetSoulType())})", $"{SoulstoneB.CapturedSoul.getName()} ({SoulTypeUtils.GetTitle(SoulstoneB.GetSoulType())})" };
+                    List<string> labels = new List<string> { $"{SoulstoneA.CapturedSoul.getName()} ({SoulTypeUtils.GetTitle(SoulstoneA.GetSoulType())}){(SoulstoneA.CapturedSoul.society == map.soc_dark ? " - Agent of The Dark" : SoulstoneA.CapturedSoul.society is SG_AgentWanderers ? " - Monstrous Soul" : "")}", $"{SoulstoneB.CapturedSoul.getName()} ({SoulTypeUtils.GetTitle(SoulstoneB.GetSoulType())}){(SoulstoneB.CapturedSoul.society == map.soc_dark ? " - Agent of The Dark" : SoulstoneB.CapturedSoul.society is SG_AgentWanderers ? " - Monstrous Soul" : "")}" };
                     Sel2_SaveSoulSelector selector = new Sel2_SaveSoulSelector(u.map, new List<I_Soulstone> { SoulstoneA, SoulstoneB });
                     map.world.ui.addBlocker(map.world.prefabStore.getScrollSetText(labels, false, selector, "Save Soul", "Choose which soul will not be consumed by this ritual. On dismiss, a random soul will not be consumed.").gameObject);
                 }
