@@ -88,23 +88,8 @@ namespace CovenExpansionRecast
                 return;
             }
 
-            bool isDuplicate = true;
-            Pr_MagicPlague firstPlagueInstance = null;
-            for (int i = 0; i < location.properties.Count; i++)
-            {
-                Property property = location.properties[i];
-                if (property == this)
-                {
-                    break;
-                }
-                else if (property is Pr_MagicPlague plague && plague.PlaguePropertyType == PlaguePropertyType)
-                {
-                    firstPlagueInstance = plague;
-                    break;
-                }
-            }
-
-            if (isDuplicate)
+            Pr_MagicPlague firstPlagueInstance = (Pr_MagicPlague)location.properties.FirstOrDefault(pr => pr is Pr_MagicPlague plague && plague.PlaguePropertyType == PlaguePropertyType);
+            if (firstPlagueInstance != this)
             {
                 firstPlagueInstance.influences.Add(new ReasonMsg("De-duplicating psychogenic illnesses", charge / 3.0));
                 firstPlagueInstance.PlaguePropertyCharge = Math.Max(firstPlagueInstance.PlaguePropertyCharge, PlaguePropertyCharge);
