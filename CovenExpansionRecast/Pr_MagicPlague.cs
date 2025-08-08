@@ -12,7 +12,7 @@ namespace CovenExpansionRecast
 
         public readonly Type PlaguePropertyType;
 
-        public readonly double PlaguePropertyCharge;
+        public double PlaguePropertyCharge;
 
         public readonly List<Challenge> Challenges = new List<Challenge>();
 
@@ -82,8 +82,56 @@ namespace CovenExpansionRecast
                 charge = 300.0;
             }
 
+            if (!(location.settlement is SettlementHuman settlementHuman))
+            {
+                location.properties.Remove(this);
+                return;
+            }
+
+            bool isDuplicate = true;
+            Pr_MagicPlague firstPlagueInstance = null;
+            for (int i = 0; i < location.properties.Count; i++)
+            {
+                Property property = location.properties[i];
+                if (property == this)
+                {
+                    break;
+                }
+                else if (property is Pr_MagicPlague plague && plague.PlaguePropertyType == PlaguePropertyType)
+                {
+                    firstPlagueInstance = plague;
+                    break;
+                }
+            }
+
+            if (isDuplicate)
+            {
+                firstPlagueInstance.influences.Add(new ReasonMsg("De-duplicating psychogenic illnesses", charge / 3.0));
+                firstPlagueInstance.PlaguePropertyCharge = Math.Max(firstPlagueInstance.PlaguePropertyCharge, PlaguePropertyCharge);
+                location.properties.Remove(this);
+                return;
+            }
+
             influences.Add(new ReasonMsg("Constant Increase", 2.0 * map.difficultyMult_shrinkWithDifficulty));
-            addToProperty("Panic Over Psychogenic Illness", Property.standardProperties.UNREST, (int)((charge / 100.0) + 1.0), location);
+
+            Pr_Unrest unrest = (Pr_Unrest)location.properties.FirstOrDefault(pr => pr is Pr_Unrest);
+            if (unrest == null)
+            {
+                unrest = new Pr_Unrest(location);
+                unrest.charge = 1.0;
+                location.properties.Add(unrest);
+            }
+
+            ReasonMsg exposureMsg = unrest.influences.FirstOrDefault(msg => msg.msg == "Panic Over Psychogenic Illness");
+            double deltaChargeUnrest = (int)((charge / 100.0) + 1.0);
+            if (exposureMsg == null)
+            {
+                unrest.influences.Add(new ReasonMsg("Panic Over Psychogenic Illness", deltaChargeUnrest));
+            }
+            else
+            {
+                exposureMsg.value += deltaChargeUnrest * 0.5;
+            }
 
             int spreadRequirement = map.param.prop_plagueSpreadReq;
             if (location.properties.Any(pr => pr is Pr_Quarantine && pr.charge > 0.0))
@@ -100,22 +148,26 @@ namespace CovenExpansionRecast
                         continue;
                     }
 
-                    bool plagueExists = false;
-                    foreach(Property property in neighbour.properties)
+                    Pr_MagicPlague neighbouringPlague = (Pr_MagicPlague)neighbour.properties.FirstOrDefault(pr => pr is Pr_MagicPlague nPlague && nPlague.PlaguePropertyType == PlaguePropertyType);
+                    if (neighbouringPlague == null)
                     {
-                        if (property is Pr_MagicPlague && property.charge < charge / 2.0)
-                        {
-                            property.influences.Add(new ReasonMsg($"Spread from {location.getName()}", 1.0));
-                            plagueExists = true;
-                        }
+                        neighbouringPlague = new Pr_MagicPlague(neighbour, PlaguePropertyName, PlaguePropertyType, PlaguePropertyCharge);
+                        neighbouringPlague.charge = 1.0;
+                        neighbouringPlague.influences.Add(new ReasonMsg($"Spread from {location.getName()}", 1.0));
+                        neighbour.properties.Add(neighbouringPlague);
+                        return;
                     }
-
-                    if (!plagueExists)
+                    else
                     {
-                        Pr_MagicPlague neighbourPlague = new Pr_MagicPlague(neighbour, PlaguePropertyName, PlaguePropertyType, PlaguePropertyCharge);
-                        neighbourPlague.charge = 1.0;
-                        neighbourPlague.influences.Add(new ReasonMsg($"Spread from {location.getName()}", 1.0));
-                        neighbour.properties.Add(neighbourPlague);
+                        if (neighbouringPlague.charge < charge / 2.0)
+                        {
+                            neighbouringPlague.influences.Add(new ReasonMsg($"Spread from {location.getName()}", 1.0));
+                        }
+
+                        if (neighbouringPlague.PlaguePropertyCharge < PlaguePropertyCharge)
+                        {
+                            neighbouringPlague.PlaguePropertyCharge = Math.Min(neighbouringPlague.PlaguePropertyCharge + 2.0, PlaguePropertyCharge);
+                        }
                     }
                 }
             }
@@ -127,7 +179,22 @@ namespace CovenExpansionRecast
                 lucidity.charge = 1.0;
                 location.properties.Add(lucidity);
             }
-            lucidity.influences.Add(new ReasonMsg("Psychogenic Illness Exposure", 3.0));
+
+            double deltaChargeLucidity = 3.0;
+            if (map.opt_rulerTraitsAffectModifiers && location.person() != null)
+            {
+                    deltaChargeLucidity = 3.0 * 0.5 * location.person().getStatLore();
+            }
+
+            exposureMsg = lucidity.influences.FirstOrDefault(msg => msg.msg == "Psychogenic Illness Exposure");
+            if (exposureMsg == null)
+            {
+                lucidity.influences.Add(new ReasonMsg("Psychogenic Illness Exposure", deltaChargeLucidity));
+            }
+            else
+            {
+                exposureMsg.value += deltaChargeLucidity * 0.5;
+            }
 
             if (charge >= 80.0)
             {
@@ -141,7 +208,7 @@ namespace CovenExpansionRecast
 
                 if (targetProperty.charge < PlaguePropertyCharge)
                 {
-                    double chargeDelta = targetProperty.charge <= 3.0 ? PlaguePropertyCharge / 10.0 : 3.0;
+                    double chargeDelta = 3.0;
                     chargeDelta = Math.Min(chargeDelta, PlaguePropertyCharge - targetProperty.charge);
 
                     targetProperty.influences.Add(new ReasonMsg("Psychogenic Illness", chargeDelta));
