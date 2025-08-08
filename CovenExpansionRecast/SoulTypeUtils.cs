@@ -98,7 +98,7 @@ namespace CovenExpansionRecast
                 case SoulType.Werewolf:
                     return "Werewolf";
                 default:
-                    return "Nothing";
+                    return "Unremarkable";
             }
         }
 

@@ -69,7 +69,7 @@ namespace CovenExpansionRecast
 
         public override bool validFor(UA ua)
         {
-            return ua.isCommandable() && ua.location.settlement is SettlementHuman && ua.person != null && ua.person.items.Any(i => i is I_Soulstone soulstone && (soulstone.GetSoulType() == SoulType.Mediator || soulstone.GetSoulType() == SoulType.Physician));
+            return ua.isCommandable() && ua.location.settlement is SettlementHuman && ua.person != null && ua.person.items.Any(i => i is I_Soulstone soulstone && (soulstone.GetSoulType() == SoulType.Mediator || soulstone.GetSoulType() == SoulType.Physician)) && GetPlagueProperties(ua.location).Any();
         }
 
         public override double getComplexity()
@@ -147,29 +147,11 @@ namespace CovenExpansionRecast
 
         public static void PopPlaguePropertySelect(UA caster, I_Soulstone soulstone)
         {
-            List<Property> properties = new List<Property>();
-            List<string> optionLabels = new List<string>();
-            Type propertyType;
-            foreach (Property property in caster.location.properties)
+            List<Property> properties = GetPlagueProperties(caster.location).ToList();
+            List<string> labels = new List<string>();
+            foreach (Property property in properties)
             {
-                propertyType = property.GetType();
-                if (CovensCore.Instance.IsBlacklistedForPsychogenicIllness(propertyType))
-                {
-                    continue;
-                }
-
-                if (CompatibleProperties.Contains(propertyType))
-                {
-                    properties.Add(property);
-                    continue;
-                }
-
-                if (propertyType.GetConstructors(BindingFlags.Public | BindingFlags.Instance).Any(c => c.GetParameters().Length == 1 && c.GetParameters()[0].ParameterType == typeof(Location)))
-                {
-                    CompatibleProperties.Add(propertyType);
-                    properties.Add(property);
-                    optionLabels.Add($"{property.getName()} ({property.charge})");
-                }
+                labels.Add($"{property.getName()} ({property.charge})");
             }
 
             if (properties.Count == 0)
@@ -183,7 +165,36 @@ namespace CovenExpansionRecast
                 selector.Caster = caster;
                 selector.Soulstone = soulstone;
                 selector.TargetList = properties;
-                caster.map.world.ui.addBlocker(caster.map.world.prefabStore.getScrollSetText(optionLabels, false, selector, "Select Property", "Select the property that this phsychogenic illenss will spread.").gameObject);
+                caster.map.world.ui.addBlocker(caster.map.world.prefabStore.getScrollSetText(labels, false, selector, "Select Property", "Select the property that this phsychogenic illenss will spread.").gameObject);
+            }
+        }
+
+        private static IEnumerable<Property> GetPlagueProperties(Location loc)
+        {
+            foreach (Property property in loc.properties)
+            {
+                Type propertyType = property.GetType();
+                if (CovensCore.Instance.IsBlacklistedForPsychogenicIllness(propertyType))
+                {
+                    continue;
+                }
+
+                if (loc.properties.Any(pr => pr is Pr_MagicPlague plague && plague.PlaguePropertyType == propertyType))
+                {
+                    continue;
+                }
+
+                if (CompatibleProperties.Contains(propertyType))
+                {
+                    yield return property;
+                    continue;
+                }
+
+                if (propertyType.GetConstructors(BindingFlags.Public | BindingFlags.Instance).Any(c => c.GetParameters().Length == 1 && c.GetParameters()[0].ParameterType == typeof(Location)))
+                {
+                    CompatibleProperties.Add(propertyType);
+                    yield return property;
+                }
             }
         }
 
