@@ -56,6 +56,11 @@ namespace CovenExpansionRecast
 
         public override void onAgentLevelup_GetTraits(UA ua, List<Trait> availableTraits, bool startingTraits)
         {
+            if (!CovensCore.Opt_Curseweaving)
+            {
+                return;
+            }
+
             if (startingTraits)
             {
                 if (ua is UAE_Warlock)
@@ -63,7 +68,7 @@ namespace CovenExpansionRecast
                     availableTraits.Add(new T_MasteryCurseweaving());
                 }
             }
-            else
+            else if (ua.isCommandable())
             {
                 if (ua.corrupted && (ua is UAG || ua is UAA))
                 {

@@ -56,6 +56,11 @@ namespace CovenExpansionRecast
             {
                 charge = 100.0;
             }
+
+            if (!(location.settlement?.subs.Any(sub => sub is Sub_Catacombs) ?? false))
+            {
+                location.properties.Remove(this);
+            }
         }
 
         public override bool deleteOnZero()

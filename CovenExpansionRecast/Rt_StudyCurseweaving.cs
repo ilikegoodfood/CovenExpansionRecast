@@ -35,6 +35,11 @@ namespace CovenExpansionRecast
 
         public override string getRestriction()
         {
+            if (!CovensCore.Opt_Curseweaving)
+            {
+                return $"The mod option for curseweaving is disabled. Enable it in the Configure Mods menu if you wish to learn and use curseweaving.";
+            }
+
             T_MasteryCurseweaving curseweaving = (T_MasteryCurseweaving)Caster.person.traits.FirstOrDefault(t => t is T_MasteryCurseweaving);
             if (curseweaving == null ||  curseweaving.level < 3)
             {
@@ -75,6 +80,11 @@ namespace CovenExpansionRecast
         public override Sprite getSprite()
         {
             return EventManager.getImg("CovenExpansionRecast.Icon_Curseweave.png");
+        }
+
+        public override bool valid()
+        {
+            return CovensCore.Opt_Curseweaving;
         }
 
         public override bool validFor(UA ua)

@@ -134,6 +134,11 @@ namespace CovenExpansionRecast
 
         public override List<Ritual> getRituals(UA ua)
         {
+            if (!CovensCore.Opt_Curseweaving)
+            {
+                return new List<Ritual>();
+            }
+
             Dictionary<I_Soulstone, Mg_Rti_TransposeSoul> existingTranspositionRituals = new Dictionary<I_Soulstone, Mg_Rti_TransposeSoul>();
 
             if (GetSoulType() != SoulType.Nothing)
