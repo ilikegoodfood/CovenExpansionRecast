@@ -29,7 +29,17 @@ namespace CovenExpansionRecast
 
         public override string getRestriction()
         {
+            if (!CovensCore.Opt_Curseweaving)
+            {
+                return $"The mod option for curseweaving is disabled. Enable it in the Configure Mods menu if you wish to learn and use curseweaving.";
+            }
+
             return $"Costs {cost} <b>gold</b>";
+        }
+
+        public override bool valid()
+        {
+            return CovensCore.Opt_Curseweaving;
         }
 
         public override bool validFor(UA ua)

@@ -31,8 +31,6 @@ namespace CovenExpansionRecast
 
         public static bool Opt_Curseweaving = true;
 
-        public static bool Opt_SoulWeaving = true;
-
         public static bool Opt_LimitedInfluenceGain = true;
 
         public static int Opt_LimitedInfluenceGainCap = 2;
@@ -40,6 +38,22 @@ namespace CovenExpansionRecast
         public static bool Opt_FindableArtifacts = true;
 
         public static bool Opt_AdditionalTenets = true;
+
+        public static int Opt_SoulLabel_None = 1;
+
+        public static int Opt_SoulLabel_Cooperation = 1;
+
+        public static int Opt_SoulLabel_DeepOnes = 1;
+
+        public static int Opt_SoulLabel_Disease = 1;
+
+        public static int Opt_SoulLabel_Madness = 1;
+
+        public static int Opt_SoulLabel_Orc = 1;
+
+        public static int Opt_SoulLabel_Shadow = 1;
+
+        public static int Opt_SoulLabel_Undead = 1;
 
         // Soul Craftable Pairs //
         // The DUalSouls list is built dynamically in beforeMapGen
@@ -128,9 +142,6 @@ namespace CovenExpansionRecast
                 case "Curseweaving":
                     Opt_Curseweaving = value;
                     break;
-                case "Soulweaving":
-                    Opt_SoulWeaving = value;
-                    break;
                 case "Limited Influence":
                     Opt_LimitedInfluenceGain = value;
                     break;
@@ -151,6 +162,30 @@ namespace CovenExpansionRecast
             {
                 case "Influence Cap":
                     Opt_LimitedInfluenceGainCap = value;
+                    break;
+                case "Soul Label Style : None":
+                    Opt_SoulLabel_None = value;
+                    break;
+                case "Soul Label Style : Co-Operation":
+                    Opt_SoulLabel_Cooperation = value;
+                    break;
+                case "Soul Label Style : Deep Ones":
+                    Opt_SoulLabel_DeepOnes = value;
+                    break;
+                case "Soul Label Style : Disease":
+                    Opt_SoulLabel_Disease = value;
+                    break;
+                case "Soul Label Style : Madness":
+                    Opt_SoulLabel_Madness = value;
+                    break;
+                case "Soul Label Style : Orc":
+                    Opt_SoulLabel_Orc = value;
+                    break;
+                case "Soul Label Style : Shadow":
+                    Opt_SoulLabel_Shadow = value;
+                    break;
+                case "Soul Label Style : Undead":
+                    Opt_SoulLabel_Undead = value;
                     break;
                 default:
                     break;
@@ -509,7 +544,7 @@ namespace CovenExpansionRecast
 
         public override Item optionToReturnItemFromRandomPool(int itemRarity)
         {
-            if (Eleven.random.NextDouble() >= 0.35)
+            if (!Opt_FindableArtifacts || Eleven.random.NextDouble() >= 0.35)
             {
                 return null;
             }
@@ -587,38 +622,53 @@ namespace CovenExpansionRecast
             Sub_Catacombs catacombs = null;
             Sub_Temple temple = null;
             Sub_WitchCoven coven = null;
-
-            foreach (Subsettlement sub in location.settlement.subs)
+            if (location.settlement is Set_MinorOther)
             {
-                if (catacombs == null && sub is Sub_Catacombs cata)
+                foreach (Subsettlement sub in location.settlement.subs)
                 {
-                    catacombs = cata;
-                    continue;
-                }
-
-                if (temple == null && sub is Sub_Temple temp && temp.order is HolyOrder_Witches)
-                {
-                    temple = temp;
-                    continue;
-                }
-
-                if (coven == null && sub is Sub_WitchCoven cov)
-                {
-                    coven = cov;
-                    continue;
+                    if (sub is Sub_WitchCoven cov)
+                    {
+                        coven = cov;
+                        break;
+                    }
                 }
             }
+            else if (location.settlement is SettlementHuman)
+            {
+                foreach (Subsettlement sub in location.settlement.subs)
+                {
+                    if (catacombs == null && sub is Sub_Catacombs cata)
+                    {
+                        catacombs = cata;
+                        continue;
+                    }
+                    else if (temple == null && sub is Sub_Temple temp && temp.order is HolyOrder_Witches)
+                    {
+                        temple = temp;
+                        continue;
+                    }
 
+                    if (catacombs != null && temple != null)
+                    {
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                return;
+            }
+
+            Ch_ExhumeGrave exhume = (Ch_ExhumeGrave)location.settlement.customChallenges.FirstOrDefault(ch => ch is Ch_ExhumeGrave);
+            Pr_RobbedGraves robbed = (Pr_RobbedGraves)location.properties.FirstOrDefault(pr => pr is Pr_RobbedGraves);
             if (catacombs != null)
             {
-                Ch_ExhumeGrave exhume = (Ch_ExhumeGrave)location.settlement.customChallenges.FirstOrDefault(ch => ch is Ch_ExhumeGrave);
                 if (exhume == null)
                 {
                     exhume = new Ch_ExhumeGrave(location);
                     location.settlement.customChallenges.Add(exhume);
                 }
 
-                Pr_RobbedGraves robbed = (Pr_RobbedGraves)location.properties.FirstOrDefault(pr => pr is Pr_RobbedGraves);
                 if (robbed == null)
                 {
                     robbed = new Pr_RobbedGraves(location);
@@ -626,54 +676,62 @@ namespace CovenExpansionRecast
                     location.properties.Add(robbed);
                 }
             }
+            else
+            {
+                if (exhume != null)
+                {
+                    location.settlement.customChallenges.Remove(exhume);
+                }
 
+                if (robbed != null)
+                {
+                    location.properties.Remove(robbed);
+                }
+            }
+
+            Ch_RecruitMinion recruitPigeon = (Ch_RecruitMinion)location.settlement.customChallenges.FirstOrDefault(ch => ch is Ch_RecruitMinion recruit && recruit.exemplar is M_Pigeon);
+            Ch_BuySoulstone buySoulstone = (Ch_BuySoulstone)location.settlement.customChallenges.FirstOrDefault(ch => ch is Ch_BuySoulstone);
+            Ch_BuyCraftList buyCraftList = (Ch_BuyCraftList)location.settlement.customChallenges.FirstOrDefault(c => c is Ch_BuyCraftList);
             if (temple != null || coven != null)
             {
-                Ch_RecruitMinion recruitPigeon = (Ch_RecruitMinion)location.settlement.customChallenges.FirstOrDefault(ch => ch is Ch_RecruitMinion recruit && recruit.exemplar is M_Pigeon);
+                Subsettlement pigeonReqInf = (Subsettlement)temple ?? (Subsettlement)coven;
                 if (recruitPigeon == null)
                 {
-                    if (temple != null)
-                    {
-                        recruitPigeon = new Ch_RecruitMinion(location, new M_Pigeon(location.map), -1, temple);
-                        location.settlement.customChallenges.Add(recruitPigeon);
-                    }
-
-                    if (coven != null)
-                    {
-                        recruitPigeon = new Ch_RecruitMinion(location, new M_Pigeon(location.map), -1, coven);
-                        location.settlement.customChallenges.Add(recruitPigeon);
-                    }
+                    recruitPigeon = new Ch_RecruitMinion(location, new M_Pigeon(location.map), -1, pigeonReqInf);
+                    location.settlement.customChallenges.Add(recruitPigeon);
                 }
-                
-                Ch_BuySoulstone buySoulstone = (Ch_BuySoulstone)location.settlement.customChallenges.FirstOrDefault(ch => ch is Ch_BuySoulstone);
+                else
+                {
+                    recruitPigeon.reqInf = pigeonReqInf;
+                }
+
                 if (buySoulstone == null)
                 {
                     buySoulstone = new Ch_BuySoulstone(location);
                     location.settlement.customChallenges.Add(buySoulstone);
                 }
 
-                Ch_BuyCraftList buyCraftList = (Ch_BuyCraftList)location.settlement.customChallenges.FirstOrDefault(c => c is Ch_BuyCraftList);
                 if (buyCraftList == null)
                 {
-                    buyCraftList= new Ch_BuyCraftList(location);
+                    buyCraftList = new Ch_BuyCraftList(location);
                     location.settlement.customChallenges.Add(buyCraftList);
                 }
             }
             else
             {
-                foreach (Challenge challenge in location.settlement.customChallenges.ToList())
+                if (recruitPigeon != null)
                 {
-                    if (challenge is Ch_RecruitMinion recruit && recruit.exemplar is M_Pigeon)
-                    {
-                        location.settlement.customChallenges.Remove(challenge);
-                        continue;
-                    }
+                    location.settlement.customChallenges.Remove(recruitPigeon);
+                }
 
-                    if (challenge is Ch_BuySoulstone || challenge is Ch_BuyCraftList)
-                    {
-                        location.settlement.customChallenges.Remove(challenge);
-                        continue;
-                    }
+                if (buySoulstone != null)
+                {
+                    location.settlement.customChallenges.Remove(buySoulstone);
+                }
+
+                if (buyCraftList != null)
+                {
+                    location.settlement.customChallenges.Remove(buyCraftList);
                 }
             }
         }

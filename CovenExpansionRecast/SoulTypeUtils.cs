@@ -80,25 +80,75 @@ namespace CovenExpansionRecast
             switch (type)
             {
                 case SoulType.Alienist:
-                    return "Alienist";
+                    switch(CovensCore.Opt_SoulLabel_Madness)
+                    {
+                        case 1:
+                            return "Alienist";
+                        default:
+                            return "Madness Specialist";
+                    }
                 case SoulType.Exorcist:
-                    return "Excorcist";
+                    switch (CovensCore.Opt_SoulLabel_Undead)
+                    {
+                        case 1:
+                            return "Excorcist";
+                        default:
+                            return "Undead Specialist";
+                    }
                 case SoulType.Lightbringer:
-                    return "Lightbringer";
+                    switch (CovensCore.Opt_SoulLabel_Shadow)
+                    {
+                        case 1:
+                            return "Lightbringer";
+                        default:
+                            return "Shadow Specialist";
+                    }
                 case SoulType.Mage:
                     return "Mage";
                 case SoulType.Mediator:
-                    return "Mediator";
+                    switch (CovensCore.Opt_SoulLabel_Cooperation)
+                    {
+                        case 1:
+                            return "Mediator";
+                        default:
+                            return "Co-Operation Specialist";
+                    }
                 case SoulType.OrcSlayer:
-                    return "Orc-slayer";
+                    switch (CovensCore.Opt_SoulLabel_Orc)
+                    {
+                        case 1:
+                            return "Orc-slayer";
+                        default:
+                            return "Orc Specialist";
+                    }
                 case SoulType.DeepOneSpecialist:
-                    return "Deep One Specialist";
+                    switch (CovensCore.Opt_SoulLabel_DeepOnes)
+                    {
+                        case 2:
+                            return "Harpoonist";
+                        case 1:
+                            return "Pelagist";
+                        default:
+                            return "Deep One Specialist";
+                    }
                 case SoulType.Physician:
-                    return "Physician";
+                    switch (CovensCore.Opt_SoulLabel_Disease)
+                    {
+                        case 1:
+                            return "Physician";
+                        default:
+                            return "Disease Specialist";
+                    }
                 case SoulType.Werewolf:
                     return "Werewolf";
                 default:
-                    return "Unremarkable";
+                    switch (CovensCore.Opt_SoulLabel_Cooperation)
+                    {
+                        case 1:
+                            return "Unremarkable";
+                        default:
+                            return "Unspecialized";
+                    }
             }
         }
 
