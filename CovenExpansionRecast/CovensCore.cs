@@ -41,6 +41,8 @@ namespace CovenExpansionRecast
 
         public static bool Opt_AdditionalTenets = true;
 
+        public static bool Opt_RandomizeInitialTenetAlignments = true;
+
         public static int Opt_SoulLabel_None = 1;
 
         public static int Opt_SoulLabel_Cooperation = 1;
@@ -152,6 +154,9 @@ namespace CovenExpansionRecast
                     break;
                 case "Unique Coven Tenets":
                     Opt_AdditionalTenets = value;
+                    break;
+                case "Random Coven Initial Tenet Alignment":
+                    Opt_RandomizeInitialTenetAlignments = value;
                     break;
                 default:
                     break;
@@ -497,6 +502,11 @@ namespace CovenExpansionRecast
 
         public void EstablishInitialTenetSpread(HolyOrder_Witches witches)
         {
+            if (!Opt_RandomizeInitialTenetAlignments)
+            {
+                return;
+            }
+
             List<HolyTenet> positiveTenets = new List<HolyTenet>();
             List<HolyTenet> negativeTenets = new List<HolyTenet>();
 
