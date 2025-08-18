@@ -23,6 +23,8 @@ namespace CovenExpansionRecast
 
         private HashSet<Type> _tenetDistributionTypeBalcklist = new HashSet<Type> { typeof(H_W_HumanSacrifice), typeof(H_Healers), typeof(H_MusicOfTheOuterSpheres), typeof(H_Doomsayers), typeof(H_IntransigentFaith) };
 
+        public HashSet<HolyOrder_Witches> TenetDistributionCovensVisited;
+
         private Map _map;
 
         public P_OpenMind OpenMindPower;
@@ -224,6 +226,10 @@ namespace CovenExpansionRecast
             _modIntegrationData = new Dictionary<string, ModIntegrationData>();
             _psychogenicIllnessPropertyBlacklist = new HashSet<Type>();
             RitualRemovalData = new List<Tuple<UA, Ritual>>();
+            if (TenetDistributionCovensVisited == null)
+            {
+                TenetDistributionCovensVisited = new HashSet<HolyOrder_Witches>();
+            }
             GetModKernels(map.mods);
             RegisterComLibHooks(map);
             RegisterAgentAIs(map);
@@ -469,6 +475,12 @@ namespace CovenExpansionRecast
                             witches.tenets.Add(dogmatic);
                         }
                     }
+
+                    if (!TenetDistributionCovensVisited.Contains(witches))
+                    {
+                        EstablishInitialTenetSpread(witches);
+                        TenetDistributionCovensVisited.Add(witches);
+                    }
                 }
             }
         }
@@ -540,6 +552,17 @@ namespace CovenExpansionRecast
                 tuple.Item1.rituals.Remove(tuple.Item2);
             }
             RitualRemovalData.Clear();
+
+            foreach (SocialGroup sg in map.socialGroups)
+            {
+                if (!(sg is HolyOrder_Witches witches) || TenetDistributionCovensVisited.Contains(witches))
+                {
+                    continue;
+                }
+
+                EstablishInitialTenetSpread(witches);
+                TenetDistributionCovensVisited.Add(witches);
+            }
         }
 
         public override Item optionToReturnItemFromRandomPool(int itemRarity)
