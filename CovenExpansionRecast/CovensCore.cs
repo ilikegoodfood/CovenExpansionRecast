@@ -23,7 +23,7 @@ namespace CovenExpansionRecast
 
         private HashSet<Type> _tenetDistributionTypeBalcklist = new HashSet<Type> { typeof(H_W_HumanSacrifice), typeof(H_Healers), typeof(H_MusicOfTheOuterSpheres), typeof(H_Doomsayers), typeof(H_IntransigentFaith) };
 
-        public HashSet<HolyOrder_Witches> TenetDistributionCovensVisited;
+        public HashSet<HolyOrder_Witches> TenetDistributionCovensVisited = new HashSet<HolyOrder_Witches>();
 
         private Map _map;
 
@@ -226,10 +226,6 @@ namespace CovenExpansionRecast
             _modIntegrationData = new Dictionary<string, ModIntegrationData>();
             _psychogenicIllnessPropertyBlacklist = new HashSet<Type>();
             RitualRemovalData = new List<Tuple<UA, Ritual>>();
-            if (TenetDistributionCovensVisited == null)
-            {
-                TenetDistributionCovensVisited = new HashSet<HolyOrder_Witches>();
-            }
             GetModKernels(map.mods);
             RegisterComLibHooks(map);
             RegisterAgentAIs(map);
@@ -252,6 +248,20 @@ namespace CovenExpansionRecast
                     {
                         soulstone.Rti_TransposeSoul = (Mg_Rti_TransposeSoul)soulstone.challenges.FirstOrDefault(ch => ch is Mg_Rti_TransposeSoul transpose && transpose.SoulstoneB == null);
                     }
+                }
+            }
+
+            if (TenetDistributionCovensVisited == null)
+            {
+                TenetDistributionCovensVisited = new HashSet<HolyOrder_Witches>();
+                foreach (SocialGroup sg in map.socialGroups)
+                {
+                    if (!(sg is HolyOrder_Witches witches) || TenetDistributionCovensVisited.Contains(witches))
+                    {
+                        continue;
+                    }
+
+                    TenetDistributionCovensVisited.Add(witches);
                 }
             }
         }
