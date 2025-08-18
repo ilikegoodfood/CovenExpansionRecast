@@ -573,15 +573,18 @@ namespace CovenExpansionRecast
             }
             RitualRemovalData.Clear();
 
-            foreach (SocialGroup sg in map.socialGroups)
+            if (map.burnInComplete)
             {
-                if (!(sg is HolyOrder_Witches witches) || TenetDistributionCovensVisited.Contains(witches))
+                foreach (SocialGroup sg in map.socialGroups)
                 {
-                    continue;
-                }
+                    if (!(sg is HolyOrder_Witches witches) || TenetDistributionCovensVisited.Contains(witches))
+                    {
+                        continue;
+                    }
 
-                EstablishInitialTenetSpread(witches);
-                TenetDistributionCovensVisited.Add(witches);
+                    EstablishInitialTenetSpread(witches);
+                    TenetDistributionCovensVisited.Add(witches);
+                }
             }
         }
 
