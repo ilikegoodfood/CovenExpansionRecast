@@ -106,8 +106,7 @@ namespace CovenExpansionRecast
             }
 
             Sel2_PigeonTargetSelector selector = new Sel2_PigeonTargetSelector(map, u, targets);
-            selector.Targets = targets;
-            map.world.ui.addBlocker(map.world.prefabStore.getScrollSetText(targetLabels, false, selector, "Choose Traget", "Select and agent for the carrier pigeon to fly to.").gameObject);
+            map.world.ui.addBlocker(map.world.prefabStore.getScrollSetText(targetLabels, false, selector, "Choose Traget", "Select an agent for the carrier pigeon to fly to.").gameObject);
         }
 
         public override int[] buildPositiveTags()
