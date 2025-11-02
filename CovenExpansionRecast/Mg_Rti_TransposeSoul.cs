@@ -160,7 +160,7 @@ namespace CovenExpansionRecast
 
         public override void complete(UA u)
         {
-            Item item = CovensCore.Instance.GetSoulcraftingItem(map, u, SoulstoneA.GetSoulType(), SoulstoneB.GetSoulType());
+            Item item = CovensCore.Instance.GetSoulcraftingItem(map, u, SoulstoneA.GetSoulType(), SoulstoneB?.GetSoulType() ?? SoulType.Nothing);
 
             if (SoulstoneB != null)
             {
