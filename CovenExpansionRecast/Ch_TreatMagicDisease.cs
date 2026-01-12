@@ -1,16 +1,12 @@
 ﻿using Assets.Code;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace CovenExpansionRecast
 {
     public class Ch_TreatMagicDisease : Challenge
     {
-        Pr_MagicPlague Plague;
+        public Pr_MagicPlague Plague;
 
         public Ch_TreatMagicDisease(Location loc, Pr_MagicPlague plague)
             : base(loc)
@@ -53,6 +49,11 @@ namespace CovenExpansionRecast
             return 0.0;
         }
 
+        public override bool valid()
+        {
+            return Plague != null && Plague.charge > 0.0;
+        }
+
         public override int isGoodTernary()
         {
             return 1;
@@ -89,6 +90,11 @@ namespace CovenExpansionRecast
 
         public override void complete(UA u)
         {
+            if (Plague == null)
+            {
+                return;
+            }
+
             Plague.charge += map.param.ch_treatdisease_parameterValue4;
             if (Plague.charge < 0.0)
             {
