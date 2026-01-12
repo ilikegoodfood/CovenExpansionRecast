@@ -245,6 +245,25 @@ namespace CovenExpansionRecast
                 RitualRemovalData = new List<Tuple<UA, Ritual>>();
             }
 
+            foreach (Location loc in map.locations)
+            {
+                foreach (Property pr in loc.properties)
+                {
+                    if (!(pr is Pr_MagicPlague magicPlague))
+                    {
+                        continue;
+                    }
+
+                    foreach (Challenge challenge in magicPlague.Challenges)
+                    {
+                        if (challenge is Ch_TreatMagicDisease treat && treat.Plague == null)
+                        {
+                            treat.Plague = magicPlague;
+                        }
+                    }
+                }
+            }
+
             foreach (Person person in map.persons)
             {
                 for (int i = 0; i < person.items.Length; i++)
