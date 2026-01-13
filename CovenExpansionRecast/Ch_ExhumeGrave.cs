@@ -389,9 +389,14 @@ namespace CovenExpansionRecast
                 
             }
 
-            foreach (Item item in items)
+            for (int i = 0; i < items.Length; i++)
             {
-                person.gainItem(item, true);
+                if (items[i] == null)
+                {
+                    continue;
+                }
+
+                person.gainItem(items[i], true);
             }
         }
 
