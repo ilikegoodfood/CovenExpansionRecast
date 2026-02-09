@@ -116,7 +116,7 @@ namespace CovenExpansionRecast
                 targetLabels.Add(SoulTypeUtils.GetTitle(type));
             }
 
-            map.world.ui.addBlocker(map.world.prefabStore.getScrollSetText(targetLabels, false, new Sel2_SoulTypeSelector(Soulstone, types), "Select an intruding acolyte to curse").gameObject);
+            map.world.ui.addBlocker(map.world.prefabStore.getScrollSetText(targetLabels, false, new Sel2_SoulTypeSelector(Soulstone, types), "Select the specialization you wihs this soulstone to manifest").gameObject);
             uA.task = null;
         }
 

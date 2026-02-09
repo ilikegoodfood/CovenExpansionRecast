@@ -176,6 +176,26 @@ namespace CovenExpansionRecast
             Target.charge = 0.0;
             u.location.properties.Remove(Target);
             u.rituals.Remove(this);
+
+            List<SoulType> types = SoulTypeUtils.GetSoulTypes(map.persons[Target.personIndex]);
+            if (types.Count <= 1)
+            {
+                return;
+            }
+
+            List<string> targetLabels = new List<string>();
+            foreach (SoulType type in types)
+            {
+                if (type == soulstone.SoulType)
+                {
+                    targetLabels.Add(SoulTypeUtils.GetTitle(type) + " (Default)");
+                    continue;
+                }
+
+                targetLabels.Add(SoulTypeUtils.GetTitle(type));
+            }
+
+            map.world.ui.addBlocker(map.world.prefabStore.getScrollSetText(targetLabels, false, new Sel2_SoulTypeSelector(soulstone, types), $"{soulstone.CapturedSoul.getName()}'s soul has been captured by {u.getName()}. Select the specialization you want this soulstone to manifest").gameObject);
         }
 
         public override int[] buildPositiveTags()
