@@ -2,6 +2,7 @@
 using FullSerializer;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using UnityEngine;
 
 namespace CovenExpansionRecast
@@ -103,18 +104,39 @@ namespace CovenExpansionRecast
         {
             if (CapturedSoul != null)
             {
-                string result = $"A gemstone carved into a magical cage. It contains the captured soul of {CapturedSoul.getName()} ({SoulTypeUtils.GetTitle(SoulType)}).";
+                StringBuilder result = new StringBuilder("A gemstone carved into a magical cage. It contains the captured soul of ");
+                result.Append(CapturedSoul.getName());
+                result.Append(" (");
+
+                List<SoulType> types = SoulTypeUtils.GetSoulTypes(CapturedSoul);
+                if (types.Count == 0)
+                {
+                    result.Append(SoulTypeUtils.GetTitle(SoulType.Nothing));
+                }
+                else
+                {
+                    for (int i = 0; i < types.Count; i++)
+                    {
+                        result.Append(SoulTypeUtils.GetTitle(types[i]));
+                        if (i < types.Count - 1)
+                        {
+                            result.Append(", ");
+                        }
+                    }
+                }
+
+                result.Append(").");
 
                 if (CapturedSoul.society == map.soc_dark)
                 {
-                    result += $"They are an Agent of The Dark, and cannot be cursed.";
+                    result.Append("They are an Agent of The Dark, and cannot be cursed.");
                 }
                 else if (CapturedSoul.society is SG_AgentWanderers)
                 {
-                    result += $"They have a Mounstrous Soul, and cannot be cursed.";
+                    result.Append("They have a Mounstrous Soul, and cannot be cursed.");
                 }
 
-                return result;
+                return result.ToString();
             }
 
             return "A gemstone carved into a magical cage that can be used to capture and release souls.";

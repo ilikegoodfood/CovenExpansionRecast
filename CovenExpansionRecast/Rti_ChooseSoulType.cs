@@ -83,7 +83,7 @@ namespace CovenExpansionRecast
 
         public override bool validFor(UA ua)
         {
-            return ua.isCommandable() && ua.person != null && ua.person.items.Any(i => i is I_Soulstone soulstone && soulstone.CapturedSoul != null && SoulTypeUtils.GetSoulTypes(soulstone.CapturedSoul).Count > 1);
+            return ua.isCommandable() && ua.person != null && ua.person.items.Contains(Soulstone);
         }
 
         public override bool validFor(UM ua)
@@ -91,9 +91,9 @@ namespace CovenExpansionRecast
             return ua.isCommandable() & ua.person != null && ua.person.items.Contains(Soulstone);
         }
 
-        public override void onBegin(Unit unit)
+        public override void onImmediateBegin(UA uA)
         {
-            if (unit == null || !unit.isCommandable() || Soulstone == null || Soulstone.CapturedSoul == null)
+            if (uA == null || !uA.isCommandable() || Soulstone == null || Soulstone.CapturedSoul == null)
             {
                 return;
             }
@@ -110,23 +110,30 @@ namespace CovenExpansionRecast
                 if (Soulstone.SoulType == type)
                 {
                     targetLabels.Add(SoulTypeUtils.GetTitle(type) + " (Current)");
+                    continue;
                 }
 
                 targetLabels.Add(SoulTypeUtils.GetTitle(type));
             }
 
             map.world.ui.addBlocker(map.world.prefabStore.getScrollSetText(targetLabels, false, new Sel2_SoulTypeSelector(Soulstone, types), "Select an intruding acolyte to curse").gameObject);
-            unit.task = null;
+            uA.task = null;
         }
 
         public override double getComplexity()
         {
-            return 0;
+            return 1.0;
         }
 
         public override challengeStat getChallengeType()
         {
             return challengeStat.OTHER;
+        }
+
+        public override double getProgressPerTurnInner(UA unit, List<ReasonMsg> msgs)
+        {
+            msgs?.Add(new ReasonMsg("Base", 1.0));
+            return 1.0;
         }
     }
 }

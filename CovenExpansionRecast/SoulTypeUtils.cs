@@ -26,16 +26,16 @@ namespace CovenExpansionRecast
                 return SoulType.Nothing;
             }
 
+            if (CovensCore.ComLib.checkKnowsMagic(p))
+            {
+                return SoulType.Mage;
+            }
+
             foreach (Trait trait in p.traits)
             {
                 if (trait.getName().Contains("Lycanthropy"))
                 {
                     return SoulType.Werewolf;
-                }
-
-                if (CovensCore.ComLib.checkKnowsMagic(p))
-                {
-                    return SoulType.Mage;
                 }
 
                 if (trait is T_ChallengeBooster booster)
@@ -79,17 +79,16 @@ namespace CovenExpansionRecast
         {
             List<SoulType> types = new List<SoulType>();
 
+            if (CovensCore.ComLib.checkKnowsMagic(p))
+            {
+                types.Add(SoulType.Mage);
+            }
+
             foreach (Trait trait in p.traits)
             {
                 if (trait.getName().Contains("Lycanthropy"))
                 {
                     types.Add(SoulType.Werewolf);
-                    continue;
-                }
-
-                if (CovensCore.ComLib.checkKnowsMagic(p))
-                {
-                    types.Add(SoulType.Mage);
                     continue;
                 }
 
@@ -122,7 +121,7 @@ namespace CovenExpansionRecast
                 }
             }
 
-            if (types.Count == 0)
+            if (types.Count <= 1)
             {
                 return types;
             }
