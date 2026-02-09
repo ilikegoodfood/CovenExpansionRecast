@@ -37,16 +37,16 @@ namespace CovenExpansionRecast
             string name;
             if (SoulstoneB == null)
             {
-                name = $"Transpose Soul ({SoulTypeUtils.GetTitle(SoulstoneA.GetSoulType())})";
+                name = $"Transpose Soul ({SoulTypeUtils.GetTitle(SoulstoneA.SoulType)})";
             }
             else
             {
-                name = $"Transpose Souls ({SoulTypeUtils.GetTitle(SoulstoneA.GetSoulType())}, {SoulTypeUtils.GetTitle(SoulstoneB.GetSoulType())})";
+                name = $"Transpose Souls ({SoulTypeUtils.GetTitle(SoulstoneA.SoulType)}, {SoulTypeUtils.GetTitle(SoulstoneB.SoulType)})";
             }
 
             if (DisplayResult)
             {
-                name += $" into {CovensCore.Instance.GetSoulcraftingItemName(SoulstoneA.GetSoulType(), SoulstoneB?.GetSoulType() ?? SoulType.Nothing)}";
+                name += $" into {CovensCore.Instance.GetSoulcraftingItemName(SoulstoneA.SoulType, SoulstoneB?.SoulType ?? SoulType.Nothing)}";
             }
 
             return name;
@@ -91,14 +91,14 @@ namespace CovenExpansionRecast
 
         public override bool valid()
         {
-            return SoulstoneA != null && SoulstoneA.GetSoulType() != SoulType.Nothing && !string.IsNullOrEmpty(CovensCore.Instance.GetSoulcraftingItemID(SoulstoneA.GetSoulType(), SoulstoneB?.GetSoulType() ?? SoulType.Nothing));
+            return SoulstoneA != null && SoulstoneA.SoulType != SoulType.Nothing && !string.IsNullOrEmpty(CovensCore.Instance.GetSoulcraftingItemID(SoulstoneA.SoulType, SoulstoneB?.SoulType ?? SoulType.Nothing));
         }
 
         public override bool validFor(UA ua)
         {
             if (ua.task != null && (ua.task is Task_PerformChallenge perform && perform.challenge == this) || (ua.task is Task_GoToPerformChallenge goPerform && goPerform.challenge == this))
             {
-                SoulType soulType = SoulstoneA.GetSoulType();
+                SoulType soulType = SoulstoneA.SoulType;
                 if (lastTurnTypeA != SoulType.Nothing && lastTurnTypeA != soulType)
                 {
                     map.addMessage($"{ua.getName()} cancelled Transpose {(SoulstoneB == null ? "Soul" : "Souls")} because the type of the{(SoulstoneB == null ? " " : " first ")}soul being used changed from {SoulTypeUtils.GetTitle(lastTurnTypeA)} to {SoulTypeUtils.GetTitle(soulType)}, invalidating the recipe.", 0.0, false, ua.location.hex);
@@ -108,7 +108,7 @@ namespace CovenExpansionRecast
 
                 if (SoulstoneB != null)
                 {
-                    soulType = SoulstoneB.GetSoulType();
+                    soulType = SoulstoneB.SoulType;
                     if (lastTurnTypeB != SoulType.Nothing && lastTurnTypeB != soulType)
                     {
                         map.addMessage($"{ua.getName()} cancelled Transpose Souls because the type of the second soul being used changed from {SoulTypeUtils.GetTitle(lastTurnTypeB)} to {SoulTypeUtils.GetTitle(soulType)}, invalidating the recipe.", 0.0, false, ua.location.hex);
@@ -118,8 +118,8 @@ namespace CovenExpansionRecast
                 }
             }
 
-            lastTurnTypeA = SoulstoneA.GetSoulType();
-            lastTurnTypeB = SoulstoneB?.GetSoulType() ?? SoulType.Nothing;
+            lastTurnTypeA = SoulstoneA.SoulType;
+            lastTurnTypeB = SoulstoneB?.SoulType ?? SoulType.Nothing;
 
             if (ua.location == null || ua.location.settlement == null)
             {
@@ -160,13 +160,13 @@ namespace CovenExpansionRecast
 
         public override void complete(UA u)
         {
-            Item item = CovensCore.Instance.GetSoulcraftingItem(map, u, SoulstoneA.GetSoulType(), SoulstoneB?.GetSoulType() ?? SoulType.Nothing);
+            Item item = CovensCore.Instance.GetSoulcraftingItem(map, u, SoulstoneA.SoulType, SoulstoneB?.SoulType ?? SoulType.Nothing);
 
             if (SoulstoneB != null)
             {
                 if (u.person.traits.Any(t => t is T_TransmutationMaster))
                 {
-                    List<string> labels = new List<string> { $"{SoulstoneA.CapturedSoul.getName()} ({SoulTypeUtils.GetTitle(SoulstoneA.GetSoulType())}){(SoulstoneA.CapturedSoul.society == map.soc_dark ? " - Agent of The Dark" : SoulstoneA.CapturedSoul.society is SG_AgentWanderers ? " - Monstrous Soul" : "")}", $"{SoulstoneB.CapturedSoul.getName()} ({SoulTypeUtils.GetTitle(SoulstoneB.GetSoulType())}){(SoulstoneB.CapturedSoul.society == map.soc_dark ? " - Agent of The Dark" : SoulstoneB.CapturedSoul.society is SG_AgentWanderers ? " - Monstrous Soul" : "")}" };
+                    List<string> labels = new List<string> { $"{SoulstoneA.CapturedSoul.getName()} ({SoulTypeUtils.GetTitle(SoulstoneA.SoulType)}){(SoulstoneA.CapturedSoul.society == map.soc_dark ? " - Agent of The Dark" : SoulstoneA.CapturedSoul.society is SG_AgentWanderers ? " - Monstrous Soul" : "")}", $"{SoulstoneB.CapturedSoul.getName()} ({SoulTypeUtils.GetTitle(SoulstoneB.SoulType)}){(SoulstoneB.CapturedSoul.society == map.soc_dark ? " - Agent of The Dark" : SoulstoneB.CapturedSoul.society is SG_AgentWanderers ? " - Monstrous Soul" : "")}" };
                     Sel2_SaveSoulSelector selector = new Sel2_SaveSoulSelector(u.map, new List<I_Soulstone> { SoulstoneA, SoulstoneB });
                     map.world.ui.addBlocker(map.world.prefabStore.getScrollSetText(labels, false, selector, "Save Soul", "Choose which soul will not be consumed by this ritual. On dismiss, a random soul will not be consumed.").gameObject);
                 }

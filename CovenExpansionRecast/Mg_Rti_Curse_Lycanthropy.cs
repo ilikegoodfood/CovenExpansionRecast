@@ -60,7 +60,7 @@ namespace CovenExpansionRecast
 
         public override bool valid()
         {
-            return Soulstone != null && Soulstone.CapturedSoul != null && Soulstone.GetSoulType() == SoulType.Werewolf && Soulstone.CapturedSoul.house != null && !(Soulstone.CapturedSoul.society is SG_AgentWanderers) && Soulstone.CapturedSoul.society != map.soc_dark && !Soulstone.CapturedSoul.house.curses.Any(c => c is Curse_Lycanthropy);
+            return Soulstone != null && Soulstone.CapturedSoul != null && Soulstone.SoulType == SoulType.Werewolf && Soulstone.CapturedSoul.house != null && !(Soulstone.CapturedSoul.society is SG_AgentWanderers) && Soulstone.CapturedSoul.society != map.soc_dark && !Soulstone.CapturedSoul.house.curses.Any(c => c is Curse_Lycanthropy);
         }
 
         public override bool validFor(UA ua)

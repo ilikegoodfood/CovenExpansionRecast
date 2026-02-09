@@ -69,7 +69,7 @@ namespace CovenExpansionRecast
 
         public override bool validFor(UA ua)
         {
-            return ua.isCommandable() && ua.location.settlement is SettlementHuman && ua.person != null && ua.person.items.Any(i => i is I_Soulstone soulstone && (soulstone.GetSoulType() == SoulType.Mediator || soulstone.GetSoulType() == SoulType.Physician)) && GetPlagueProperties(ua.location).Any();
+            return ua.isCommandable() && ua.location.settlement is SettlementHuman && ua.person != null && ua.person.items.Any(i => i is I_Soulstone soulstone && (soulstone.SoulType == SoulType.Mediator || soulstone.SoulType == SoulType.Physician)) && GetPlagueProperties(ua.location).Any();
         }
 
         public override double getComplexity()
@@ -113,7 +113,7 @@ namespace CovenExpansionRecast
 
         public override void complete(UA u)
         {
-            List<I_Soulstone> soulstones = u.person.items.OfType<I_Soulstone>().Where(stone => stone.GetSoulType() == SoulType.Mediator || stone.GetSoulType() == SoulType.Physician).ToList();
+            List<I_Soulstone> soulstones = u.person.items.OfType<I_Soulstone>().Where(stone => stone.SoulType == SoulType.Mediator || stone.SoulType == SoulType.Physician).ToList();
 
             if (soulstones.Count == 0)
             {
@@ -131,7 +131,7 @@ namespace CovenExpansionRecast
 
         public static void PopSoulSelect(UA caster)
         {
-            List<I_Soulstone> soulstones = caster.person.items.OfType<I_Soulstone>().Where(stone => stone.GetSoulType() == SoulType.Mediator || stone.GetSoulType() == SoulType.Physician).ToList();
+            List<I_Soulstone> soulstones = caster.person.items.OfType<I_Soulstone>().Where(stone => stone.SoulType == SoulType.Mediator || stone.SoulType == SoulType.Physician).ToList();
 
             List<string> optionLabels = new List<string>();
             foreach (I_Soulstone soulstone in soulstones)

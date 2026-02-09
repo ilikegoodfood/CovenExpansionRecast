@@ -75,6 +75,61 @@ namespace CovenExpansionRecast
             return SoulType.Nothing;
         }
 
+        public static List<SoulType> GetSoulTypes(Person p)
+        {
+            List<SoulType> types = new List<SoulType>();
+
+            foreach (Trait trait in p.traits)
+            {
+                if (trait.getName().Contains("Lycanthropy"))
+                {
+                    types.Add(SoulType.Werewolf);
+                    continue;
+                }
+
+                if (CovensCore.ComLib.checkKnowsMagic(p))
+                {
+                    types.Add(SoulType.Mage);
+                    continue;
+                }
+
+                if (trait is T_ChallengeBooster booster)
+                {
+                    if (booster.target == Tags.ORC)
+                    {
+                        types.Add(SoulType.OrcSlayer);
+                    }
+                    else if (booster.target == Tags.DISCORD)
+                    {
+                        types.Add(SoulType.Mediator);
+                    }
+                    else if (booster.target == Tags.DISEASE)
+                    {
+                        types.Add(SoulType.Physician);
+                    }
+                    else if (booster.target == Tags.SHADOW)
+                    {
+                        types.Add(SoulType.Lightbringer);
+                    }
+                    else if (booster.target == Tags.UNDEAD)
+                    {
+                        types.Add(SoulType.Exorcist);
+                    }
+                    else if (booster.target == Tags.DEEPONES)
+                    {
+                        types.Add(SoulType.DeepOneSpecialist);
+                    }
+                }
+            }
+
+            if (types.Count == 0)
+            {
+                return types;
+            }
+
+            return types.Distinct().ToList();
+        }
+
         public static string GetTitle(SoulType type)
         {
             switch (type)

@@ -259,6 +259,15 @@ namespace CovenExpansionRecast
                         if (challenge is Ch_TreatMagicDisease treat && treat.Plague == null)
                         {
                             treat.Plague = magicPlague;
+                            continue;
+                        }
+
+                        if (challenge is Ch_BuyItem buy && buy.onSale is I_Soulstone soulstone)
+                        {
+                            if (!soulstone.challenges.Any(r => r is Rti_ChooseSoulType))
+                            {
+                                soulstone.challenges.Add(new Rti_ChooseSoulType(map.locations[0], soulstone));
+                            }
                         }
                     }
                 }
@@ -268,9 +277,16 @@ namespace CovenExpansionRecast
             {
                 for (int i = 0; i < person.items.Length; i++)
                 {
-                    if (person.items[i] is I_Soulstone soulstone && soulstone.Rti_TransposeSoul == null)
+                    if (person.items[i] is I_Soulstone soulstone)
                     {
-                        soulstone.Rti_TransposeSoul = (Mg_Rti_TransposeSoul)soulstone.challenges.FirstOrDefault(ch => ch is Mg_Rti_TransposeSoul transpose && transpose.SoulstoneB == null);
+                        if (soulstone.Rti_TransposeSoul == null)
+                        {
+                            soulstone.Rti_TransposeSoul = (Mg_Rti_TransposeSoul)soulstone.challenges.FirstOrDefault(ch => ch is Mg_Rti_TransposeSoul transpose && transpose.SoulstoneB == null);
+                        }
+                        if (!soulstone.challenges.Any(r => r is Rti_ChooseSoulType))
+                        {
+                            soulstone.challenges.Add(new Rti_ChooseSoulType(map.locations[0], soulstone));
+                        }
                     }
                 }
             }

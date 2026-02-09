@@ -1,16 +1,59 @@
 ﻿using Assets.Code;
-using System;
+using FullSerializer;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace CovenExpansionRecast
 {
     public class I_Soulstone : Item
     {
-        public Person CapturedSoul;
+        [fsProperty("CapturedSoul")]
+        private Person _capturedSoul;
+
+        [fsIgnore]
+        public Person CapturedSoul
+        {
+            get
+            {
+                return _capturedSoul;
+            }
+            set
+            {
+                if (value != _capturedSoul)
+                {
+                    if (value == null)
+                    {
+                        _soulType = SoulType.Nothing;
+                    }
+                    else
+                    {
+                        _soulType = SoulTypeUtils.GetSoulType(value);
+                    }
+                    _capturedSoul = value;
+                }
+            }
+        }
+
+        [SerializeField]
+        private SoulType _soulType = SoulType.Nothing;
+
+        [fsIgnore]
+        public SoulType SoulType
+        {
+            get
+            {
+                if (_soulType == SoulType.Nothing && CapturedSoul != null)
+                {
+                    _soulType = SoulTypeUtils.GetSoulType(CapturedSoul);
+                }
+                return _soulType;
+            }
+            set
+            {
+                _soulType = value;
+            }
+        }
 
         public Mg_Rti_TransposeSoul Rti_TransposeSoul;
 
@@ -23,11 +66,12 @@ namespace CovenExpansionRecast
             Rti_TransposeSoul = new Mg_Rti_TransposeSoul(location, this);
             challenges.Add(Rti_TransposeSoul);
             challenges.Add(new Rti_ReleaseSoul(location, this));
+            challenges.Add(new Rti_ChooseSoulType(location, this));
             challenges.Add(new Mg_Rti_RiteOfMasks(location, this));
             challenges.Add(new Mg_Rti_Curse_Toad(location, this));
             challenges.Add(new Mg_Rti_Curse_Flourishing(location, this));
             challenges.Add(new Mg_Rti_Curse_Mirror(location, this));
-            
+
             if (CovensCore.Instance.TryGetModIntegrationData("LivingWilds", out _))
             {
                 challenges.Add(new Mg_Rti_Curse_Lycanthropy(location, this));
@@ -38,7 +82,7 @@ namespace CovenExpansionRecast
         {
             if (CapturedSoul != null)
             {
-                string name = $"Soulstone ({SoulTypeUtils.GetTitle(CapturedSoul)})";
+                string name = $"Soulstone ({SoulTypeUtils.GetTitle(SoulType)})";
 
                 if (CapturedSoul.society == map.soc_dark)
                 {
@@ -59,7 +103,7 @@ namespace CovenExpansionRecast
         {
             if (CapturedSoul != null)
             {
-                string result = $"A gemstone carved into a magical cage. It contains the captured soul of {CapturedSoul.getName()} ({SoulTypeUtils.GetTitle(CapturedSoul)}).";
+                string result = $"A gemstone carved into a magical cage. It contains the captured soul of {CapturedSoul.getName()} ({SoulTypeUtils.GetTitle(SoulType)}).";
 
                 if (CapturedSoul.society == map.soc_dark)
                 {
@@ -78,44 +122,34 @@ namespace CovenExpansionRecast
 
         public override Sprite getIconFore()
         {
-            if (CapturedSoul != null)
+            if (CapturedSoul == null)
             {
-                switch(SoulTypeUtils.GetSoulType(CapturedSoul))
-                {
-                    case SoulType.Alienist:
-                        return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_Alienist.png");
-                    case SoulType.DeepOneSpecialist:
-                        return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_Alienist.png");
-                    case SoulType.Exorcist:
-                        return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_Exorcist.png");
-                    case SoulType.Lightbringer:
-                        return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_Lightbringer.png");
-                    case SoulType.Mediator:
-                        return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_Mediator.png");
-                    case SoulType.Mage:
-                        return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_Mage.png");
-                    case SoulType.OrcSlayer:
-                        return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_OrcSlayer.png");
-                    case SoulType.Physician:
-                        return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_Doctor.png");
-                    case SoulType.Werewolf:
-                        return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_Werewolf.png");
-                    default:
-                        return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone.png");
-                }
+                return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_Inactive.png");
             }
 
-            return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_Inactive.png");
-        }
-
-        public SoulType GetSoulType()
-        {
-            if (CapturedSoul != null)
+            switch (SoulType)
             {
-                return SoulTypeUtils.GetSoulType(CapturedSoul);
+                case SoulType.Alienist:
+                    return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_Alienist.png");
+                case SoulType.DeepOneSpecialist:
+                    return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_Alienist.png");
+                case SoulType.Exorcist:
+                    return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_Exorcist.png");
+                case SoulType.Lightbringer:
+                    return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_Lightbringer.png");
+                case SoulType.Mediator:
+                    return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_Mediator.png");
+                case SoulType.Mage:
+                    return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_Mage.png");
+                case SoulType.OrcSlayer:
+                    return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_OrcSlayer.png");
+                case SoulType.Physician:
+                    return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_Doctor.png");
+                case SoulType.Werewolf:
+                    return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone_Werewolf.png");
+                default:
+                    return EventManager.getImg("CovenExpansionRecast.Fore_Soulstone.png");
             }
-
-            return SoulType.Nothing;
         }
 
         public override Sprite getIconBack()
@@ -141,7 +175,7 @@ namespace CovenExpansionRecast
 
             Dictionary<I_Soulstone, Mg_Rti_TransposeSoul> existingTranspositionRituals = new Dictionary<I_Soulstone, Mg_Rti_TransposeSoul>();
 
-            if (GetSoulType() != SoulType.Nothing)
+            if (SoulType != SoulType.Nothing)
             {
                 foreach (Mg_Rti_TransposeSoul transpose in TranspositionRituals)
                 {
@@ -164,15 +198,15 @@ namespace CovenExpansionRecast
 
             bool hasTranspositionScroll = false;
             TranspositionRituals.Clear();
-            if (GetSoulType() != SoulType.Nothing)
+            if (SoulType != SoulType.Nothing)
             {
                 for (int i = 0; i < ua.person.items.Length; i++)
                 {
                     if (ua.person.items[i] is I_Soulstone soulstone)
                     {
-                        if (soulstone != this && soulstone.GetSoulType() != SoulType.Nothing && soulstone.GetSoulType() != GetSoulType())
+                        if (soulstone != this && soulstone.SoulType != SoulType.Nothing && soulstone.SoulType != SoulType)
                         {
-                            if (CovensCore.Instance.GetSoulcraftingItemID(GetSoulType(), soulstone.GetSoulType(), false) != string.Empty)
+                            if (CovensCore.Instance.GetSoulcraftingItemID(SoulType, soulstone.SoulType, false) != string.Empty)
                             {
                                 if (existingTranspositionRituals.TryGetValue(soulstone, out Mg_Rti_TransposeSoul transpose))
                                 {
