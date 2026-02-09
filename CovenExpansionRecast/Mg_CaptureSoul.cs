@@ -1,9 +1,7 @@
 ﻿using Assets.Code;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace CovenExpansionRecast
@@ -20,23 +18,62 @@ namespace CovenExpansionRecast
 
         public override string getName()
         {
-            return $"Capture Soul ({SoulTypeUtils.GetTitle(map.persons[Target.personIndex])})";
+            StringBuilder result = new StringBuilder("Capture Soul (");
+            List<SoulType> types = SoulTypeUtils.GetSoulTypes(map.persons[Target.personIndex]);
+            if (types.Count == 0)
+            {
+                result.Append(SoulTypeUtils.GetTitle(SoulType.Nothing));
+            }
+            else
+            {
+                for (int i = 0; i < types.Count; i++)
+                {
+                    result.Append(SoulTypeUtils.GetTitle(types[i]));
+                    if (i < types.Count - 1)
+                    {
+                        result.Append(", ");
+                    }
+                }
+            }
+            result.Append(")");
+
+            return result.ToString();
         }
 
         public override string getDesc()
         {
-            string result = $"Captures the soul of {map.persons[Target.personIndex].getFullName()} ({SoulTypeUtils.GetTitle(map.persons[Target.personIndex])}) in an inactive soulstone, saving it for later use.";
+            StringBuilder result = new StringBuilder("Captures the soul of ");
+            result.Append(map.persons[Target.personIndex].getFullName());
+            result.Append(" (");
+
+            List<SoulType> types = SoulTypeUtils.GetSoulTypes(map.persons[Target.personIndex]);
+            if (types.Count == 0)
+            {
+                result.Append(SoulTypeUtils.GetTitle(SoulType.Nothing));
+            }
+            else
+            {
+                for (int i = 0; i < types.Count; i++)
+                {
+                    result.Append(SoulTypeUtils.GetTitle(types[i]));
+                    if (i < types.Count - 1)
+                    {
+                        result.Append(", ");
+                    }
+                }
+            }
+            result.Append(") in an inactive soulstone, saving it for later use.");
 
             if (map.persons[Target.personIndex].society == map.soc_dark)
             {
-                result += $"They are an Agent of The Dark, and cannot be cursed.";
+                result.Append("They are an Agent of The Dark, and cannot be cursed.");
             }
             else if (map.persons[Target.personIndex].society is SG_AgentWanderers)
             {
-                result += $"They have a Mounstrous Soul, and cannot be cursed.";
+                result.Append("They have a Mounstrous Soul, and cannot be cursed.");
             }
 
-            return result;
+            return result.ToString();
         }
 
         public override string getCastFlavour()
