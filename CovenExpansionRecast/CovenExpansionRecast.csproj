@@ -116,6 +116,7 @@
     <Compile Include="P_OpenMind.cs" />
     <Compile Include="Rti_CallHordes.cs" />
     <Compile Include="Mg_CaptureSoul.cs" />
+    <Compile Include="Rti_ChooseSoulType.cs" />
     <Compile Include="Rti_MassSettlement.cs" />
     <Compile Include="Rti_Panacea.cs" />
     <Compile Include="Rti_RatIconSteal.cs" />
@@ -131,6 +132,7 @@
     <Compile Include="Rt_Haunt.cs" />
     <Compile Include="Rti_OrganizeSettlers.cs" />
     <Compile Include="Rt_StudyCurseweaving.cs" />
+    <Compile Include="Sel2_SoulTypeSelector.cs" />
     <Compile Include="Sel2_DisplayInertSelection.cs" />
     <Compile Include="Sel2_CurseTargetSelector.cs" />
     <Compile Include="Sel2_MagicPlague_PropertySelector.cs" />
