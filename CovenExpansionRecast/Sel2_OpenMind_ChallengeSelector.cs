@@ -24,7 +24,7 @@ namespace CovenExpansionRecast
             {
                 if (outerKvp.Value.Count == 1)
                 {
-                    labels.Add(outerKvp.Value.GetKeyAtIndex(0));
+                    labels.Add(outerKvp.Value.Keys[0]);
                     hasData = true;
                     continue;
                 }
