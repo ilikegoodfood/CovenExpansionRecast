@@ -712,6 +712,11 @@ namespace CovenExpansionRecast
                         coven = cov;
                         break;
                     }
+                    else if (temple == null && sub is Sub_Temple temp && temp.order is HolyOrder_Witches)
+                    {
+                        temple = temp;
+                        continue;
+                    }
                 }
             }
             else if (location.settlement is SettlementHuman)

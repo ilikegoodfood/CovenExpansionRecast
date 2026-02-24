@@ -120,6 +120,35 @@ namespace CovenExpansionRecast
             uA.task = null;
         }
 
+        public override void complete(UM u)
+        {
+            if (u == null || !u.isCommandable() || Soulstone == null || Soulstone.CapturedSoul == null)
+            {
+                return;
+            }
+
+            List<SoulType> types = SoulTypeUtils.GetSoulTypes(Soulstone.CapturedSoul);
+            if (types.Count <= 1)
+            {
+                return;
+            }
+
+            List<string> targetLabels = new List<string>();
+            foreach (SoulType type in types)
+            {
+                if (Soulstone.SoulType == type)
+                {
+                    targetLabels.Add(SoulTypeUtils.GetTitle(type) + " (Current)");
+                    continue;
+                }
+
+                targetLabels.Add(SoulTypeUtils.GetTitle(type));
+            }
+
+            map.world.ui.addBlocker(map.world.prefabStore.getScrollSetText(targetLabels, false, new Sel2_SoulTypeSelector(Soulstone, types), "Select the specialization you wihs this soulstone to manifest").gameObject);
+            u.task = null;
+        }
+
         public override double getComplexity()
         {
             return 1.0;
