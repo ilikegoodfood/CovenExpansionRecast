@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace CovenExpansionRecast
 {
@@ -26,49 +27,61 @@ namespace CovenExpansionRecast
                 return SoulType.Nothing;
             }
 
-            if (CovensCore.ComLib.checkKnowsMagic(p))
+            CovensCore.ComLib.checkKnowsMagic(p, out List<Trait> mageTraits);
+
+            Type lycanthropyType = null;
+            Type lycanthropyCurseType = null;
+            if (CovensCore.Instance.TryGetModIntegrationData("LivingWilds", out ModIntegrationData intDataLW))
             {
-                return SoulType.Mage;
+                if (intDataLW.TypeDict.TryGetValue("LycanthropyTrait", out Type t))
+                {
+                    lycanthropyType = t;
+                }
+                if (intDataLW.TypeDict.TryGetValue("LycanthropyCurseTrait", out Type t2))
+                {
+                    lycanthropyCurseType = t2;
+                }
             }
 
             foreach (Trait trait in p.traits)
             {
-                if (trait.getName().Contains("Lycanthropy"))
-                {
-                    return SoulType.Werewolf;
-                }
-
                 if (trait is T_ChallengeBooster booster)
                 {
                     if (booster.target == Tags.ORC)
                     {
                         return SoulType.OrcSlayer;
                     }
-
-                    if (booster.target == Tags.DISCORD)
+                    else if (booster.target == Tags.DISCORD)
                     {
                         return SoulType.Mediator;
                     }
-
-                    if (booster.target == Tags.DISEASE)
+                    else if (booster.target == Tags.DISEASE)
                     {
                         return SoulType.Physician;
                     }
-
-                    if (booster.target == Tags.SHADOW)
+                    else if (booster.target == Tags.SHADOW)
                     {
                         return SoulType.Lightbringer;
                     }
-
-                    if (booster.target == Tags.UNDEAD)
+                    else if (booster.target == Tags.UNDEAD)
                     {
                         return SoulType.Exorcist;
                     }
-
-                    if (booster.target == Tags.DEEPONES)
+                    else if (booster.target == Tags.DEEPONES)
                     {
                         return SoulType.DeepOneSpecialist;
                     }
+                }
+
+                if (mageTraits != null && mageTraits.Contains(trait))
+                {
+                    return SoulType.Mage;
+                }
+
+                Type traitType = trait.GetType();
+                if ((lycanthropyType != null && lycanthropyType.IsAssignableFrom(traitType)) || (lycanthropyCurseType != null && lycanthropyCurseType.IsAssignableFrom(traitType)))
+                {
+                    return SoulType.Werewolf;
                 }
             }
 
@@ -79,19 +92,24 @@ namespace CovenExpansionRecast
         {
             List<SoulType> types = new List<SoulType>();
 
-            if (CovensCore.ComLib.checkKnowsMagic(p))
+            CovensCore.ComLib.checkKnowsMagic(p, out List<Trait> mageTraits);
+
+            Type lycanthropyType = null;
+            Type lycanthropyCurseType = null;
+            if (CovensCore.Instance.TryGetModIntegrationData("LivingWilds", out ModIntegrationData intDataLW))
             {
-                types.Add(SoulType.Mage);
+                if (intDataLW.TypeDict.TryGetValue("LycanthropyTrait", out Type t))
+                {
+                    lycanthropyType = t;
+                }
+                if (intDataLW.TypeDict.TryGetValue("LycanthropyCurseTrait", out Type t2))
+                {
+                    lycanthropyCurseType = t2;
+                }
             }
 
             foreach (Trait trait in p.traits)
             {
-                if (trait.getName().Contains("Lycanthropy"))
-                {
-                    types.Add(SoulType.Werewolf);
-                    continue;
-                }
-
                 if (trait is T_ChallengeBooster booster)
                 {
                     if (booster.target == Tags.ORC)
@@ -117,6 +135,18 @@ namespace CovenExpansionRecast
                     else if (booster.target == Tags.DEEPONES)
                     {
                         types.Add(SoulType.DeepOneSpecialist);
+                    }
+                }
+                else if (mageTraits != null && mageTraits.Contains(trait))
+                {
+                    types.Add(SoulType.Mage);
+                }
+                else
+                {
+                    Type traitType = trait.GetType();
+                    if ((lycanthropyType != null && lycanthropyType.IsAssignableFrom(traitType)) || (lycanthropyCurseType != null && lycanthropyCurseType.IsAssignableFrom(traitType)))
+                    {
+                        types.Add(SoulType.Werewolf);
                     }
                 }
             }

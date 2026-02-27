@@ -4,8 +4,6 @@ using CommunityLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CovenExpansionRecast
 {
@@ -106,7 +104,13 @@ namespace CovenExpansionRecast
             "I_BagOfBoundlessWealth",
             "I_ExquisiteMask",
             "I_RuinousBlade",
-            "I_HoodOfShadows"
+            "I_HoodOfShadows",
+            "I_BootsOfWealth",
+            "I_BootsOfXP",
+            "I_Elfstone",
+            "I_PageFromTome",
+            "I_SacrificialDagger",
+            "I_WarAxe"
         });
 
         public readonly List<SoulType> DeepOneSouls = new List<SoulType>
@@ -127,7 +131,8 @@ namespace CovenExpansionRecast
             "I_MesmerizingShell",
             "I_RitualistShard",
             "I_WaterloggedCharm",
-            "I_StrangeMeat"
+            "I_StrangeMeat",
+            "I_AbyssalTome" // DUPLICATE
         });
 
         public readonly List<String> RecipeList = new List<String>();
@@ -264,9 +269,28 @@ namespace CovenExpansionRecast
 
                         if (challenge is Ch_BuyItem buy && buy.onSale is I_Soulstone soulstone)
                         {
-                            if (!soulstone.challenges.Any(r => r is Rti_ChooseSoulType))
+                            Rti_ChooseSoulType chooseSoulRitual = null;
+                            Mg_Rti_Curse_CollectMind collectMindRitual = null;
+                            foreach (Ritual ritual in soulstone.challenges.ToList())
                             {
-                                soulstone.challenges.Add(new Rti_ChooseSoulType(map.locations[0], soulstone));
+                                if (ritual is Rti_ChooseSoulType choose)
+                                {
+                                    chooseSoulRitual = choose;
+
+                                }
+                                else if (ritual is Mg_Rti_Curse_CollectMind collect)
+                                {
+                                    collectMindRitual = collect;
+                                }
+                            }
+
+                            if (chooseSoulRitual == null)
+                            {
+                                soulstone.challenges.Add(new Rti_ChooseSoulType(buy.location, soulstone));
+                            }
+                            if (collectMindRitual == null)
+                            {
+                                soulstone.challenges.Add(new Mg_Rti_Curse_CollectMind(buy.location, soulstone));
                             }
                         }
                     }
@@ -283,10 +307,42 @@ namespace CovenExpansionRecast
                         {
                             soulstone.Rti_TransposeSoul = (Mg_Rti_TransposeSoul)soulstone.challenges.FirstOrDefault(ch => ch is Mg_Rti_TransposeSoul transpose && transpose.SoulstoneB == null);
                         }
-                        if (!soulstone.challenges.Any(r => r is Rti_ChooseSoulType))
+
+                        Rti_ChooseSoulType chooseSoulRitual = null;
+                        Mg_Rti_Curse_CollectMind collectMindRitual = null;
+                        foreach (Ritual ritual in soulstone.challenges.ToList())
                         {
-                            soulstone.challenges.Add(new Rti_ChooseSoulType(map.locations[0], soulstone));
+                            if (ritual is Rti_ChooseSoulType choose)
+                            {
+                                chooseSoulRitual = choose;
+
+                            }
+                            else if (ritual is Mg_Rti_Curse_CollectMind collect)
+                            {
+                                collectMindRitual = collect;
+                            }
                         }
+
+                        if (chooseSoulRitual == null)
+                        {
+                            soulstone.challenges.Add(new Rti_ChooseSoulType(person.getLocation(), soulstone));
+                        }
+                        if (collectMindRitual == null)
+                        {
+                            soulstone.challenges.Add(new Mg_Rti_Curse_CollectMind(person.getLocation(), soulstone));
+                        }
+                    }
+                }
+
+                if (person.unit is UAEN_Pigeon pigeon && pigeon.task.GetType() == typeof(Task_GoToUnit))
+                {
+                    if (pigeon.returning)
+                    {
+                        pigeon.task = new Task_PigeonCarryToUnit(pigeon, pigeon.Owner);
+                    }
+                    else
+                    {
+                        pigeon.task = new Task_PigeonCarryToUnit(pigeon, pigeon.Target);
                     }
                 }
             }
@@ -413,12 +469,23 @@ namespace CovenExpansionRecast
                             Type lycanthropyTraitType = intDataLW.Assembly.GetType("LivingWilds.T_Nature_Lycanthropy", false);
                             if (lycanthropyTraitType != null)
                             {
+                                intDataLW.TypeDict.Add("LycanthropyTrait", lycanthropyTraitType);
                                 intDataLW.MethodInfoDict.Add("T_Lycanthropy.InfectPerson", lycanthropyTraitType.GetMethod("infectPerson", new Type[] { typeof(Person), typeof(bool), typeof(bool) }));
                                 intDataLW.MethodInfoDict.Add("T_Lycanthropy.IsWerewolf", lycanthropyTraitType.GetMethod("isWerewolf", new Type[] { typeof(Person) }));
                             }
                             else
                             {
                                 Console.WriteLine("CovenExpansionRecast: Failed to get Lycanthropy trait Type from Living Wilds (Living_Wilds.T_Nature_Lycanthropy)");
+                            }
+
+                            Type lycanthropyCurseTraitType = intDataLW.Assembly.GetType("LivingWilds.T_Nature_WerewolfInfectiousness", false);
+                            if (lycanthropyCurseTraitType != null)
+                            {
+                                intDataLW.TypeDict.Add("LycanthropyCurseTrait", lycanthropyCurseTraitType);
+                            }
+                            else
+                            {
+                                Console.WriteLine("CovenExpansionRecast: Failed to get Lycanthropy Curse trait Type from Living Wilds (Living_Wilds.T_Nature_WerewolfInfectiousness)");
                             }
                         }
                         break;
@@ -469,9 +536,9 @@ namespace CovenExpansionRecast
             // Shuffle craftables collection, ensuring that the soul-craftable pairs are unique each game.
             SingleCraftables.Shuffle();
             DualCraftables.Shuffle();
+            DeepOneCraftables.Shuffle();
 
-            // In the case of DeepOnes, there are more SoulTypes than craftables, therefore, the soul types are shuffled instead of the craftables.
-            DeepOneSouls.Shuffle();
+            // In any case where there are more SoulTypes than craftables, the soul types are shuffled instead of the craftables.
         }
 
         public void BuildSoulItemRecipeList(Map map)
@@ -486,11 +553,28 @@ namespace CovenExpansionRecast
                 RecipeList.Add($"{SoulTypeUtils.GetTitle(DualSouls[i].Item1)} + {SoulTypeUtils.GetTitle(DualSouls[i].Item2)} => {GetSoulcraftingItemName(DualCraftables[i])}");
             }
 
-            if (Instance.TryGetModIntegrationData("DeepOnesPlus", out _))
+            if (Instance.TryGetModIntegrationData("DeepOnesPlus", out ModIntegrationData intDataDO))
             {
+                RecipeList.Add($"{SoulTypeUtils.GetTitle(SoulType.DeepOneSpecialist)} => {GetSoulcraftingItemName(GetSoulcraftingItemID(SoulType.DeepOneSpecialist))}");
+
                 for (int i = 0; i < DeepOneSouls.Count && i < DeepOneCraftables.Count; i++)
                 {
-                    RecipeList.Add($"Pelagist + {SoulTypeUtils.GetTitle(DeepOneSouls[i])} => {GetSoulcraftingItemName(DeepOneCraftables[i])}");
+                    RecipeList.Add($"{SoulTypeUtils.GetTitle(SoulType.DeepOneSpecialist)} + {SoulTypeUtils.GetTitle(DeepOneSouls[i])} => {GetSoulcraftingItemName(DeepOneCraftables[i])}");
+                }
+            }
+
+            if (Instance.TryGetModIntegrationData("LivingWilds", out _))
+            {
+                RecipeList.Add($"{SoulTypeUtils.GetTitle(SoulType.Werewolf)} => {GetSoulcraftingItemName(GetSoulcraftingItemID(SoulType.Werewolf))}");
+
+                if (intDataDO != null)
+                {
+                    RecipeList.Add($"{SoulTypeUtils.GetTitle(SoulType.Werewolf)} + {SoulTypeUtils.GetTitle(SoulType.DeepOneSpecialist)} => {GetSoulcraftingItemName(GetSoulcraftingItemID(SoulType.Werewolf, SoulType.DeepOneSpecialist))}");
+                }
+
+                for (int i = 0; i < SingleSouls.Count; i++)
+                {
+                    RecipeList.Add($"{SoulTypeUtils.GetTitle(SoulType.Werewolf)} + {SoulTypeUtils.GetTitle(SingleSouls[i])} => {GetSoulcraftingItemName(GetSoulcraftingItemID(SoulType.Werewolf, SingleSouls[i]))}");
                 }
             }
         }
@@ -958,6 +1042,16 @@ namespace CovenExpansionRecast
             int index;
             if (soulTypeB == SoulType.Nothing)
             {
+                if (soulTypeA == SoulType.DeepOneSpecialist)
+                {
+                    return "I_Soulstone";
+                }
+
+                if (soulTypeA == SoulType.Werewolf)
+                {
+                    return "I_ConcealedDagger";
+                }
+
                 index = SingleSouls.IndexOf(soulTypeA);
                 if (index < 0 || index >= SingleCraftables.Count)
                 {
@@ -966,12 +1060,12 @@ namespace CovenExpansionRecast
                 return SingleCraftables[index];
             }
 
-            if (soulTypeB != SoulType.DeepOneSpecialist && !SingleSouls.Contains(soulTypeB))
+            if (soulTypeB != SoulType.DeepOneSpecialist && soulTypeB != SoulType.Werewolf && !SingleSouls.Contains(soulTypeB))
             {
                 return string.Empty;
             }
 
-            if  (soulTypeA == SoulType.DeepOneSpecialist || (checkReverseRecipe && soulTypeB == SoulType.DeepOneSpecialist))
+            if (soulTypeA == SoulType.DeepOneSpecialist || (checkReverseRecipe && soulTypeB == SoulType.DeepOneSpecialist))
             {
                 SoulType otherSoulType;
                 if (soulTypeA == SoulType.DeepOneSpecialist)
@@ -983,6 +1077,11 @@ namespace CovenExpansionRecast
                     otherSoulType = soulTypeA;
                 }
 
+                if (otherSoulType == SoulType.Werewolf)
+                {
+                    return "I_ManticoreTrophy";
+                }
+
                 index = DeepOneSouls.IndexOf(otherSoulType);
                 if (index < 0 || index >= DeepOneCraftables.Count)
                 {
@@ -990,6 +1089,11 @@ namespace CovenExpansionRecast
                 }
 
                 return DeepOneCraftables[index];
+            }
+
+            if (soulTypeA == SoulType.Werewolf || (checkReverseRecipe && soulTypeB == SoulType.Werewolf))
+            {
+                return "I_WarAxe";
             }
 
             Tuple<SoulType, SoulType> tuple = new Tuple<SoulType, SoulType>(soulTypeA, soulTypeB);
@@ -1066,6 +1170,29 @@ namespace CovenExpansionRecast
                     return new I_RuinousBlade(map);
                 case "I_HoodOfShadows":
                     return new I_HoodOfShadows(map);
+                case "I_BootsOfWealth":
+                    return new I_BootsOfWealth(map);
+                case "I_BootsOfXP":
+                    return new I_BootsOfXP(map);
+                case "I_Elfstone":
+                    I_Elfstone elfstone = new I_Elfstone(map);
+                    elfstone.corrupted = true;
+                    Rti_CorruptElfstone corruptElfstone = (Rti_CorruptElfstone)elfstone.challenges.FirstOrDefault(c => c is Rti_CorruptElfstone);
+                    if (corruptElfstone != null)
+                    {
+                        elfstone.challenges.Remove(corruptElfstone);
+                    }
+                    return elfstone;
+                case "I_PageFromTome":
+                    return new I_PageFromTome(map);
+                case "I_SacrificialDagger":
+                    return new I_SacrificialDagger(map);
+                case "I_WarAxe":
+                    return new I_WarAxe(map);
+                case "I_ManticoreTrophy":
+                    return new I_ManticoreTrophy(map);
+                case "I_ConcealedDagger":
+                    return new I_ConcealedDagger(map);
             }
 
             if (Instance.TryGetModIntegrationData("DeepOnesPlus", out ModIntegrationData intDataDOP))
@@ -1108,6 +1235,8 @@ namespace CovenExpansionRecast
                             return (Item)Activator.CreateInstance(waterloggedCharmType, new object[] { map, ua });
                         }
                         return null;
+                    case "I_Soulstone":
+                        return new I_Soulstone(map);
                 }
             }
 
@@ -1177,6 +1306,21 @@ namespace CovenExpansionRecast
                     return "The Ruinous Blade";
                 case "I_HoodOfShadows":
                     return "Hood of Shadows";
+                case "I_BootsOfWealth":
+                    return "Boots of Wealth";
+                case "I_BootsOfXP":
+                    return "Boots of the Scholar";
+                case "I_Elfstone":
+                    return "Corrupted Elfstone";
+                case "I_PageFromTome":
+                    return "Page from the Tome";
+                case "I_SacrificialDagger":
+                    return "Sacrificial Dagger";
+                case "I_WarAxe":
+                    return "War Axe";
+                case "I_ManticoreTrophy":
+                    return "Manticore Trophy";
+                // DeepOnesPlus Itmes
                 case "I_AbyssalTome":
                     return "Abyssal Tome";
                 case "I_DrownedMemento":

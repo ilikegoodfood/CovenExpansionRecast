@@ -1,9 +1,6 @@
 ﻿using Assets.Code;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace CovenExpansionRecast
@@ -56,9 +53,18 @@ namespace CovenExpansionRecast
         {
             if (SoulstoneB == null)
             {
-                return "Forging an item from the essence of a soul. The rarity of the item produced will be low, with the highest quality items being composed of two souls with unique professions.";
+                if (SoulstoneA.CapturedSoul != null)
+                {
+                    return $"Forges an item from the essence of {SoulstoneA.CapturedSoul.getName()}'s {SoulTypeUtils.GetTitle(SoulstoneA.SoulType)} soul. The rarity of the item produced will be low, with the highest quality items being composed of two souls with unique professions.";
+                }
+
+                return "Forges an item from the essence of a soul. The rarity of the item produced will be low, with the highest quality items being composed of two souls with unique professions.";
             }
-            return "Combines two souls together, forging an item from their combined essence. The rarity of the item will depend on the profession of the souls, with the highest quality items being composed of two souls with unique professions.";
+            if (SoulstoneA.CapturedSoul != null && SoulstoneB.CapturedSoul != null)
+            {
+                return $"Forges the souls of {SoulstoneA.CapturedSoul.getName()}'s {SoulTypeUtils.GetTitle(SoulstoneA.SoulType)} soul and {SoulstoneB.CapturedSoul.getName()}'s {SoulTypeUtils.GetTitle(SoulstoneB.SoulType)} soul together, forging an item from their combined essence. The rarity of the item will depend on the profession of the souls, with the highest quality items being composed of two souls with unique professions.";
+            }
+            return $"Forges two souls together, forging an item from their combined essence. The rarity of the item will depend on the profession of the souls, with the highest quality items being composed of two souls with unique professions.";
         }
 
         public override string getCastFlavour()
@@ -91,7 +97,7 @@ namespace CovenExpansionRecast
 
         public override bool valid()
         {
-            return SoulstoneA != null && SoulstoneA.SoulType != SoulType.Nothing && !string.IsNullOrEmpty(CovensCore.Instance.GetSoulcraftingItemID(SoulstoneA.SoulType, SoulstoneB?.SoulType ?? SoulType.Nothing));
+            return SoulstoneA != null && SoulstoneA.SoulType != SoulType.Nothing && !string.IsNullOrEmpty(CovensCore.Instance.GetSoulcraftingItemID(SoulstoneA.SoulType, (SoulstoneB?.SoulType ?? SoulType.Nothing)));
         }
 
         public override bool validFor(UA ua)
@@ -131,7 +137,7 @@ namespace CovenExpansionRecast
                 return false;
             }
 
-            return ua.location.settlement.subs.Any(sub => sub is Sub_Temple temple && temple.order is HolyOrder_Witches);
+            return ua.location.settlement.subs.Any(sub => (sub is Sub_Temple temple && temple.order is HolyOrder_Witches) || sub is Sub_WitchCoven coven);
         }
 
         public override double getComplexity()

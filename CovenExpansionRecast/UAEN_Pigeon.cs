@@ -1,10 +1,5 @@
 ﻿using Assets.Code;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static UnityEngine.GraphicsBuffer;
 
 namespace CovenExpansionRecast
 {
@@ -94,7 +89,7 @@ namespace CovenExpansionRecast
                 }
             }
 
-            if (!gainedPigeon && target.isCommandable() && target.getStatCommandLimit() > 0 && target.map.burnInComplete)
+            if (!gainedPigeon && target.isCommandable() && target.getStatCommandLimit() >= Pigeon.getCommandCost() && target.map.burnInComplete)
             {
                 target.map.world.prefabStore.popMinionDismiss(target, Pigeon);
                 return;

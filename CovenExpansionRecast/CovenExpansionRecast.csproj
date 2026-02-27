@@ -145,6 +145,7 @@
     <Compile Include="Sel2_SoulFinder.cs" />
     <Compile Include="SoulType.cs" />
     <Compile Include="SoulTypeUtils.cs" />
+    <Compile Include="Task_PigeonCarryToUnit.cs" />
     <Compile Include="T_ Wanderer.cs" />
     <Compile Include="T_CollectedMind.cs" />
     <Compile Include="T_PhthisicalPoisoned.cs" />
