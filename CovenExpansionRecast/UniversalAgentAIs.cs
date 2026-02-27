@@ -1,10 +1,6 @@
 ﻿using Assets.Code;
 using CommunityLib;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace CovenExpansionRecast
@@ -29,8 +25,8 @@ namespace CovenExpansionRecast
             controlParams.includeDangerousFoe = false;
 
             List<AITask> tasks = new List<AITask> {
-                    new AITask(typeof(Task_GoToUnit), "Deliver Item", Map, Delegate_Instantiate_DeliverItems, AITask.TargetCategory.Unit, null, new Color(0.5f, 0.5f, 0.5f, 1.0f)),
-                    new AITask(typeof(Task_GoToUnit), "Fly Home", Map, Delegate_Instantiate_PigeonFlyHome, AITask.TargetCategory.Unit, null, new Color(0.5f, 0.5f, 0.5f, 1.0f))
+                    new AITask(typeof(Task_PigeonCarryToUnit), "Deliver Item", Map, Delegate_Instantiate_DeliverItems, AITask.TargetCategory.Unit, null, new Color(0.5f, 0.5f, 0.5f, 1.0f)),
+                    new AITask(typeof(Task_PigeonCarryToUnit), "Fly Home", Map, Delegate_Instantiate_PigeonFlyHome, AITask.TargetCategory.Unit, null, new Color(0.5f, 0.5f, 0.5f, 1.0f))
                 };
 
             tasks[0].delegates_Valid.Add(Delegate_Validity_DeliverItems);
@@ -50,9 +46,13 @@ namespace CovenExpansionRecast
             }
 
             UA target = taskData.targetUnit as UA;
+            if (pigeon.returning)
+            {
+                target = pigeon.Owner;
+            }
             if (target != null && (!target.isDead || CovensCore.ComLib.checkIsUnitSubsumed(target)))
             {
-                Task_GoToUnit follow = new Task_GoToUnit(ua, target.person.unit, -1, 1);
+                Task_PigeonCarryToUnit follow = new Task_PigeonCarryToUnit(pigeon, target);
                 follow.reasonsMessages.Add(new ReasonMsg("Delivering Items", 100.0));
                 return follow;
             }

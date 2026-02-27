@@ -1,9 +1,6 @@
 ﻿using Assets.Code;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CovenExpansionRecast
 {
@@ -11,7 +8,7 @@ namespace CovenExpansionRecast
     {
         public Person Person;
 
-        public List<Mg_CaptureSoul>CaptureSoulRituals = new List<Mg_CaptureSoul>();
+        public List<Mg_CaptureSoul> CaptureSoulRituals = new List<Mg_CaptureSoul>();
 
         public override string getName()
         {
@@ -111,7 +108,7 @@ namespace CovenExpansionRecast
                     {
                         // Remove all Capture Soul rituals for souls that are no longer present at the person's locatiion
                         Person.unit.rituals.Remove(captureSoul);
-                        if ((Person.unit.task  is Task_PerformChallenge challenge && challenge.challenge == captureSoul) || (Person.unit.task is Task_GoToPerformChallenge goToChallenge && goToChallenge.challenge == captureSoul))
+                        if ((Person.unit.task is Task_PerformChallenge challenge && challenge.challenge == captureSoul) || (Person.unit.task is Task_GoToPerformChallenge goToChallenge && goToChallenge.challenge == captureSoul))
                         {
                             Person.unit.map.addUnifiedMessage(Person.unit, null, "Task Cancelled", Person.unit.getName() + " cancelled challenge " + ritual.getName() + ": No Longer Valid", UnifiedMessage.messageType.TASK_CANCELLED);
                             Person.unit.task = null;

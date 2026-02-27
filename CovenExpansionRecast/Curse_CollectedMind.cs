@@ -1,9 +1,5 @@
 ﻿using Assets.Code;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CovenExpansionRecast
 {
@@ -31,6 +27,12 @@ namespace CovenExpansionRecast
             {
                 collected = new T_CollectedMind();
                 p.receiveTrait(collected);
+            }
+
+            if (!p.map.overmind.god.powers.Contains(CovensCore.Instance.OpenMindPower))
+            {
+                p.map.overmind.god.powers.Add(CovensCore.Instance.OpenMindPower);
+                p.map.overmind.god.powerLevelReqs.Add(0);
             }
         }
     }

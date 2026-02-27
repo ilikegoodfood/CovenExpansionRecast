@@ -36,7 +36,7 @@ namespace CovenExpansionRecast
             }
         }
 
-        [SerializeField]
+        [fsProperty]
         private SoulType _soulType = SoulType.Nothing;
 
         [fsIgnore]
@@ -72,6 +72,7 @@ namespace CovenExpansionRecast
             challenges.Add(new Mg_Rti_Curse_Toad(location, this));
             challenges.Add(new Mg_Rti_Curse_Flourishing(location, this));
             challenges.Add(new Mg_Rti_Curse_Mirror(location, this));
+            challenges.Add(new Mg_Rti_Curse_CollectMind(location, this));
 
             if (CovensCore.Instance.TryGetModIntegrationData("LivingWilds", out _))
             {
@@ -224,6 +225,11 @@ namespace CovenExpansionRecast
             {
                 for (int i = 0; i < ua.person.items.Length; i++)
                 {
+                    if (ua.person.items[i] == this)
+                    {
+                        continue;
+                    }
+
                     if (ua.person.items[i] is I_Soulstone soulstone)
                     {
                         if (soulstone != this && soulstone.SoulType != SoulType.Nothing && soulstone.SoulType != SoulType)
