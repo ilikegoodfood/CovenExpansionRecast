@@ -1,11 +1,5 @@
 ﻿using Assets.Code;
-using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CovenExpansionRecast
 {
@@ -39,15 +33,15 @@ namespace CovenExpansionRecast
             {
                 int value = 0;
 
-                if (NationalActions.Count > 0)
+                if (NationalActions != null && NationalActions.Count > 0)
                 {
                     value++;
                 }
-                if (LocalActions.Count > 0)
+                if (LocalActions != null && LocalActions.Count > 0)
                 {
                     value++;
                 }
-                if (Challenges.Count > 0)
+                if (Challenges != null && Challenges.Count > 0)
                 {
                     value++;
                 }
@@ -60,15 +54,15 @@ namespace CovenExpansionRecast
         {
             TypeSelectorOptions.Clear();
 
-            if (NationalActions.Count > 0)
+            if (NationalActions != null && NationalActions.Count > 0)
             {
                 TypeSelectorOptions.Add("National Actions");
             }
-            if (LocalActions.Count > 0)
+            if (LocalActions != null && LocalActions.Count > 0)
             {
                 TypeSelectorOptions.Add("Local Actions");
             }
-            if (Challenges.Count > 0)
+            if (Challenges != null && Challenges.Count > 0)
             {
                 TypeSelectorOptions.Add("Challenges");
             }
