@@ -37,7 +37,7 @@ namespace CovenExpansionRecast
 
             Sel2_OpenMind_LocalActionSelector selector = new Sel2_OpenMind_LocalActionSelector();
             selector.SelectorData = selectorData;
-            selectorData.Map.world.prefabStore.getScrollSetText(labels, false, selector, "Select Local Action", $"Select the local ruler action that you wish {selectorData.Ua.getName()} to perform at {selectorData.Map.locations[selectorData.Person.rulerOf].getName()}, or go back.");
+            selectorData.Map.world.prefabStore.getScrollSetText(labels, false, selector, "Select Local Action", $"Select the local ruler action that you wish {selectorData.Person.getName()} to perform at {selectorData.Map.locations[selectorData.Person.rulerOf].getName()}, or go back.");
         }
 
         public OpenMindSelectorData SelectorData;
