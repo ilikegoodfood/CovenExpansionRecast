@@ -52,6 +52,7 @@ namespace CovenExpansionRecast
         {
             if (hasArrived)
             {
+                Pigeon.returning = true;
                 unit.task = null;
             }
 
