@@ -92,7 +92,6 @@ namespace CovenExpansionRecast
             if (!gainedPigeon && target.isCommandable() && target.getStatCommandLimit() >= Pigeon.getCommandCost() && target.map.burnInComplete)
             {
                 target.map.world.prefabStore.popMinionDismiss(target, Pigeon);
-                return;
             }
 
             if (gainedPigeon)

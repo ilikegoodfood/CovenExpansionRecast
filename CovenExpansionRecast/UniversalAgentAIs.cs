@@ -26,7 +26,7 @@ namespace CovenExpansionRecast
 
             List<AITask> tasks = new List<AITask> {
                     new AITask(typeof(Task_PigeonCarryToUnit), "Deliver Item", Map, Delegate_Instantiate_DeliverItems, AITask.TargetCategory.Unit, null, new Color(0.5f, 0.5f, 0.5f, 1.0f)),
-                    new AITask(typeof(Task_PigeonCarryToUnit), "Fly Home", Map, Delegate_Instantiate_PigeonFlyHome, AITask.TargetCategory.Unit, null, new Color(0.5f, 0.5f, 0.5f, 1.0f))
+                    new AITask(typeof(Task_PigeonCarryToUnit), "Fly Home", Map, Delegate_Instantiate_DeliverItems, AITask.TargetCategory.Unit, null, new Color(0.5f, 0.5f, 0.5f, 1.0f))
                 };
 
             tasks[0].delegates_Valid.Add(Delegate_Validity_DeliverItems);
@@ -87,24 +87,6 @@ namespace CovenExpansionRecast
             reasonMsgs?.Add(new ReasonMsg("Base", utility));
 
             return utility;
-        }
-
-        private Assets.Code.Task Delegate_Instantiate_PigeonFlyHome(UA ua, AITask.TargetCategory targetCategory, AgentAI.TaskData taskData)
-        {
-            if (!(ua is UAEN_Pigeon pigeon))
-            {
-                return null;
-            }
-
-            UA target = taskData.targetUnit as UA;
-            if (target != null && (!target.isDead || CovensCore.ComLib.checkIsUnitSubsumed(target)))
-            {
-                Task_GoToUnit follow = new Task_GoToUnit(ua, target.person.unit, -1, 1);
-                follow.reasonsMessages.Add(new ReasonMsg("Delivering Items", 100.0));
-                return follow;
-            }
-
-            return null;
         }
 
         private bool Delegate_Validity_PigeonFlyHome(UA ua, AITask.TargetCategory targetCategory, AgentAI.TaskData taskData)
