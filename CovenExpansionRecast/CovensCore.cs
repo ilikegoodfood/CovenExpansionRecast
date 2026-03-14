@@ -1253,6 +1253,8 @@ namespace CovenExpansionRecast
         {
             switch (soulcraftingItemID)
             {
+                case "I_Soulstone":
+                    return "Soulstone";
                 case "I_SkeletonKey":
                     return "Skeleton Key";
                 case "I_BagOfPoverty":
