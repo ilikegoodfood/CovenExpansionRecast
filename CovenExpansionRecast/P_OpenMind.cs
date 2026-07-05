@@ -1,4 +1,5 @@
 ﻿using Assets.Code;
+using CommunityLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -212,7 +213,8 @@ namespace CovenExpansionRecast
 
             if  (CommunityLib.ModCore.Get().GetAgentAI().TryGetAgentType(ua.GetType(), out _))
             {
-                List<CommunityLib.AgentAI.ChallengeData> challengeData = CommunityLib.ModCore.Get().GetAgentAI().getAllValidChallengesAndRituals(ua);
+                Dictionary<Location, Location[]> reachableLocations = CommunityLib.Pathfinding.getPathsFrom(ua.location, null, null, ua, ua.society?.isAtWar() ?? false);
+                List<CommunityLib.AgentAI.ChallengeData> challengeData = CommunityLib.ModCore.Get().GetAgentAI().getAllValidChallengesAndRituals(ua, reachableLocations);
 
                 foreach (CommunityLib.AgentAI.ChallengeData cd in challengeData)
                 {

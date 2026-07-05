@@ -36,6 +36,11 @@ namespace CovenExpansionRecast
 
         public override string getName()
         {
+            if (Complete)
+            {
+                return "Satiated Tome of Secrets (Satiated)";
+            }
+
             return $"Secrets of Life and Death ({Progress}/3)";
         }
 
@@ -74,7 +79,7 @@ namespace CovenExpansionRecast
                     taskString = "Bring the tome to the ruins of a city. The ruins must be fresh, not Ancient Ruins.";
                     break;
             }
-            return $"An inscrutable tome that demands knowledge as much as it offers. +1 <b>Lore</b>. The tome will give you 3 tasks that when completed will empower the tome and grant 50 progress towards your gods awakening. Current task: {taskString}";
+            return $"An inscrutable tome that demands knowledge as much as it offers. +1 <b>Lore</b>. The tome will give you 3 tasks that, when completed, will empower the tome to +2 <b>Lore</b> {(map.overmind.god.usesConventionalSeals() ? " and grant 50 progress towards your god's awakening" : "and 3 arcane secrets")}. Current task: {taskString}";
         }
 
         public override Sprite getIconFore()
@@ -181,6 +186,16 @@ namespace CovenExpansionRecast
         {
             if (Complete)
             {
+                if (map.overmind.god.usesConventionalSeals())
+                {
+                    map.overmind.sealProgress += 50;
+                }
+                else
+                {
+                    location.properties.Add(new Pr_ArcaneSecret(location));
+                    location.properties.Add(new Pr_ArcaneSecret(location));
+                    location.properties.Add(new Pr_ArcaneSecret(location));
+                }
                 map.addUnifiedMessage(person, null, "Tome Satiated", $"{person.getName()} has completed their tomes request and has been rewarded for satiating the tombs hunger for knowledge.", "TOME QUEST", true);
             }
             else
