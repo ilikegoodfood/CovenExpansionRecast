@@ -226,13 +226,15 @@ namespace CovenExpansionRecast
                                     ua.person.gainItem(new I_Soulstone(ua.map));
                                 }
                                 curse.level++;
+                                return;
                             }
-                            return;
                         }
+
                         ua.person.receiveTrait(new T_MasteryCurseweaving());
-                        ua.person.gainItem(new I_Soulstone(ua.map));
+                        return;
                     }
-                    else if (GraphicalMap.selectedHex != null && GraphicalMap.selectedHex.location != null && GraphicalMap.selectedHex.location.settlement is SettlementHuman settlementHuman && settlementHuman.ruler != null && !settlementHuman.ruler.isDead)
+                    
+                    if (GraphicalMap.selectedHex != null && GraphicalMap.selectedHex.location != null && GraphicalMap.selectedHex.location.settlement is SettlementHuman settlementHuman && settlementHuman.ruler != null && !settlementHuman.ruler.isDead)
                     {
                         Person ruler = settlementHuman.ruler;
                         foreach (Trait t in ruler.traits)
@@ -241,6 +243,7 @@ namespace CovenExpansionRecast
                             {
                                 continue;
                             }
+
                             if (curse.level < curse.getMaxLevel())
                             {
                                 if (curse.level == 0 && !ruler.items.Any(i => i is I_Soulstone))
@@ -248,11 +251,10 @@ namespace CovenExpansionRecast
                                     ruler.gainItem(new I_Soulstone(ruler.map));
                                 }
                                 curse.level++;
+                                return;
                             }
-                            return;
                         }
                         ruler.receiveTrait(new T_MasteryCurseweaving());
-                        ruler.gainItem(new I_Soulstone(ruler.map));
                     }
                     break;
             }
