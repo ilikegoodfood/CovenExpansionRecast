@@ -21,17 +21,15 @@ namespace CovenExpansionRecast
             }
             set
             {
-                if (value != _capturedSoul)
+                if (value == null)
                 {
-                    if (value == null)
-                    {
-                        _soulType = SoulType.Nothing;
-                    }
-                    else
-                    {
-                        _soulType = SoulTypeUtils.GetSoulType(value);
-                    }
                     _capturedSoul = value;
+                    _soulType = SoulType.Nothing;
+                }
+                else if (value != _capturedSoul)
+                {
+                    _capturedSoul = value;
+                    _soulType = SoulTypeUtils.GetSoulType(value);
                 }
             }
         }
@@ -44,7 +42,11 @@ namespace CovenExpansionRecast
         {
             get
             {
-                if (_soulType == SoulType.Nothing && CapturedSoul != null)
+                if (CapturedSoul == null)
+                {
+                    _soulType = SoulType.Nothing;
+                }
+                else if (_soulType == SoulType.Nothing)
                 {
                     _soulType = SoulTypeUtils.GetSoulType(CapturedSoul);
                 }
