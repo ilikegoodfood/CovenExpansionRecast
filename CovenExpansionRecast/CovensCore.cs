@@ -232,7 +232,7 @@ namespace CovenExpansionRecast
                         ua.person.receiveTrait(new T_MasteryCurseweaving());
                         ua.person.gainItem(new I_Soulstone(ua.map));
                     }
-                    else if (GraphicalMap.selectedHex != null && GraphialMap.selectedHex.location != null && GraphicalMap.selectedHex.location.settlement is SettlementHuman settlementHuman && settlementHuman.ruler != null && !settlementHuman.ruler.isDead)
+                    else if (GraphicalMap.selectedHex != null && GraphicalMap.selectedHex.location != null && GraphicalMap.selectedHex.location.settlement is SettlementHuman settlementHuman && settlementHuman.ruler != null && !settlementHuman.ruler.isDead)
                     {
                         Person ruler = settlementHuman.ruler;
                         foreach (Trait t in ruler.traits)
