@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace CovenExpansionRecast
 {
-    public class Sel2_OpenMind_TypeSelector : SelectClickReceiver
+    public class Sel2_OpenMind_TypeSelector : Sel2_OpenMind
     {
         public static void PopInstance(OpenMindSelectorData selectorData)
         {
@@ -52,16 +53,20 @@ namespace CovenExpansionRecast
             {
                 labels.Add("Challenges");
             }
+
+            Sel2_OpenMind_TypeSelector selector = new Sel2_OpenMind_TypeSelector();
+            selector.SelectorData = selectorData;
+            selectorData.Map.world.ui.addBlocker(selectorData.Map.world.prefabStore.getScrollSetText(labels, false, selector, "Select Action Type", $"Select the type of action that you wish {selectorData.Person.getName()} to perform, or go cancel.").gameObject);
         }
 
         public OpenMindSelectorData SelectorData;
 
-        public void cancelled()
+        public override void cancelled()
         {
             CovensCore.Instance.OpenMindPower.RefundCast(SelectorData.Person);
         }
 
-        public void selectableClicked(string text, int index)
+        public override void selectableClicked(string text, int index)
         {
             switch(text)
             {

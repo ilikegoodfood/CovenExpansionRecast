@@ -1,13 +1,10 @@
 ﻿using Assets.Code;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CovenExpansionRecast
 {
-    public class Sel2_OpenMind_LocalActionSelector : SelectClickReceiver
+    public class Sel2_OpenMind_LocalActionSelector : Sel2_OpenMind
     {
         public static void PopInstance(OpenMindSelectorData selectorData)
         {
@@ -37,12 +34,12 @@ namespace CovenExpansionRecast
 
             Sel2_OpenMind_LocalActionSelector selector = new Sel2_OpenMind_LocalActionSelector();
             selector.SelectorData = selectorData;
-            selectorData.Map.world.prefabStore.getScrollSetText(labels, false, selector, "Select Local Action", $"Select the local ruler action that you wish {selectorData.Person.getName()} to perform at {selectorData.Map.locations[selectorData.Person.rulerOf].getName()}, or go back.");
+            selectorData.Map.world.ui.addBlocker(selectorData.Map.world.prefabStore.getScrollSetText(labels, false, selector, "Select Local Action", $"Select the local ruler action that you wish {selectorData.Person.getName()} to perform at {selectorData.Map.locations[selectorData.Person.rulerOf].getName()}, or go back.").gameObject);
         }
 
         public OpenMindSelectorData SelectorData;
 
-        public void cancelled()
+        public override void cancelled()
         {
             if (SelectorData.ActionTypeCount > 1)
             {
@@ -53,7 +50,7 @@ namespace CovenExpansionRecast
             CovensCore.Instance.OpenMindPower.RefundCast(SelectorData.Person);
         }
 
-        public void selectableClicked(string text, int index)
+        public override void selectableClicked(string text, int index)
         {
             if (SelectorData.Map == null || SelectorData.HumanSettlement == null)
             {

@@ -1,13 +1,10 @@
 ﻿using Assets.Code;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CovenExpansionRecast
 {
-    public class Sel2_OpenMind_NationalActionSelector : SelectClickReceiver
+    public class Sel2_OpenMind_NationalActionSelector : Sel2_OpenMind
     {
         public static void PopInstance(OpenMindSelectorData selectorData)
         {
@@ -37,12 +34,12 @@ namespace CovenExpansionRecast
 
             Sel2_OpenMind_NationalActionSelector selector = new Sel2_OpenMind_NationalActionSelector();
             selector.SelectorData = selectorData;
-            selectorData.Map.world.prefabStore.getScrollSetText(labels, false, selector, "Select National Action", $"Select the national action that you wish {selectorData.Person.getName()} to perform as leader of the {selectorData.Society.getName()}, or go back.");
+            selectorData.Map.world.ui.addBlocker(selectorData.Map.world.prefabStore.getScrollSetText(labels, false, selector, "Select National Action", $"Select the national action that you wish {selectorData.Person.getName()} to perform as leader of the {selectorData.Society.getName()}, or go back.").gameObject);
         }
 
         public OpenMindSelectorData SelectorData;
 
-        public void cancelled()
+        public override void cancelled()
         {
             if (SelectorData.ActionTypeCount > 1)
             {
@@ -53,7 +50,7 @@ namespace CovenExpansionRecast
             CovensCore.Instance.OpenMindPower.RefundCast(SelectorData.Person);
         }
 
-        public void selectableClicked(string text, int index)
+        public override void selectableClicked(string text, int index)
         {
             if (SelectorData.Map == null || SelectorData.Society == null)
             {

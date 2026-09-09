@@ -103,7 +103,7 @@ namespace CovenExpansionRecast
                 PopulateLocalActionData(selectorData, p);
             }
 
-            if (p.unit is UA ua)
+            if (p.unit is UA ua && !ua.isDead && ua.location.units.Contains(ua))
             {
                 selectorData.Ua = ua;
                 PopulateChallengeData(selectorData, ua);
@@ -111,7 +111,7 @@ namespace CovenExpansionRecast
 
             if (selectorData.ActionTypeCount == 0)
             {
-                RefundCast(p, "Target has no valid actions or challenges that they can perform which they are not already performing");
+                RefundCast(p, "Target has no valid actions or challenges that they can perform which they are not already performing.");
                 return;
             }
 

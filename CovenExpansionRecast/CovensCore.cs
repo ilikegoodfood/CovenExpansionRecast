@@ -204,6 +204,34 @@ namespace CovenExpansionRecast
             }
         }
 
+        public override void onCheatEntered(string command)
+        {
+            string commandCleaned = command.ToLower().Trim();
+            switch (command)
+            {
+                case "curseweaver":
+                    if (GraphicalMap.selectedUnit is UA ua)
+                    {
+                        foreach (Trait t in ua.person.traits)
+                        {
+                            if (!(t is T_MasteryCurseweaving curse))
+                            {
+                                continue;
+                            }
+
+                            if (curse.level < curse.getMaxLevel())
+                            {
+                                curse.level++;
+                            }
+                            return;
+                        }
+                        ua.person.receiveTrait(new T_MasteryCurseweaving());
+                        ua.person.gainItem(new I_Soulstone(ua.map));
+                    }
+                    break;
+            }
+        }
+
         public override void onStartGamePresssed(Map map, List<God> gods)
         {
             _modIntegrationData?.Clear();

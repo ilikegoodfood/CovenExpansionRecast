@@ -58,6 +58,8 @@ namespace CovenExpansionRecast
             }
         }
 
+        public double SoulCharge = 50.0;
+
         public Mg_Rti_TransposeSoul Rti_TransposeSoul;
 
         public List<Mg_Rti_TransposeSoul> TranspositionRituals = new List<Mg_Rti_TransposeSoul>();
