@@ -221,12 +221,38 @@ namespace CovenExpansionRecast
 
                             if (curse.level < curse.getMaxLevel())
                             {
+                                if (curse.level == 0 && !ua.person.items.Any(i => i is I_Soulstone))
+                                {
+                                    ua.person.gainItem(new I_Soulstone(ua.map));
+                                }
                                 curse.level++;
                             }
                             return;
                         }
                         ua.person.receiveTrait(new T_MasteryCurseweaving());
                         ua.person.gainItem(new I_Soulstone(ua.map));
+                    }
+                    else if (GraphicalMap.selectedHex != null && GraphialMap.selectedHex.location != null && GraphicalMap.selectedHex.location.settlement is SettlementHuman settlementHuman && settlementHuman.ruler != null && !settlementHuman.ruler.isDead)
+                    {
+                        Person ruler = settlementHuman.ruler;
+                        foreach (Trait t in ruler.traits)
+                        {
+                            if (!(t is T_MasteryCurseweaving curse))
+                            {
+                                continue;
+                            }
+                            if (curse.level < curse.getMaxLevel())
+                            {
+                                if (curse.level == 0 && !ruler.items.Any(i => i is I_Soulstone))
+                                {
+                                    ruler.gainItem(new I_Soulstone(ruler.map));
+                                }
+                                curse.level++;
+                            }
+                            return;
+                        }
+                        ruler.receiveTrait(new T_MasteryCurseweaving());
+                        ruler.gainItem(new I_Soulstone(ruler.map));
                     }
                     break;
             }
