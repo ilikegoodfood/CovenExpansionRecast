@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CovenExpansionRecast
 {
-    public class Sel2_OpenMind_ChallengeSelector : SelectClickReceiver
+    public class Sel2_OpenMind_ChallengeSelector : Sel2_OpenMind
     {
         public static void PopInstance(OpenMindSelectorData selectorData)
         {
@@ -45,12 +45,12 @@ namespace CovenExpansionRecast
 
             Sel2_OpenMind_ChallengeSelector selector = new Sel2_OpenMind_ChallengeSelector();
             selector.SelectorData = selectorData;
-            selectorData.Map.world.prefabStore.getScrollSetText(labels, false, selector, "Select Challenge", $"Select the challenge or challnge type that you wish {selectorData.Ua.getName()} to perform, or go back.");
+            selectorData.Map.world.ui.addBlocker(selectorData.Map.world.prefabStore.getScrollSetText(labels, false, selector, "Select Challenge", $"Select the challenge or challnge type that you wish {selectorData.Ua.getName()} to perform, or go back.").gameObject);
         }
 
         public OpenMindSelectorData SelectorData;
 
-        public void cancelled()
+        public override void cancelled()
         {
             if (SelectorData.ActionTypeCount > 1)
             {
@@ -61,7 +61,7 @@ namespace CovenExpansionRecast
             CovensCore.Instance.OpenMindPower.RefundCast(SelectorData.Person);
         }
 
-        public void selectableClicked(string text, int index)
+        public override void selectableClicked(string text, int index)
         {
             if (SelectorData.Ua == null)
             {
@@ -85,7 +85,7 @@ namespace CovenExpansionRecast
                 return;
             }
 
-            Challenge challenge = SelectorData.Challenges[index]?[0];
+            Challenge challenge = SelectorData.Challenges[index][0];
             if (challenge == null)
             {
                 cancelled();

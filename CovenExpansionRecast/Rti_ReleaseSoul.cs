@@ -86,7 +86,10 @@ namespace CovenExpansionRecast
 
         public override void complete(UA u)
         {
-            u.location.properties.Add(new Pr_FallenHuman(u.location, Soulstone.CapturedSoul));
+            Pr_FallenHuman soul = new Pr_FallenHuman(u.location, Soulstone.CapturedSoul);
+            soul.charge = Soulstone.SoulCharge;
+            Soulstone.SoulCharge = 50.0;
+            u.location.properties.Add(soul);
             Soulstone.CapturedSoul = null;
         }
 

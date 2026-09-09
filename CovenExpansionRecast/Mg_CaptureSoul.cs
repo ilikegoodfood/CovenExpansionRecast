@@ -173,6 +173,7 @@ namespace CovenExpansionRecast
             }
 
             soulstone.CapturedSoul = map.persons[Target.personIndex];
+            soulstone.SoulCharge = Target.charge;
             Target.charge = 0.0;
             u.location.properties.Remove(Target);
             u.rituals.Remove(this);
